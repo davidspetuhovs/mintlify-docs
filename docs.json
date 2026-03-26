@@ -3,16 +3,16 @@
   "theme": "mint",
   "name": "OpenBat",
   "colors": {
-    "primary": "#4ADE80",
-    "light": "#16A34A",
-    "dark": "#4ADE80"
+    "primary": "#ffffff",
+    "light": "#FFFFFF",
+    "dark": "#FFFFFF"
   },
   "appearance": {
     "default": "dark",
     "strict": true
   },
   "background": {
-    "decoration": "grid"
+    "decoration": "gradient"
   },
   "favicon": "/favicon.svg",
   "logo": {
