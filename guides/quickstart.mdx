@@ -1,0 +1,78 @@
+---
+title: "Quickstart"
+description: "Get OpenBat running in under 5 minutes. Create a chatbot, install the SDK, and start seeing conversation analytics."
+---
+
+import SdkInstall from "/snippets/sdk-install.mdx";
+import ApiKeyWarning from "/snippets/api-key-warning.mdx";
+
+<Steps>
+  <Step title="Create an account">
+    Go to [app.openbat.dev/auth/sign-up](https://app.openbat.dev/auth/sign-up) and enter your email and password.
+
+    Check your inbox and confirm your email address. An organization is automatically created for you once you verify.
+
+    ![Create an account](/images/sign-up.png)
+  </Step>
+
+  <Step title="Create a chatbot">
+    From the platform home, click **New chatbot** and give it a name.
+
+    After creation, your API key is displayed. Copy it immediately.
+
+    <ApiKeyWarning />
+
+    ![Chatbots list](/images/chatbots-list.png)
+  </Step>
+
+  <Step title="Install the SDK">
+    Add the OpenBat SDK to your project:
+
+    <SdkInstall />
+
+    Then set your API key as an environment variable:
+
+    ```bash
+    OPENBAT_API_KEY=ob_live_your_key_here
+    ```
+
+    <Tip>
+      The SDK reads `OPENBAT_API_KEY` from your environment automatically, so you do not need to pass it in code.
+    </Tip>
+  </Step>
+
+  <Step title="Send your first message">
+    Add a `recordMessages` call after your chatbot generates a response:
+
+    ```typescript
+    import { OpenBat } from 'openbat';
+
+    const client = new OpenBat();
+
+    await client.recordMessages({
+      conversationId: "conv_123",
+      messages: [
+        { role: "user", content: "How do I reset my password?" },
+        { role: "assistant", content: "Go to Settings > Account > Reset password." }
+      ]
+    });
+    ```
+
+    The SDK is fire-and-forget. It never throws errors or blocks your response pipeline.
+
+    <Tip>
+      Pass a message `id` field on each message to enable automatic deduplication. This lets you safely call `recordMessages` on every turn without inserting duplicates.
+    </Tip>
+  </Step>
+
+  <Step title="View your dashboard">
+    Navigate to your chatbot dashboard. Within minutes, analysis results appear including sentiment scores, intent classifications, and more.
+
+    ![Dashboard with analytics](/images/dashboard.png)
+  </Step>
+</Steps>
+
+## Next steps
+
+- [SDK reference](/sdk-reference) -- explore the full `recordMessages` API with user, session, and organization metadata
+- [Vercel AI SDK integration](/guides/frameworks/vercel-ai-sdk) -- use the `withOpenBat` wrapper for streaming responses

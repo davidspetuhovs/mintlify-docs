@@ -1,0 +1,87 @@
+---
+title: "Recording messages"
+description: "Send conversation messages to OpenBat with the recordMessages method. Supports deduplication, metadata, and custom fields."
+---
+
+## Method signature
+
+```typescript
+await client.recordMessages(input: RecordMessagesInput): Promise<void>
+```
+
+`recordMessages` is the core SDK method. It sends one or more conversation messages to OpenBat for analysis. The call is fire-and-forget — it never blocks your response pipeline and never throws errors.
+
+## Parameters
+
+### Required
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `conversationId` | `string` | Your unique identifier for this conversation. |
+| `messages` | `Message[]` | Array of 1–100 messages to record. |
+
+Each message in the array accepts the following fields:
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `role` | `"user" \| "assistant" \| "system"` | Yes | The role of the message sender. |
+| `content` | `string` | Yes | The text content of the message. |
+| `id` | `string` | No | External message ID, used for deduplication. |
+| `sentAt` | `Date` | No | Timestamp of when the message was sent. |
+
+### Optional metadata
+
+These fields let you attach context to every `recordMessages` call. They are covered in detail on the [enriching data](/sdk/enriching-data) page.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `user` | `object` | User metadata (id, name, email, plan, and more). |
+| `organization` | `object` | Organization metadata (id, name, plan, mrr, industry). |
+| `session` | `object` | Session metadata (id, pageUrl, referrer, device, country). |
+| `custom` | `Record<string, string \| number \| boolean>` | Arbitrary key-value pairs matching your chatbot's metadata schema. |
+| `headers` | `Record<string, string>` | Forward incoming request headers for automatic geo and device detection. |
+
+## Minimal example
+
+```typescript
+await client.recordMessages({
+  conversationId: "conv_123",
+  messages: [
+    { role: "user", content: "How do I reset my password?" },
+    { role: "assistant", content: "Go to Settings > Account > Reset password." }
+  ]
+});
+```
+
+This is the smallest valid call. You provide a conversation ID and at least one message — OpenBat handles the rest.
+
+## Message deduplication
+
+<Info>
+  If you pass an `id` on each message, OpenBat deduplicates on that ID. You can safely call `recordMessages` on every turn without creating duplicate entries.
+</Info>
+
+```typescript
+await client.recordMessages({
+  conversationId: threadId,
+  messages: allMessages.map(msg => ({
+    role: msg.role,
+    content: msg.content,
+    id: msg.id,
+    sentAt: msg.createdAt
+  }))
+});
+```
+
+This pattern works well when your application stores a running list of messages. Send the full array on each turn and let OpenBat skip any messages it has already seen.
+
+If no `id` is provided, deduplication falls back to a combination of content, role, and timestamp. Explicit IDs are more reliable and recommended for production use.
+
+## Return value
+
+`recordMessages` returns `Promise<void>`. Errors are caught internally and logged to the console — the method never throws. Your chatbot's core functionality is never affected by SDK failures.
+
+## Next steps
+
+- [Enriching data](/sdk/enriching-data) — attach user, organization, session, and custom metadata to your calls.
+- [Vercel AI SDK integration](/sdk/vercel-ai-sdk) — use the `withOpenBat` wrapper for streaming responses.

@@ -1,0 +1,67 @@
+---
+title: "Authentication"
+description: "Two authentication methods: API key (Bearer token) for SDK ingestion, and session cookies for dashboard endpoints."
+---
+
+import ApiKeyWarning from "/snippets/api-key-warning.mdx";
+
+OpenBat uses two authentication methods depending on which endpoints you call.
+
+<Tabs>
+  <Tab title="API key">
+    API key authentication is used by the SDK ingestion endpoint ([`POST /api/v1/capture`](/api-reference/capture)). Pass your chatbot's API key as a Bearer token in the `Authorization` header:
+
+    ```bash
+    Authorization: Bearer ob_live_a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4
+    ```
+
+    ### How it works
+
+    - The key is validated by hashing it with SHA-256 and looking up the corresponding chatbot.
+    - The full key is never stored in the database — only the hash.
+    - The prefix (`ob_live_a1b2c3...`) is displayed in the dashboard for identification.
+
+    If the key is missing or invalid, the API returns `401 Unauthorized`.
+  </Tab>
+  <Tab title="Session">
+    Session authentication is used by chatbot management, conversations, and analytics endpoints. These are the same endpoints that power the OpenBat dashboard.
+
+    - Cookie-based authentication via Supabase Auth.
+    - A session is established through the web login flow.
+    - All dashboard endpoints enforce organization-level Row Level Security (RLS).
+    - You can only access data that belongs to your organization.
+  </Tab>
+</Tabs>
+
+## Getting your API key
+
+<Steps>
+  <Step title="Open your chatbot settings">
+    Go to **Settings > General** in the chatbot you want to connect.
+  </Step>
+  <Step title="Find your key prefix">
+    The key prefix is displayed on the settings page so you can identify which key is active.
+  </Step>
+  <Step title="Rotate if you need the full key">
+    If you need the full key (for example, during initial setup or after losing the original), click **Rotate Key**. This generates a new key and immediately invalidates the old one.
+  </Step>
+  <Step title="Copy and store the key">
+    Copy the full key and store it somewhere secure, such as an environment variable.
+  </Step>
+</Steps>
+
+<ApiKeyWarning />
+
+## Key security
+
+- The full key is shown only once at creation or rotation. It cannot be recovered afterward.
+- Store your key in environment variables. Never commit it to source code.
+- Rotate immediately if you suspect the key has been compromised. Rotating a key invalidates the previous one instantly.
+
+### API key format
+
+```
+ob_live_<32 lowercase hex characters>
+```
+
+The `ob_live_` prefix is constant. The remaining 32 characters are randomly generated hexadecimal.

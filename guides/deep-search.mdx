@@ -1,0 +1,51 @@
+---
+title: "Deep search"
+description: "Search conversations by meaning, not just keywords. Find relevant messages across your entire conversation history."
+---
+
+Deep search is a semantic search engine that spans every conversation your chatbot has ever had. Instead of matching exact words, it understands the meaning behind your query, so searching for "billing problems" also surfaces messages like "I was overcharged" or "payment failed."
+
+![Deep search](/images/deep-search.png)
+
+## Semantic search vs keyword search
+
+Traditional keyword search only returns results that contain the exact words you typed. Deep search uses vector embeddings to find messages that are semantically similar to your query, even when different words are used.
+
+| Query | Keyword search | Deep search |
+| --- | --- | --- |
+| "export feature" | Only finds messages containing "export feature" | Also finds "download CSV", "bulk export", "save as spreadsheet" |
+| "frustrated about billing" | Requires exact words | Finds "I've been charged three times", "your pricing is confusing" |
+| "competitor comparison" | Requires "competitor" in text | Finds "how does this compare to Intercom?", "Zendesk does this better" |
+
+## How it works
+
+1. Every message captured by OpenBat is embedded into a vector representation using a text embedding model.
+2. When you search, your query is embedded using the same model.
+3. Results are ranked by semantic similarity, not keyword matching.
+4. Each result links directly to the conversation detail view, scrolled to the exact matching message.
+
+## Using deep search
+
+Type a natural language query into the search bar at the top of the deep search page and press Enter. Results appear in a paginated table with the following columns:
+
+| Column | Description |
+| --- | --- |
+| User | The external user's name and email |
+| Message | The matching message content (truncated) |
+| Sentiment | Sentiment badge for that specific message |
+| Conversation | Link to the full conversation, scrolling to the exact message |
+| Date | When the message was sent |
+
+Each conversation link includes a `?msg=` parameter that scrolls to and highlights the matched message in the conversation detail view.
+
+<Tip>
+Try queries like "users asking about SSO" to find messages mentioning "single sign-on", "SAML", or "enterprise login" -- even if none of those exact terms appear together. You can also combine meaning with tone, such as "frustrated messages about the API."
+</Tip>
+
+## Contextual search from a conversation
+
+From the [conversation detail](/guides/introduction) view, click the sparkle icon on any message bubble to open a contextual deep search shortcut. This pre-fills the search with that message's content, letting you quickly find similar messages across all conversations.
+
+## Translation interaction
+
+When [auto-translation](/guides/introduction) is enabled, messages are embedded using their translated content rather than the original language. This means deep search works consistently in your primary language. Searching in English returns semantically similar messages regardless of what language the user originally wrote in.

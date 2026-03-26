@@ -1,0 +1,66 @@
+---
+title: "Team management"
+description: "Manage your organization, invite team members, and configure role-based access control."
+---
+
+Every OpenBat account belongs to an organization. Organizations group your chatbots, conversations, and team members under a single workspace. You can invite teammates, assign roles, and control who can manage resources.
+
+## Organizations
+
+When you sign up for the first time, OpenBat automatically creates an organization named after your email prefix. There is no manual setup step.
+
+If you belong to multiple organizations, use the organization switcher in the sidebar to move between them. The switcher only appears when you have more than one organization.
+
+## Roles
+
+Each member of an organization has one of three roles:
+
+| Role | Capabilities |
+|------|-------------|
+| **Owner** | Full access. Rename and delete the organization. Manage all members and chatbots. Transfer ownership. |
+| **Admin** | Invite and remove members. Create and manage chatbots. Cannot delete the organization or transfer ownership. |
+| **Member** | Read-only access to assigned chatbots. Cannot invite members or create chatbots. |
+
+## Inviting members
+
+<Steps>
+  <Step title="Open the members page">
+    Navigate to **Members** in the sidebar, or go directly to [app.openbat.dev/platform/members](https://app.openbat.dev/platform/members).
+  </Step>
+
+  <Step title="Click invite member">
+    Click the **Invite member** button. This is visible to owners and admins only.
+  </Step>
+
+  <Step title="Enter details">
+    Enter the email address of the person you want to invite and select their role (admin or member).
+  </Step>
+
+  <Step title="Recipient joins">
+    The invited user receives an email with a link to create an account (or sign in if they already have one). Once they accept, they appear in the members list with their assigned role.
+  </Step>
+</Steps>
+
+![Organization members](/images/org-members.png)
+
+## Removing members
+
+Owners and admins can remove any member from the members page. Click the remove action next to the member you want to remove. Access is revoked immediately — the removed member can no longer see the organization or any of its chatbots.
+
+## Organization settings
+
+Owners can rename or delete the organization from the settings page.
+
+![Organization settings](/images/org-settings.png)
+
+### Rename
+
+Change the display name of your organization. The name appears in the sidebar and in team invitations. Only owners can rename the organization.
+
+### Delete
+
+<Warning>
+  Deleting an organization is permanent and cannot be undone. All chatbots, conversations, and analysis data belonging to the organization are permanently removed.
+</Warning>
+
+Only owners can delete an organization. A confirmation step prevents accidental deletion.

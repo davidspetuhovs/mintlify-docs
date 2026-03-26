@@ -1,0 +1,130 @@
+---
+title: "Users and organizations"
+description: "Browse and filter your chatbot's end users and their organizations. Analyze sentiment, revenue, and conversation patterns at the entity level."
+---
+
+OpenBat separates analytics by the external entities you pass through the SDK — the end users who interact with your chatbot and the organizations those users belong to. These pages let you browse, filter, and surface patterns at the entity level rather than the conversation level.
+
+<Tabs>
+  <Tab title="Users">
+    The users page is a filterable directory of every unique user your chatbot has interacted with. Each row represents a real person from your product, identified by the `user.id` you pass through the SDK.
+
+    ![Users](/images/users.png)
+
+    ## Table columns
+
+    | Column | Description |
+    |--------|-------------|
+    | **User** | Name and email, pulled from SDK metadata |
+    | **Plan** | Subscription plan (e.g., Free, Pro, Enterprise) |
+    | **Industry** | The user's industry, if provided |
+    | **Organization** | Which organization they belong to |
+    | **Conversations** | Total conversation count |
+    | **Avg Sentiment** | Average sentiment score across all conversations |
+    | **MRR** | Monthly recurring revenue, if provided |
+    | **First seen** | When their first conversation was captured |
+
+    ## Filtering
+
+    **Free-text search** matches on user name, email, or user ID.
+
+    **Faceted filters:**
+    - Plan (multi-select)
+    - Industry (multi-select)
+    - Organization (specific org or any)
+
+    **Range filters:**
+    - Conversation count (min/max)
+    - Average sentiment (min/max) — find your most or least satisfied users
+    - MRR (min/max) — narrow results to high-value accounts
+
+    You can sort by any column in ascending or descending order.
+
+    **Clicking a user row** filters the [conversations](/guides/dashboard) view to show only that user's conversations.
+  </Tab>
+
+  <Tab title="Organizations">
+    The organizations page aggregates data at the company or account level. Each row represents a unique organization you have passed through the SDK.
+
+    ![Organizations](/images/organizations.png)
+
+    ## Table columns
+
+    | Column | Description |
+    |--------|-------------|
+    | **Organization** | Organization name, from SDK metadata |
+    | **Plan** | Org-level subscription plan |
+    | **Industry** | The organization's industry |
+    | **Users** | Number of unique users from this org |
+    | **Conversations** | Total conversation count across all users in the org |
+    | **Avg Sentiment** | Average sentiment across all org conversations |
+    | **MRR** | Monthly recurring revenue for this account |
+    | **First seen** | When the first conversation from this org was captured |
+
+    ## Filtering
+
+    **Free-text search** matches on organization name or org ID.
+
+    **Faceted filters:**
+    - Plan (multi-select)
+    - Industry (multi-select)
+
+    **Range filters:**
+    - Conversation count (min/max)
+    - User count (min/max) — find orgs with high adoption
+    - Average sentiment (min/max)
+    - MRR (min/max)
+
+    You can sort by any column in ascending or descending order.
+
+    **Clicking an organization row** filters the [conversations](/guides/dashboard) view to show only that org's conversations.
+  </Tab>
+</Tabs>
+
+## Metadata sourcing
+
+Both pages are only as rich as the metadata you pass through the SDK. Fields like plan, industry, and MRR must be explicitly provided when calling `recordMessages()`:
+
+```javascript
+client.recordMessages({
+  conversationId: "...",
+  user: {
+    id: "user_123",
+    name: "Alice Johnson",
+    email: "alice@acme.com",
+    plan: "enterprise",
+    industry: "fintech",
+    mrr: 1500
+  },
+  organization: {
+    id: "org_acme",
+    name: "Acme Corp",
+    plan: "enterprise",
+    mrr: 5000,
+    industry: "fintech"
+  },
+  messages: [...]
+});
+```
+
+<Info>
+  Fields not provided appear as empty in the table and are not available as filters. Richer metadata means richer filtering and sorting.
+</Info>
+
+## Use cases
+
+### Churn prevention
+
+Sort by sentiment ascending to find the most frustrated users or organizations. Then filter by high MRR to prioritize outreach to the accounts that matter most. When an entire org's sentiment drops, that is an account-level risk — not just one unhappy user.
+
+### Expansion targeting
+
+Filter conversations for buying signals and cross-reference with high-sentiment users. These are your strongest expansion candidates — engaged, satisfied, and already showing purchase intent.
+
+### QBR prep
+
+Pull up a specific organization to review their conversation volume, average sentiment, and typical interaction patterns. You get an account-level summary without digging through individual conversations.
+
+### Segment analysis
+
+Filter by plan or industry to understand how different user segments experience your chatbot. Compare sentiment and conversation volume across cohorts to identify where your assistant performs well and where it falls short.

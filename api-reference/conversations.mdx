@@ -1,0 +1,223 @@
+---
+title: "Conversations and analytics"
+description: "List and retrieve conversations with full message history. Query aggregate metrics and sentiment trends."
+---
+
+These endpoints use [session authentication](/api-reference/authentication). All data is scoped to your organization.
+
+## List conversations
+
+<CodeGroup>
+```bash Request
+GET /api/v1/conversations?chatbotId=<chatbot_id>&page=1&limit=20
+```
+</CodeGroup>
+
+### Query parameters
+
+| Parameter   | Type   | Default | Description                      |
+| ----------- | ------ | ------- | -------------------------------- |
+| `chatbotId` | string | —       | Filter to a specific chatbot     |
+| `page`      | number | `1`     | Page number                      |
+| `limit`     | number | `20`    | Items per page (max 100)         |
+
+### Response
+
+```json
+{
+  "conversations": [
+    {
+      "id": "uuid",
+      "chatbot_id": "uuid",
+      "external_conversation_id": "conv_123",
+      "external_user_id": "user_456",
+      "message_count": 8,
+      "first_message_at": "2024-01-15T10:00:00Z",
+      "last_message_at": "2024-01-15T10:15:00Z",
+      "created_at": "2024-01-15T10:00:00Z",
+      "chatbots": { "name": "Support Bot" }
+    }
+  ],
+  "total": 142,
+  "page": 1,
+  "limit": 20
+}
+```
+
+### Response fields
+
+| Field                        | Type   | Description                                        |
+| ---------------------------- | ------ | -------------------------------------------------- |
+| `conversations`              | array  | Paginated list of conversation objects              |
+| `conversations[].id`         | string | OpenBat internal ID                                |
+| `conversations[].chatbot_id` | string | ID of the chatbot this conversation belongs to     |
+| `conversations[].external_conversation_id` | string | The conversation ID you passed via the SDK |
+| `conversations[].external_user_id` | string | The user ID you passed via the SDK           |
+| `conversations[].message_count` | number | Total messages in the conversation              |
+| `conversations[].first_message_at` | string | ISO 8601 timestamp of the first message      |
+| `conversations[].last_message_at`  | string | ISO 8601 timestamp of the most recent message |
+| `conversations[].created_at` | string | ISO 8601 timestamp when the conversation was created |
+| `conversations[].chatbots.name` | string | Name of the chatbot                            |
+| `total`                      | number | Total number of matching conversations             |
+| `page`                       | number | Current page number                                |
+| `limit`                      | number | Items per page                                     |
+
+---
+
+## Get a conversation
+
+Retrieve a single conversation with its full message history and sentiment analysis.
+
+<CodeGroup>
+```bash Request
+GET /api/v1/conversations/:id
+```
+</CodeGroup>
+
+### Response
+
+```json
+{
+  "id": "uuid",
+  "external_conversation_id": "conv_123",
+  "message_count": 4,
+  "first_message_at": "2024-01-15T10:00:00Z",
+  "last_message_at": "2024-01-15T10:05:00Z",
+  "messages": [
+    {
+      "id": "uuid",
+      "role": "user",
+      "content": "How do I cancel my subscription?",
+      "external_message_id": "msg_001",
+      "created_at": "2024-01-15T10:00:00Z",
+      "user_sentiments": [
+        {
+          "score": -0.4,
+          "text_chunk": "cancel my subscription",
+          "reasoning": "User expressing intent to discontinue service"
+        }
+      ]
+    },
+    {
+      "id": "uuid",
+      "role": "assistant",
+      "content": "You can cancel by going to Settings...",
+      "created_at": "2024-01-15T10:01:00Z"
+    }
+  ]
+}
+```
+
+### Message fields
+
+| Field                | Type   | Description                                              |
+| -------------------- | ------ | -------------------------------------------------------- |
+| `id`                 | string | OpenBat internal message ID                              |
+| `role`               | string | `user`, `assistant`, or `system`                         |
+| `content`            | string | Message text                                             |
+| `external_message_id`| string | The message ID you passed via the SDK                    |
+| `created_at`         | string | ISO 8601 timestamp                                       |
+| `user_sentiments`    | array  | Sentiment analysis results (present on user messages only)|
+
+### Sentiment object fields
+
+| Field        | Type   | Description                                                  |
+| ------------ | ------ | ------------------------------------------------------------ |
+| `score`      | number | Sentiment score ranging from -1 (very negative) to 1 (very positive) |
+| `text_chunk` | string | The portion of the message this score applies to             |
+| `reasoning`  | string | Explanation of why this score was assigned                   |
+
+---
+
+## Analytics overview
+
+Get aggregate metrics across all your chatbots, or scope to a specific one.
+
+<CodeGroup>
+```bash Request
+GET /api/v1/analytics/overview?chatbotId=<chatbot_id>
+```
+</CodeGroup>
+
+### Query parameters
+
+| Parameter   | Type   | Default | Description                          |
+| ----------- | ------ | ------- | ------------------------------------ |
+| `chatbotId` | string | —       | Scope metrics to a specific chatbot  |
+
+### Response
+
+```json
+{
+  "totalConversations": 1247,
+  "totalMessages": 8932,
+  "avgSentiment": 0.23,
+  "sentimentDistribution": {
+    "Very Positive": 312,
+    "Positive": 445,
+    "Neutral": 298,
+    "Negative": 142,
+    "Very Negative": 50
+  },
+  "messagesToday": 83
+}
+```
+
+### Response fields
+
+| Field                    | Type   | Description                                           |
+| ------------------------ | ------ | ----------------------------------------------------- |
+| `totalConversations`     | number | Total number of conversations                         |
+| `totalMessages`          | number | Total number of messages across all conversations     |
+| `avgSentiment`           | number | Average sentiment score (-1 to 1)                     |
+| `sentimentDistribution`  | object | Counts grouped by sentiment label                     |
+| `messagesToday`          | number | Number of messages received today                     |
+
+The `sentimentDistribution` object contains five keys: `Very Positive`, `Positive`, `Neutral`, `Negative`, and `Very Negative`. Each value is an integer count.
+
+---
+
+## Sentiment trends
+
+Get sentiment data over time for charting and trend analysis.
+
+<CodeGroup>
+```bash Request
+GET /api/v1/analytics/sentiment?chatbotId=<chatbot_id>&days=30
+```
+</CodeGroup>
+
+### Query parameters
+
+| Parameter   | Type   | Default | Description                                  |
+| ----------- | ------ | ------- | -------------------------------------------- |
+| `chatbotId` | string | —       | Required. Filter to a specific chatbot.      |
+| `days`      | number | `30`    | Lookback period in days (max 365)            |
+
+### Response
+
+```json
+{
+  "sentimentOverTime": [
+    { "date": "2024-01-15", "avgScore": 0.18, "count": 42 },
+    { "date": "2024-01-16", "avgScore": 0.24, "count": 38 }
+  ],
+  "distribution": {
+    "Positive": 145,
+    "Neutral": 89,
+    "Negative": 43
+  },
+  "total": 277
+}
+```
+
+### Response fields
+
+| Field                             | Type   | Description                                        |
+| --------------------------------- | ------ | -------------------------------------------------- |
+| `sentimentOverTime`               | array  | One entry per day within the lookback period        |
+| `sentimentOverTime[].date`        | string | Date in `YYYY-MM-DD` format                        |
+| `sentimentOverTime[].avgScore`    | number | Average sentiment score for that day (-1 to 1)     |
+| `sentimentOverTime[].count`       | number | Number of sentiment-analyzed messages that day      |
+| `distribution`                    | object | Counts grouped by sentiment label for the period   |
+| `total`                           | number | Total number of analyzed messages in the period     |

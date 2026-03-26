@@ -1,33 +1,60 @@
 ---
-title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
+title: "API overview"
+description: "REST API reference for OpenBat. Two endpoint categories: SDK ingestion (API key auth) and dashboard (session auth)."
 ---
 
-<Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
-</Note>
+The OpenBat API lets you ingest conversation data from your chatbot and retrieve analytics through a set of REST endpoints. All endpoints share a single base URL and fall into two authentication categories.
 
-## Welcome
+## Base URL
 
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
-
-<Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
->
-  View the OpenAPI specification file
-</Card>
-
-## Authentication
-
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
-
-```json
-"security": [
-  {
-    "bearerAuth": []
-  }
-]
 ```
+https://app.openbat.dev
+```
+
+## Endpoint categories
+
+### SDK ingestion API
+
+Authenticated with an API key (`ob_live_...`), passed as a Bearer token. Use this from your chatbot integration to send conversation data to OpenBat.
+
+```
+Authorization: Bearer ob_live_a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4
+```
+
+### Dashboard API
+
+Authenticated with a Supabase session cookie, established through the web login flow. These endpoints power the OpenBat dashboard and are available for programmatic access. All dashboard endpoints enforce organization-level row-level security — you can only access data that belongs to your organization.
+
+## API key format
+
+```
+ob_live_<32 lowercase hex characters>
+
+Example: ob_live_a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4
+```
+
+The prefix `ob_live_a1b2c3` (roughly the first 14 characters) is stored in the dashboard for identification. The full key is hashed with SHA-256 before storage — only the hash is persisted. The full key is returned once at creation or rotation and cannot be recovered.
+
+## Rate limits and constraints
+
+| Endpoint | Limit |
+|----------|-------|
+| `POST /api/v1/capture` | 1-100 messages per request |
+| `GET /api/v1/conversations` | Max page size: 100 |
+| `GET /api/v1/analytics/sentiment` | Max lookback: 365 days |
+
+## Endpoint overview
+
+| Endpoint | Method | Auth | Description |
+|----------|--------|------|-------------|
+| `/api/v1/capture` | POST | API Key | Ingest conversation messages |
+| `/api/v1/chatbots` | GET | Session | List chatbots |
+| `/api/v1/chatbots` | POST | Session | Create chatbot |
+| `/api/v1/chatbots/:id` | GET | Session | Get chatbot |
+| `/api/v1/chatbots/:id` | PATCH | Session | Update chatbot |
+| `/api/v1/chatbots/:id` | DELETE | Session | Delete chatbot |
+| `/api/v1/chatbots/:id/rotate-key` | POST | Session | Rotate API key |
+| `/api/v1/conversations` | GET | Session | List conversations |
+| `/api/v1/conversations/:id` | GET | Session | Get conversation detail |
+| `/api/v1/analytics/overview` | GET | Session | Aggregate metrics |
+| `/api/v1/analytics/sentiment` | GET | Session | Sentiment trends |

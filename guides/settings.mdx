@@ -1,0 +1,127 @@
+---
+title: "Settings"
+description: "Configure your chatbot's name, API keys, metadata schema, webhooks, and access control."
+---
+
+import ApiKeyWarning from "/snippets/api-key-warning.mdx";
+
+The settings page is where you configure how your chatbot operates — its identity, API credentials, metadata schema, webhook integrations, and who can access it. Navigate to **Settings** from your chatbot's sidebar.
+
+![Chatbot settings](/images/chatbot-settings.png)
+
+<Tabs>
+  <Tab title="General">
+    The General tab manages your chatbot's identity and lifecycle.
+
+    ## Chatbot name
+
+    Edit the display name of your chatbot. This name appears in the sidebar, dashboard headers, and reports. Changes save immediately when you submit.
+
+    ## API key
+
+    Your API key authenticates SDK requests to OpenBat. The settings page displays only the key prefix (e.g., `ob_live_xxxx...`) — the full key is never shown again after creation.
+
+    <ApiKeyWarning />
+
+    ### Rotate key
+
+    Click **Rotate Key** to generate a new API key.
+
+    <Warning>
+      Rotating your key immediately invalidates the old one. Any SDK integrations using the previous key will fail until you update them with the new key.
+    </Warning>
+
+    The new full key is displayed once after rotation. Copy it and update your integration before leaving the page.
+
+    ### Delete chatbot
+
+    <Warning>
+      Deleting a chatbot is irreversible. All conversations, messages, analysis data, workflows, and webhooks associated with this chatbot are permanently deleted.
+    </Warning>
+
+    Use this only when you are certain you no longer need the chatbot or any of its data.
+  </Tab>
+
+  <Tab title="Metadata">
+    The Metadata tab lets you define and manage the custom metadata fields your SDK integration passes to OpenBat.
+
+    ## Metadata field schema
+
+    Define which custom fields your SDK sends via the `custom` parameter. For each field, you configure:
+
+    | Property | Description |
+    |---|---|
+    | Name | The field key your SDK sends (e.g., `subscription_tier`) |
+    | Type | The expected data type |
+    | Required | Whether the field must be present on every event |
+
+    ### Supported types
+
+    | Type | Description | Example value |
+    |---|---|---|
+    | `string` | Text values | `"enterprise"` |
+    | `number` | Numeric values | `42` |
+    | `boolean` | True or false | `true` |
+
+    Fields sent by your SDK that do not match the schema produce warnings in the dashboard.
+
+    **Example use case:** if your chatbot is embedded in a multi-tenant SaaS app, you might define fields like `subscription_tier`, `trial_days_remaining`, or `feature_flags` to segment conversations by customer context.
+
+    ## Discovered metadata keys
+
+    OpenBat automatically detects custom keys your SDK is already sending, even if they are not in your schema. Discovered keys appear in this section, where you can:
+
+    - **Promote** a key to your official schema — adds it as a tracked field with a type and required setting
+    - **Ignore** a key — dismisses it from the discovered list
+
+    This gives you a live view of what your integration is actually sending alongside what you have formally defined, making it straightforward to keep the schema in sync.
+  </Tab>
+
+  <Tab title="Webhooks">
+    The Webhooks tab is where you define the webhook endpoints used by [workflows](/guides/workflows) as action targets.
+
+    ## Define a webhook
+
+    Each webhook has the following properties:
+
+    | Property | Description |
+    |---|---|
+    | Name | A label used to identify the webhook in the workflow editor |
+    | URL | The endpoint OpenBat sends POST requests to |
+    | Type | `slack` for Slack incoming webhooks, or `http` for generic HTTP endpoints |
+    | Enabled | Toggle the webhook on or off without deleting it |
+
+    ## Centralized configuration
+
+    Webhooks defined here are available as selectable actions in all workflows for this chatbot. If a URL changes, update it once in settings and every workflow referencing that webhook picks up the change automatically.
+
+    Configure your webhooks here before referencing them in a workflow. See [workflows](/guides/workflows) for how to use webhooks as actions.
+  </Tab>
+
+  <Tab title="Access">
+    The Access tab controls which organization members can view and manage a specific chatbot.
+
+    ## Default behavior
+
+    By default, all organization members have access to all chatbots in the org. No configuration is needed unless you want to restrict access.
+
+    ## Restrict access
+
+    You can limit a chatbot to specific members only. This is useful for:
+
+    - **Client-facing chatbots** where only the relevant account team should have access
+    - **Sensitive internal chatbots** with restricted visibility
+    - **Team-specific chatbots** managed by different sub-teams within your org
+
+    ## Manage members
+
+    The Access tab shows all members who currently have access, including their name, email, and role. Use the **Add member** action to grant access to an org member who does not have it yet.
+  </Tab>
+</Tabs>
+
+## Other settings
+
+The settings page also includes tabs for analysis and translation configuration, which are covered in their own guides:
+
+- [Analysis configuration](/guides/analysis-configuration) — configure intent, topic, flag, behavior, outcome, and quality settings
+- [Translation](/guides/translation) — set up automatic language detection and translation for multilingual conversations

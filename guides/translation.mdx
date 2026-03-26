@@ -1,0 +1,82 @@
+---
+title: "Translation"
+description: "Automatically detect and translate conversations in 27 languages. Analysis runs on translated text for consistent cross-language insights."
+---
+
+Auto-translation lets you analyze conversations from users who write in any of 27 supported languages. OpenBat detects the language, translates the message to your primary language, and runs all analysis on the translated text. The original message is always preserved alongside the translation.
+
+## How it works
+
+1. A message arrives in any language.
+2. OpenBat detects the language automatically.
+3. If the language differs from your primary language, the message is translated.
+4. All analysis — sentiment, intent, topics, flags — runs on the translated text.
+5. Embeddings for [deep search](/guides/deep-search) are generated from the translated text.
+6. The original text is stored alongside the translation so you can view both.
+
+If the message is already in your primary language, the translation step is skipped and no additional processing occurs.
+
+## Enabling translation
+
+Translation is off by default. You can enable it during chatbot creation or from settings.
+
+<Steps>
+  <Step title="Open the translation settings">
+    Go to your chatbot settings and select the **Translation** tab.
+  </Step>
+  <Step title="Turn on auto-translate">
+    Toggle **Auto-translate messages** to on. When enabled, all new incoming messages are language-detected and translated if needed.
+  </Step>
+  <Step title="Select your primary language">
+    Choose your primary language from the dropdown. Messages in this language are not translated. Messages in any other detected language are translated to this language.
+  </Step>
+</Steps>
+
+You can also set the primary language during chatbot creation. The default is English.
+
+## Supported languages
+
+OpenBat supports 27 languages for detection and translation.
+
+| Language | Code | Language | Code | Language | Code |
+| --- | --- | --- | --- | --- | --- |
+| English | `en` | Korean | `ko` | Finnish | `fi` |
+| Spanish | `es` | Arabic | `ar` | Norwegian | `no` |
+| French | `fr` | Hindi | `hi` | Thai | `th` |
+| German | `de` | Russian | `ru` | Vietnamese | `vi` |
+| Portuguese | `pt` | Dutch | `nl` | Indonesian | `id` |
+| Italian | `it` | Polish | `pl` | Ukrainian | `uk` |
+| Japanese | `ja` | Swedish | `sv` | Czech | `cs` |
+| Chinese (Simplified) | `zh` | Danish | `da` | Romanian | `ro` |
+| Turkish | `tr` | Greek | `el` | Hebrew | `he` |
+
+## Impact on features
+
+Translation affects how several features process and display data.
+
+| Feature | Behavior |
+| --- | --- |
+| Conversation list | A language badge appears on translated conversations. You can filter by detected language. |
+| Conversation detail | Toggle between translated view (with analysis highlights) and original view. |
+| Sentiment analysis | Runs on translated text for consistent scoring across languages. |
+| Intent classification | Runs on translated text so intents match your primary-language vocabulary. |
+| Topic detection | Runs on translated text. |
+| Flag detection | Runs on translated text. Signals like churn risk are detected regardless of language. |
+| Deep search | Embeddings use translated content. Searching in your primary language finds results from any language. |
+| Workflows | Conditions evaluate against translated text. |
+| Reports | All metrics are based on analysis of translated text. |
+
+## Viewing translated conversations
+
+In the conversation detail view, a toggle button switches between two modes:
+
+- **Translated** (default) — shows translated content with analysis highlights such as underlines and colored chunks. Each translated message displays a "Translated from [language]" indicator.
+- **Original** — shows the raw message as the user wrote it. Analysis highlights are hidden because highlight positions reference the translated text.
+
+The toggle switches all messages in the conversation at once.
+
+## Cost
+
+<Note>
+Translation adds one additional LLM call per non-primary-language message. Messages already in your primary language are detected but not translated, so they incur no extra cost.
+</Note>

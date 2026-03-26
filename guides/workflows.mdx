@@ -1,0 +1,159 @@
+---
+title: "Workflows"
+description: "Automate alerts and actions based on conversation analysis. Get notified when churn risk, hallucinations, or buying signals are detected."
+---
+
+Workflows let you define **trigger → conditions → actions** chains that run automatically every time a message is analyzed. Instead of checking the dashboard for problems, you define what matters once and your team is notified the moment it happens.
+
+![Workflows](/images/workflows.png)
+
+## How workflows work
+
+Every time message analysis completes, OpenBat evaluates all enabled workflows for your chatbot. If a workflow's conditions match, its actions execute in parallel. The entire process fires automatically within seconds of a message being captured.
+
+```
+Trigger (new message analyzed)
+  └── Conditions (AND/OR logic on analysis results)
+        └── Actions (webhooks, Slack alerts)
+```
+
+## Create a workflow
+
+<Steps>
+  <Step title="Open the workflows page">
+    Navigate to **Workflows** from your chatbot's sidebar and click **Create workflow**.
+  </Step>
+  <Step title="Choose a trigger">
+    Select which messages activate the workflow. See [trigger types](#triggers) below.
+  </Step>
+  <Step title="Add conditions">
+    Define one or more conditions that must be met for the workflow to fire. You can combine conditions with AND/OR logic. See [condition fields](#condition-fields) for available options.
+  </Step>
+  <Step title="Configure actions">
+    Add one or more actions to execute when conditions match. Choose from webhook or Slack webhook actions and configure the payload template. See [actions](#actions) for details.
+  </Step>
+  <Step title="Enable the workflow">
+    Save and toggle the workflow to enabled. It begins evaluating on the next analyzed message.
+  </Step>
+</Steps>
+
+You can also start from a pre-built template on the **Templates** tab to skip the setup for common patterns.
+
+## Triggers
+
+Every workflow starts with a trigger that defines which messages activate it.
+
+| Trigger type | Activates on |
+|---|---|
+| User message | Every new user message after analysis completes |
+| Assistant message | Every new assistant message after analysis completes |
+| Any message | Both user and assistant messages |
+
+## Conditions
+
+Conditions evaluate the analysis results for the triggering message. You can add zero or more conditions and combine them with logic operators:
+
+- **AND** — all conditions must be true
+- **OR** — any condition must be true
+
+### Condition fields
+
+| Analysis type | Field | Operators |
+|---|---|---|
+| Sentiment | Score (numeric) | `>`, `<`, `>=`, `<=`, `=` |
+| Sentiment | Label (string) | `=`, `!=` |
+| Intent | Value (slug) | `=`, `!=` |
+| Topic | Value (slug) | `=`, `!=` |
+| Flag | Value (slug) | `detected`, `not detected` |
+| Behavior | Value (slug) | `=`, `!=` |
+| Outcome | Value (slug) | `=`, `!=` |
+| Quality dimension | Score (numeric) | `>`, `<`, `>=`, `<=` |
+
+### Example conditions
+
+- `sentiment score < -0.5` — very negative message
+- `flag = churn_risk AND sentiment label = Negative` — high-confidence churn signal
+- `outcome = capability_failure` — the chatbot could not answer
+- `behavior = hallucinating` — critical quality issue
+
+## Actions
+
+When conditions pass, all configured actions execute in parallel.
+
+### Webhook (HTTP POST)
+
+Send a POST request to any URL with a configurable JSON payload. Template variables are interpolated from the message analysis results.
+
+```json
+{
+  "conversation_id": "{{conversation.id}}",
+  "user": {
+    "name": "{{user.name}}",
+    "email": "{{user.email}}"
+  },
+  "sentiment": {
+    "score": "{{sentiment.score}}",
+    "label": "{{sentiment.label}}"
+  },
+  "intent": "{{intent.value}}"
+}
+```
+
+### Slack webhook
+
+Send a formatted Slack message via an incoming webhook URL. Uses the same template variable system with Slack-flavored markdown.
+
+### Template variables
+
+| Variable | Description |
+|---|---|
+| `{{user.name}}` | External user name |
+| `{{user.email}}` | External user email |
+| `{{sentiment.score}}` | Numeric sentiment score |
+| `{{sentiment.label}}` | Sentiment label (e.g., Positive, Negative) |
+| `{{intent.value}}` | Detected intent slug |
+| `{{conversation.id}}` | Conversation identifier |
+
+### Webhook configuration
+
+Webhooks are defined in **Settings → Webhooks** and selected by name in the workflow editor. Configure your webhook URLs there before referencing them in a workflow.
+
+<Tip>
+**Highest-value workflow patterns:**
+1. `churn_risk` flag + `sentiment < -0.4` → Slack your CS channel so they can reach out the same day
+2. `behavior = hallucinating` → Slack your engineering channel for immediate investigation
+3. `outcome = capability_failure` → webhook to GitHub Issues to auto-create a ticket
+4. `buying_signal` flag → webhook to your CRM to create a deal or task for sales
+</Tip>
+
+## Runs tab
+
+The **Runs** tab shows execution history for all workflows on your chatbot. Use it to debug workflows that are not firing as expected.
+
+| Column | Description |
+|---|---|
+| Workflow | Which workflow ran |
+| Status | `success`, `failed`, or `skipped` |
+| Matched conditions | The conditions that evaluated true |
+| Actions executed | Which actions fired |
+| Triggered at | Timestamp of the execution |
+
+### Run statuses
+
+| Status | Meaning |
+|---|---|
+| Success | Conditions matched and all actions executed successfully |
+| Failed | Conditions matched but an action (e.g., webhook call) failed |
+| Skipped | Workflow evaluated but conditions did not match |
+
+## Templates
+
+The **Templates** tab provides pre-built workflow recipes for common use cases. Apply a template to create a pre-configured workflow you can customize.
+
+| Template | Trigger condition | Default action |
+|---|---|---|
+| Churn Risk Alert | `churn_risk` flag detected + sentiment < -0.3 | Slack notification |
+| Capability Failure Tracker | `outcome = capability_failure` | Webhook to issue tracker |
+| Hallucination Alert | `behavior = hallucinating` | Slack urgent notification |
+| Buying Signal Alert | `buying_signal` flag detected | Webhook to CRM or Slack |
+| High-Frustration Escalation | Sentiment < -0.5 AND `intent = complaint` | Slack to CS channel |

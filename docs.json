@@ -1,13 +1,23 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mint Starter Kit",
+  "name": "OpenBat",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#FFFFFF",
+    "light": "#FFFFFF",
+    "dark": "#CCCCCC"
+  },
+  "appearance": {
+    "default": "dark"
+  },
+  "background": {
+    "decoration": "grid"
   },
   "favicon": "/favicon.svg",
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
   "navigation": {
     "tabs": [
       {
@@ -16,33 +26,55 @@
           {
             "group": "Getting started",
             "pages": [
-              "index",
-              "quickstart",
-              "development"
+              "guides/introduction",
+              "guides/quickstart"
             ]
           },
           {
-            "group": "Customization",
+            "group": "Platform",
             "pages": [
-              "essentials/settings",
-              "essentials/navigation"
+              "guides/dashboard",
+              "guides/conversations",
+              "guides/deep-search",
+              "guides/users-and-organizations",
+              "guides/reports",
+              "guides/workflows"
             ]
           },
           {
-            "group": "Writing content",
+            "group": "Configuration",
             "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
+              "guides/analysis-configuration",
+              "guides/translation",
+              "guides/settings",
+              "guides/team-management"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "SDK",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": [
+              "sdk/introduction",
+              "sdk/installation"
             ]
           },
           {
-            "group": "AI tools",
+            "group": "Usage",
             "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
+              "sdk/recording-messages",
+              "sdk/enriching-data",
+              "sdk/vercel-ai-sdk"
+            ]
+          },
+          {
+            "group": "Reference",
+            "pages": [
+              "sdk/configuration",
+              "sdk/error-handling"
             ]
           }
         ]
@@ -51,18 +83,23 @@
         "tab": "API reference",
         "groups": [
           {
-            "group": "API documentation",
+            "group": "Overview",
             "pages": [
-              "api-reference/introduction"
+              "api-reference/introduction",
+              "api-reference/authentication"
             ]
           },
           {
-            "group": "Endpoint examples",
+            "group": "Ingestion",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "api-reference/capture"
+            ]
+          },
+          {
+            "group": "Resources",
+            "pages": [
+              "api-reference/chatbots",
+              "api-reference/conversations"
             ]
           }
         ]
@@ -71,52 +108,30 @@
     "global": {
       "anchors": [
         {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
+          "anchor": "App",
+          "href": "https://app.openbat.dev",
+          "icon": "browser"
         }
       ]
     }
-  },
-  "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
   },
   "navbar": {
     "links": [
       {
         "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "href": "mailto:support@openbat.dev"
       }
     ],
     "primary": {
       "type": "button",
       "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "href": "https://app.openbat.dev"
     }
-  },
-  "contextual": {
-    "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "x": "https://x.com/openbatdev",
+      "github": "https://github.com/openbat"
     }
   }
 }
