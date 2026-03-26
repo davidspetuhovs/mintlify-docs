@@ -5,11 +5,9 @@
   "colors": {
     "primary": "#FFFFFF",
     "light": "#FFFFFF",
-    "dark": "#CCCCCC"
+    "dark": "#FFFFFF"
   },
-  "appearance": {
-    "default": "dark"
-  },
+  "appearance": "dark",
   "background": {
     "decoration": "grid"
   },
@@ -109,7 +107,7 @@
       "anchors": [
         {
           "anchor": "App",
-          "href": "https://app.openbat.dev",
+          "href": "https://openbat.dev",
           "icon": "browser"
         }
       ]
@@ -125,7 +123,7 @@
     "primary": {
       "type": "button",
       "label": "Dashboard",
-      "href": "https://app.openbat.dev"
+      "href": "https://openbat.dev"
     }
   },
   "footer": {
