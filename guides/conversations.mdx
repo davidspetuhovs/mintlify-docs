@@ -1,0 +1,79 @@
+---
+title: "Conversations"
+description: "Browse, search, and review every chatbot conversation with AI-generated analysis badges showing sentiment, behavior, and intent."
+---
+
+The conversations page gives you access to every interaction your chatbot has had. Browse the full list, filter by any column, and click into any conversation to see message-level analysis.
+
+## Conversation list
+
+![Conversations list](/images/conversations-list.png)
+
+The conversations table shows all captured conversations with these columns:
+
+| Column | Description |
+|--------|-------------|
+| **User** | The user's display name |
+| **Email** | User's email address |
+| **Organization** | The user's organization name |
+| **Messages** | Total message count in the conversation |
+| **Sentiment** | Colored badge with sentiment score (green = positive, yellow = neutral, red = negative) |
+| **Language** | Flag icon indicating conversation language |
+| **Plan** | Customer plan tier |
+| **Last message** | Timestamp of the most recent message |
+| **Created** | When the conversation started |
+
+### Searching and filtering
+
+Type in the search box to filter by user name, email, or organization. Click column headers to sort. Use the filter button for advanced filtering and the view button to configure visible columns.
+
+### Pagination
+
+Results are shown 20 per page. Use the pagination controls at the bottom to navigate through your conversations.
+
+### Date range
+
+Use the date range picker in the top right to narrow conversations to a specific period.
+
+## Conversation detail
+
+![Conversation detail](/images/conversation-detail.png)
+
+Click any row in the conversations list to open the detail view. The conversation is displayed as a chat bubble interface showing user and assistant messages in chronological order.
+
+### Analysis badges on messages
+
+Each analyzed message displays colored badges showing what OpenBat detected.
+
+<Tabs>
+  <Tab title="User messages">
+    - **Sentiment** — colored badge (green, yellow, or red) with a numeric score
+    - **Intent** — what the user is trying to do (e.g., "troubleshooting", "feature request", "billing inquiry")
+    - **Topics** — tags for subjects discussed in the message
+    - **Flags** — special signals like churn risk, buying signal, or capability gap
+  </Tab>
+  <Tab title="Assistant messages">
+    - **Behavior** — how the bot responded (e.g., Helpful, Dodging, Hallucinating, Verbose, Redirecting)
+    - **Outcome** — result of the interaction (Resolved, Deflected, Partially Resolved)
+    - **Quality** — quality flags for the response
+  </Tab>
+</Tabs>
+
+<Note>
+  Highlighted text spans within messages indicate specific patterns detected by the AI. Click on a highlighted span to see details about the detected pattern.
+</Note>
+
+## Conversation sidebar
+
+The right sidebar shows contextual information about the selected conversation:
+
+- **Overall sentiment** — aggregate sentiment for the entire conversation
+- **Conversation metadata** — message count, conversation ID, first and last message timestamps, created date
+- **User info** — name, email, user ID
+- **Organization info** — organization name, org ID
+- **Session info** — referrer URL, device type
+- **Custom metadata** — any custom fields sent via the SDK (configured in [analysis configuration](/guides/analysis-configuration))
+
+## Navigation
+
+Use breadcrumb navigation at the top to go back to the conversations list. The breadcrumb shows: Conversations > [User Name].

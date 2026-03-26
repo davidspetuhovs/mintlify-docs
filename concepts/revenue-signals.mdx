@@ -1,0 +1,93 @@
+---
+title: "Revenue signals"
+description: "How OpenBat detects churn risk, buying signals, and capability gaps from chatbot conversations to help you retain and grow customers."
+---
+
+Your chatbot conversations contain signals about customer health that most teams never see. OpenBat automatically detects three types of revenue signals: churn risk, buying signals, and capability gaps — giving your customer success and sales teams actionable intelligence.
+
+## Signal types
+
+<AccordionGroup>
+  <Accordion title="Churn risk">
+    Users showing signs of leaving your product. OpenBat detects churn risk from patterns like:
+
+    - Repeated frustration in conversations
+    - Unresolved issues across multiple sessions
+    - Expressions of dissatisfaction or intent to cancel
+    - Comparisons to competitor products
+    - Declining engagement over time
+
+    Churn risk signals appear as flags on user messages in the conversation detail view and are aggregated in the dashboard's Revenue Signals section.
+
+    <Tip>
+    Set up a [workflow](/guides/workflows) that alerts your CS team on Slack whenever churn risk is detected. Early intervention can save at-risk accounts.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="Buying signals">
+    Users expressing interest in upgrades, expansions, or additional features. OpenBat catches buying signals like:
+
+    - Questions about premium features or plan differences
+    - Requests for higher usage limits
+    - Interest in team or enterprise features
+    - Positive sentiment combined with feature requests
+    - References to growing team or usage needs
+
+    <Tip>
+    Route buying signals to your sales team with a workflow. These are warm leads hidden in support conversations.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="Capability gaps">
+    Features and capabilities users ask about that your chatbot or product doesn't currently support. OpenBat identifies capability gaps from:
+
+    - Questions the bot can't answer
+    - Feature requests in conversations
+    - Workaround requests ("Is there another way to...")
+    - Expressed frustration about missing functionality
+
+    Capability gaps feed into the "Capability gaps" section on both the User Insights and Assistant Performance tabs of the [dashboard](/guides/dashboard).
+  </Accordion>
+</AccordionGroup>
+
+## Where revenue signals appear
+
+- **Dashboard User Insights tab → Revenue signals** — Aggregated view of churn risk, buying signals, and capability gaps across all conversations
+- **Dashboard Assistant Performance tab → Capability gaps** — Specific features and topics users need that the bot can't handle
+- **Conversation detail** — Flag badges on individual messages where signals were detected
+- **Workflows** — Trigger automated actions when signals are detected
+
+## Using revenue signals
+
+### For customer success teams
+
+- Monitor churn risk signals daily — each one represents an at-risk account
+- Cross-reference with [user](/guides/users-and-organizations) and [organization](/guides/users-and-organizations) data to prioritize outreach
+- Use the "Investigate →" link on dissatisfied users to understand their specific issues
+
+### For sales teams
+
+- Review buying signals for upsell opportunities
+- Combine with organization data to understand account potential
+- Use metadata (plan, MRR) to prioritize high-value accounts
+
+### For product teams
+
+- Review capability gaps to inform your product roadmap
+- Track which missing features are mentioned most frequently
+- Use [deep search](/guides/deep-search) to find all conversations about a specific capability gap
+
+## Automating revenue signal responses
+
+Use [workflows](/guides/workflows) to automatically route signals to the right team:
+
+| Signal | Recommended action |
+|--------|-------------------|
+| Churn risk detected | Slack alert to #customer-success |
+| Buying signal detected | Slack alert to #sales |
+| Capability gap identified | Email to product manager |
+| Multiple signals from same org | High-priority alert to account manager |
+
+<Info>
+Revenue signals are extracted from user messages as part of the flag detection system. Enable flag detection in [analysis configuration](/guides/analysis-configuration) under the User Analysis tab.
+</Info>

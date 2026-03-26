@@ -1,0 +1,69 @@
+---
+title: "Users and organizations"
+description: "Track individual users and client organizations across all conversations. Identify who needs attention based on sentiment, engagement, and activity."
+---
+
+The Users and Organizations pages give you aggregate views of the people and companies using your chatbot. Identify dissatisfied users, track organization health, and understand engagement patterns across your customer base.
+
+<Tabs>
+  <Tab title="Users">
+    ![Users directory](/images/users.png)
+
+    ## Users table
+
+    The users page shows every individual who has interacted with your chatbot. The table includes:
+
+    | Column | Description |
+    |--------|-------------|
+    | **User** | Display name |
+    | **Email** | Email address |
+    | **Organization** | The user's organization |
+    | **Plan** | Customer plan tier |
+    | **MRR** | Monthly recurring revenue |
+    | **Conversations** | Total conversation count |
+    | **Sentiment** | Colored badge with aggregate sentiment score |
+    | **Last activity** | When the user last interacted |
+
+    ### What you can do
+
+    - **Sort by sentiment** to find your most dissatisfied users
+    - **Sort by conversations** to find your most active users
+    - **Search by name or email** to find a specific person
+    - **Filter by date range** to see activity in a specific period
+    - **Click a user row** to see their conversation history
+
+    <Tip>
+      Sort by sentiment (ascending) to quickly find users who need immediate attention. Cross-reference with the dashboard's "Most dissatisfied users" list.
+    </Tip>
+  </Tab>
+
+  <Tab title="Organizations">
+    ## Organizations table
+
+    The organizations page shows every client organization using your chatbot with aggregate metrics.
+
+    | Column | Description |
+    |--------|-------------|
+    | **Organization** | Organization name |
+    | **Plan** | Plan tier (demo, client, etc.) |
+    | **Industry** | Industry category |
+    | **MRR** | Monthly recurring revenue |
+    | **Conversations** | Total conversation count |
+    | **Users** | Number of individual users |
+    | **Sentiment** | Colored badge with aggregate sentiment |
+    | **Last activity** | Most recent interaction |
+
+    ### What you can do
+
+    - **Sort by sentiment** to identify at-risk accounts
+    - **Sort by conversations or users** to find your most engaged organizations
+    - **Search for a specific organization** by name
+    - **Filter by date range** to track changes over time
+  </Tab>
+</Tabs>
+
+## Metadata requirements
+
+<Info>
+  Users and organizations only appear here if your SDK integration sends `user` and `organization` metadata with each conversation. See the [SDK installation guide](/sdk/installation) for setup instructions. You can manage which metadata fields are tracked in [analysis configuration](/guides/analysis-configuration).
+</Info>

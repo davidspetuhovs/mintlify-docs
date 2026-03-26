@@ -1,0 +1,105 @@
+---
+title: "Python"
+description: "Integrate OpenBat into your Python application to track and analyze chatbot conversations."
+---
+
+The Python SDK works with any Python application — Django, Flask, FastAPI, or standalone scripts. Track conversations with a single function call.
+
+## Installation
+
+```bash
+pip install openbat
+```
+
+## Initialize the client
+
+```python
+from openbat import OpenBat
+
+client = OpenBat(api_key="your-api-key")
+```
+
+<Tip>
+Use environment variables for your API key. Set `OPENBAT_API_KEY` in your environment and initialize with `OpenBat(api_key=os.environ["OPENBAT_API_KEY"])`.
+</Tip>
+
+## Track a conversation
+
+```python
+client.track(
+    conversation_id="conv-abc-123",
+    messages=[
+        {"role": "user", "content": "How do I upgrade my plan?"},
+        {"role": "assistant", "content": "You can upgrade in Settings > Billing. Choose your new plan and confirm."},
+        {"role": "user", "content": "Great, thanks!"},
+        {"role": "assistant", "content": "You're welcome! Let me know if you need anything else."},
+    ],
+    user={
+        "id": "user-456",
+        "email": "jane@acme.com",
+        "name": "Jane Smith",
+    },
+    organization={
+        "id": "org-789",
+        "name": "Acme Corp",
+    },
+)
+```
+
+## Adding metadata
+
+```python
+client.track(
+    conversation_id="conv-abc-123",
+    messages=messages,
+    user={"id": "user-456", "email": "jane@acme.com"},
+    organization={"id": "org-789", "name": "Acme Corp"},
+    metadata={
+        "plan": "pro",
+        "mrr": 99,
+        "industry": "technology",
+        "source": "support-widget",
+    },
+)
+```
+
+<Info>
+Custom metadata fields are automatically discovered by OpenBat. Track them in [analysis configuration](/guides/analysis-configuration) to use them as filters.
+</Info>
+
+## Async support
+
+```python
+from openbat import AsyncOpenBat
+
+client = AsyncOpenBat(api_key="your-api-key")
+
+await client.track(
+    conversation_id="conv-abc-123",
+    messages=messages,
+    user={"id": "user-456"},
+)
+```
+
+## Error handling
+
+```python
+try:
+    client.track(conversation_id=conv_id, messages=messages, user=user)
+except Exception as e:
+    print(f"OpenBat tracking failed: {e}")
+    # Don't let tracking errors break your chatbot
+```
+
+<Tip>
+OpenBat tracking is non-blocking by design. Log errors for debugging but don't let them affect the user experience.
+</Tip>
+
+## Configuration reference
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `api_key` | `str` | — | Your OpenBat API key (required) |
+| `base_url` | `str` | `https://api.openbat.dev` | API endpoint |
+| `debug` | `bool` | `False` | Enable debug logging |
+| `timeout` | `int` | `30` | Request timeout in seconds |

@@ -1,0 +1,1065 @@
+{
+  "baseUrl": "http://localhost:3000",
+  "timestamp": "2026-03-26T16:31:25.553Z",
+  "pages": [
+    {
+      "url": "/",
+      "title": "Landing Page",
+      "description": "Public marketing landing page for OpenBat — 'Google Analytics for AI chatbots'. Features hero section with value proposition, animated chat widget demo, logo carousel of supported AI providers, feature sections (conversation analysis, sentiment scoring, topic detection, workflow automation, SDK integration), pricing tiers (Free through Enterprise), FAQ accordion, testimonials, and CTA sections.",
+      "elements": [
+        "link: Features (anchor)",
+        "link: Pricing (anchor)",
+        "link: FAQs (anchor)",
+        "link: Login",
+        "link: Sign Up",
+        "link: Start Free",
+        "link: Book a Demo",
+        "button: Missed Upsell",
+        "button: Feature Gap Risk",
+        "button: Bot Hallucination",
+        "tab: Vercel AI SDK",
+        "tab: TypeScript",
+        "tab: Python",
+        "tab: REST API",
+        "button: Copy code to clipboard",
+        "button: FAQ accordions (5)",
+        "link: Get Started (per pricing tier)",
+        "link: Contact Us (Enterprise)",
+        "link: Footer links (Features, Pricing, FAQs, Docs, GitHub, Blog)"
+      ],
+      "flows": [
+        {
+          "name": "Navigate to login",
+          "description": "Access the authentication page to log in to an existing OpenBat account from the public landing page.",
+          "persona": "Returning user who already has an OpenBat account and wants to access their chatbot analytics dashboard.",
+          "preconditions": [
+            "User is not already logged in",
+            "User has an existing account"
+          ],
+          "steps": [
+            "Navigate to the landing page at /",
+            "Click the 'Login' link in the top-right navigation header",
+            "User is redirected to /auth/login"
+          ],
+          "expectedOutcome": "User lands on the login page with email/password form and social auth options.",
+          "failureModes": [
+            "Page may not load if server is down"
+          ],
+          "relatedFlows": [
+            "Email login",
+            "Email sign up",
+            "Social auth login"
+          ]
+        },
+        {
+          "name": "Navigate to sign up",
+          "description": "Start the account creation process from the landing page to begin using OpenBat for chatbot analytics.",
+          "persona": "New user who has learned about OpenBat and wants to create a free account.",
+          "preconditions": [
+            "User does not have an existing account"
+          ],
+          "steps": [
+            "Navigate to the landing page at /",
+            "Click the 'Sign Up' button in the top-right navigation header",
+            "User is redirected to /auth/sign-up"
+          ],
+          "expectedOutcome": "User lands on the sign-up page with email, password, and confirm password fields.",
+          "failureModes": [
+            "Page may not load if server is down"
+          ],
+          "relatedFlows": [
+            "Email sign up",
+            "Social auth sign up"
+          ]
+        },
+        {
+          "name": "Explore features via anchor links",
+          "description": "Scroll through the landing page sections to learn about OpenBat's capabilities before signing up, using in-page anchor navigation.",
+          "persona": "Prospective user evaluating OpenBat against alternatives, wanting to understand features and pricing.",
+          "preconditions": [
+            "User is on the landing page"
+          ],
+          "steps": [
+            "Click 'Features' in the header nav to scroll to the features section",
+            "Review the feature cards: conversation analysis, sentiment scoring, topic detection, workflow automation",
+            "Click 'Pricing' to scroll to the pricing grid",
+            "Compare the 6 pricing tiers (Free, Starter, Pro, Growth, Business, Enterprise)",
+            "Click 'FAQs' to scroll to the FAQ accordion section",
+            "Expand FAQ items by clicking on them"
+          ],
+          "expectedOutcome": "User has reviewed all marketing content and can make an informed decision about signing up.",
+          "failureModes": [
+            "Anchor scroll may not work with JavaScript disabled"
+          ],
+          "relatedFlows": [
+            "Navigate to sign up"
+          ]
+        }
+      ]
+    },
+    {
+      "url": "/auth/login",
+      "title": "Login Page",
+      "description": "Authentication page where existing users log in to their OpenBat account. Features a split layout with a login form on the left and a decorative image on the right. Supports email/password login and social authentication via Apple, Google, and Meta. Includes a link to the forgot password flow.",
+      "elements": [
+        "textbox: Email",
+        "textbox: Password",
+        "button: Login",
+        "button: Login with Apple",
+        "button: Login with Google",
+        "button: Login with Meta",
+        "link: Forgot your password?",
+        "link: Terms of Service",
+        "link: Privacy Policy"
+      ],
+      "flows": [
+        {
+          "name": "Email login",
+          "description": "Authenticate using email and password credentials to access the main dashboard. This is the primary authentication method for existing users.",
+          "persona": "Returning user who already has an account and wants to access their chatbot analytics dashboard.",
+          "preconditions": [
+            "User has an existing account",
+            "User is not already logged in",
+            "User knows their email and password"
+          ],
+          "steps": [
+            "Navigate to /auth/login",
+            "Enter email address in the Email text field",
+            "Enter password in the Password text field",
+            "Click the 'Login' button to submit credentials",
+            "Wait for authentication to complete and redirect to the dashboard"
+          ],
+          "expectedOutcome": "User is redirected to /platform showing their organization's chatbot list.",
+          "failureModes": [
+            "Invalid email or password shows an error",
+            "Account may not exist yet"
+          ],
+          "relatedFlows": [
+            "Forgot password flow",
+            "Social auth login",
+            "Email sign up"
+          ]
+        },
+        {
+          "name": "Social auth login",
+          "description": "Authenticate using a third-party identity provider (Apple, Google, or Meta) for passwordless login.",
+          "persona": "User who prefers OAuth-based login over managing a separate password.",
+          "preconditions": [
+            "User has an account linked to the chosen social provider",
+            "User is not already logged in"
+          ],
+          "steps": [
+            "Navigate to /auth/login",
+            "Click one of the social auth buttons (Apple, Google, or Meta)",
+            "Complete the OAuth flow in the provider's popup/redirect",
+            "Wait for authentication to complete and redirect to the dashboard"
+          ],
+          "expectedOutcome": "User is redirected to /platform showing their organization's chatbot list.",
+          "failureModes": [
+            "Social provider OAuth popup may be blocked",
+            "Account not linked to chosen provider",
+            "Network errors during OAuth flow"
+          ],
+          "relatedFlows": [
+            "Email login",
+            "Email sign up"
+          ]
+        },
+        {
+          "name": "Navigate to forgot password",
+          "description": "Start the password reset process when a user has forgotten their credentials.",
+          "persona": "User who cannot remember their password and needs to reset it.",
+          "preconditions": [
+            "User has an existing account",
+            "User knows their email but forgot their password"
+          ],
+          "steps": [
+            "Navigate to /auth/login",
+            "Click the 'Forgot your password?' link next to the Password field",
+            "User is redirected to /auth/forgot-password"
+          ],
+          "expectedOutcome": "User lands on the password reset page with an email input field.",
+          "failureModes": [],
+          "relatedFlows": [
+            "Forgot password flow",
+            "Email login"
+          ]
+        }
+      ]
+    },
+    {
+      "url": "/auth/sign-up",
+      "title": "Sign Up Page",
+      "description": "Account creation page for new users. Features a split layout with a registration form on the left and a decorative image on the right. Requires email, password, and password confirmation. Also supports social sign-up via Apple, Google, and Meta. Includes a link to sign in for existing users.",
+      "elements": [
+        "textbox: Email",
+        "textbox: Password",
+        "textbox: Confirm Password",
+        "button: Create Account",
+        "button: Sign up with Apple",
+        "button: Sign up with Google",
+        "button: Sign up with Meta",
+        "link: Sign in",
+        "link: Terms of Service",
+        "link: Privacy Policy"
+      ],
+      "flows": [
+        {
+          "name": "Email sign up",
+          "description": "Create a new OpenBat account using email and password. After sign-up, the user's organization is auto-created on first visit to the platform.",
+          "persona": "New user who has decided to try OpenBat and wants to create an account to start analyzing their chatbot conversations.",
+          "preconditions": [
+            "User does not have an existing account",
+            "User has a valid email address"
+          ],
+          "steps": [
+            "Navigate to /auth/sign-up",
+            "Enter email address in the Email field",
+            "Enter a password (at least 8 characters) in the Password field",
+            "Re-enter the same password in the Confirm Password field",
+            "Click the 'Create Account' button",
+            "Wait for account creation and redirect"
+          ],
+          "expectedOutcome": "Account is created. User is redirected to /platform where their organization is auto-created (named after their email prefix). They see an empty chatbot list and can create their first chatbot.",
+          "failureModes": [
+            "Email already in use shows an error",
+            "Password too short (under 8 characters)",
+            "Passwords don't match",
+            "Invalid email format"
+          ],
+          "relatedFlows": [
+            "Email login",
+            "Create new chatbot"
+          ]
+        }
+      ]
+    },
+    {
+      "url": "/auth/forgot-password",
+      "title": "Forgot Password Page",
+      "description": "Password reset page where users enter their email to receive a reset link. Simple form with email input and submit button.",
+      "elements": [
+        "textbox: Email",
+        "button: Send reset email",
+        "link: Login"
+      ],
+      "flows": [
+        {
+          "name": "Request password reset",
+          "description": "Submit an email address to receive a password reset link, allowing the user to regain access to their account.",
+          "persona": "Existing user who forgot their password and needs to reset it.",
+          "preconditions": [
+            "User has an existing account",
+            "User knows their email address"
+          ],
+          "steps": [
+            "Navigate to /auth/forgot-password (or click 'Forgot your password?' from the login page)",
+            "Enter the account email address in the Email field",
+            "Click 'Send reset email'",
+            "Check email inbox for the reset link"
+          ],
+          "expectedOutcome": "A password reset email is sent to the provided address with a link to set a new password.",
+          "failureModes": [
+            "Email not found in the system",
+            "Email delivery failure",
+            "Reset link expired"
+          ],
+          "relatedFlows": [
+            "Email login"
+          ]
+        }
+      ]
+    },
+    {
+      "url": "/platform",
+      "title": "Platform Dashboard — Chatbot List",
+      "description": "The main authenticated landing page showing all chatbots belonging to the user's organization. Displays chatbot cards with name, API key prefix, creator, creation date, conversation count, and message count. Supports filtering by status (Active, Pending, Archive) and switching between card and list views. Each chatbot card has a context menu (three-dot button) with Open chatbot, Archive, and Delete actions.",
+      "elements": [
+        "button: New chatbot",
+        "button: Active filter",
+        "button: Pending filter",
+        "button: Archive filter",
+        "button: Card view",
+        "button: List view",
+        "button: chatbot context menu (per card)",
+        "link: Chatbots (sidebar)",
+        "link: Members (sidebar)",
+        "link: Settings (sidebar)",
+        "button: User account menu (sidebar footer)"
+      ],
+      "flows": [
+        {
+          "name": "Create new chatbot",
+          "description": "Add a new chatbot to the organization to begin capturing and analyzing conversations from a new AI assistant deployment.",
+          "persona": "Product or engineering team member setting up OpenBat tracking for a new or existing AI chatbot.",
+          "preconditions": [
+            "User is logged in",
+            "User has an organization"
+          ],
+          "steps": [
+            "Navigate to /platform",
+            "Click the '+ New chatbot' button in the top right",
+            "Fill in the chatbot creation form (name, etc.)",
+            "Submit the form to create the chatbot",
+            "Copy the generated API key",
+            "Complete onboarding steps"
+          ],
+          "expectedOutcome": "A new chatbot is created with an API key. User is directed to the onboarding page to set up the SDK.",
+          "failureModes": [
+            "Chatbot name already exists",
+            "Plan limit on number of chatbots reached"
+          ],
+          "relatedFlows": [
+            "Chatbot onboarding",
+            "View chatbot dashboard"
+          ]
+        },
+        {
+          "name": "Open chatbot dashboard",
+          "description": "Navigate into a specific chatbot's analytics dashboard to view conversation data, sentiment trends, and insights.",
+          "persona": "Team member who wants to review the analytics and health of a specific chatbot.",
+          "preconditions": [
+            "User is logged in",
+            "At least one chatbot exists in the organization"
+          ],
+          "steps": [
+            "Navigate to /platform",
+            "Click on a chatbot card to navigate to its dashboard",
+            "Alternatively, click the three-dot menu and select 'Open chatbot'"
+          ],
+          "expectedOutcome": "User is navigated to /platform/[chatbotId] showing the chatbot's overview dashboard with stats, sentiment charts, and insights.",
+          "failureModes": [
+            "Chatbot may redirect to onboarding if not yet set up"
+          ],
+          "relatedFlows": [
+            "View chatbot dashboard",
+            "Chatbot onboarding"
+          ]
+        },
+        {
+          "name": "Switch chatbot view mode",
+          "description": "Toggle between card view (visual cards with stats) and list view (compact table) for the chatbot list.",
+          "persona": "User with many chatbots who prefers a denser layout.",
+          "preconditions": [
+            "User is logged in",
+            "On the /platform page"
+          ],
+          "steps": [
+            "Navigate to /platform",
+            "Click the 'List view' or 'Card view' toggle button in the top right area"
+          ],
+          "expectedOutcome": "The chatbot list switches between card grid and table list layouts.",
+          "failureModes": [],
+          "relatedFlows": [
+            "Filter chatbots by status"
+          ]
+        },
+        {
+          "name": "Filter chatbots by status",
+          "description": "Filter the chatbot list to show only Active, Pending, or Archived chatbots.",
+          "persona": "User managing multiple chatbots who wants to focus on a specific group.",
+          "preconditions": [
+            "User is logged in",
+            "On the /platform page"
+          ],
+          "steps": [
+            "Navigate to /platform",
+            "Click one of the status filter buttons: Active, Pending, or Archive"
+          ],
+          "expectedOutcome": "The chatbot list filters to show only chatbots matching the selected status.",
+          "failureModes": [],
+          "relatedFlows": [
+            "Open chatbot dashboard"
+          ]
+        }
+      ]
+    },
+    {
+      "url": "/platform/members",
+      "title": "Organization Members",
+      "description": "Manage team members who have access to the organization. Displays a table of members with their email, role (Owner, etc.), and join date. Includes an 'Invite member' button to add new team members.",
+      "elements": [
+        "button: Invite member",
+        "table: members list (Email, Role, Joined)"
+      ],
+      "flows": [
+        {
+          "name": "Invite team member",
+          "description": "Add a new member to the organization so they can access chatbot dashboards and analytics alongside the team.",
+          "persona": "Organization owner or admin who wants to give a colleague access to OpenBat.",
+          "preconditions": [
+            "User is logged in",
+            "User has appropriate permissions (Owner role)"
+          ],
+          "steps": [
+            "Navigate to /platform/members",
+            "Click the '+ Invite member' button",
+            "Enter the new member's email address in the invitation form",
+            "Select a role for the new member",
+            "Submit the invitation"
+          ],
+          "expectedOutcome": "An invitation is sent to the provided email. The member appears in the table once they accept.",
+          "failureModes": [
+            "Email already a member",
+            "Plan limit on team members reached",
+            "Invalid email format"
+          ],
+          "relatedFlows": []
+        }
+      ]
+    },
+    {
+      "url": "/platform/settings",
+      "title": "Organization Settings",
+      "description": "Manage organization-level settings including the organization display name and a danger zone for permanently deleting the organization and all its data.",
+      "elements": [
+        "textbox: Organization name",
+        "button: Save",
+        "button: Delete organization"
+      ],
+      "flows": [
+        {
+          "name": "Rename organization",
+          "description": "Change the display name of the organization that appears throughout the platform.",
+          "persona": "Organization owner who wants to update the organization name (e.g., after a company rebrand).",
+          "preconditions": [
+            "User is logged in",
+            "User is organization owner"
+          ],
+          "steps": [
+            "Navigate to /platform/settings",
+            "Clear the Organization name field and type the new name",
+            "Click the 'Save' button"
+          ],
+          "expectedOutcome": "Organization name is updated and reflected across the platform UI.",
+          "failureModes": [
+            "Empty name not allowed",
+            "Name too long"
+          ],
+          "relatedFlows": []
+        },
+        {
+          "name": "Delete organization",
+          "description": "Permanently delete the organization and all associated chatbots, conversations, messages, and analytics data. This is an irreversible destructive action.",
+          "persona": "Organization owner who wants to completely remove their OpenBat account and all data.",
+          "preconditions": [
+            "User is logged in",
+            "User is organization owner"
+          ],
+          "steps": [
+            "Navigate to /platform/settings",
+            "Scroll to the 'Danger zone' section",
+            "Click the 'Delete organization' button",
+            "Confirm the deletion in the confirmation dialog"
+          ],
+          "expectedOutcome": "The organization, all chatbots, conversations, messages, and analytics are permanently deleted. User is redirected to a logged-out or empty state.",
+          "failureModes": [
+            "User cancels the confirmation dialog",
+            "Insufficient permissions"
+          ],
+          "relatedFlows": []
+        }
+      ]
+    },
+    {
+      "url": "/platform/[chatbotId]",
+      "title": "Chatbot Overview Dashboard",
+      "description": "Main analytics dashboard for a specific chatbot. Shows stat cards (Conversations, Messages, Avg Sentiment, Analyzed Today), date range picker, segment filter (by Plan), and two tabs: User Insights and Assistant Performance. User Insights tab includes: sentiment trend chart, top user frustrations table, most dissatisfied users with investigate links, support topics table, revenue signals (churn risk, buying signals, capability gaps), top intents chart, sentiment by segment, activity heatmap, and languages breakdown. Assistant Performance tab includes: behavior alerts table (Hallucinating, Dodging, Verbose, Redirecting with severity), resolution outcomes donut chart, quality flags table, and capability gaps table.",
+      "elements": [
+        "button: Select date range",
+        "combobox: Segment by (Plan)",
+        "tab: User Insights",
+        "tab: Assistant Performance",
+        "link: Investigate (per dissatisfied user)",
+        "link: sidebar nav (Dashboard, Workflows, Conversations, Deep Search, Organizations, Users, Analysis Config, Settings, Get Help)",
+        "button: New report",
+        "button: Create your first report"
+      ],
+      "flows": [
+        {
+          "name": "View user insights",
+          "description": "Review the User Insights tab to understand customer sentiment trends, frustration patterns, support topics, revenue signals, and user behavior over time.",
+          "persona": "Product manager or CS lead wanting to understand how users feel about their chatbot and identify actionable patterns.",
+          "preconditions": [
+            "User is logged in",
+            "Chatbot has received conversations with analyzed messages"
+          ],
+          "steps": [
+            "Navigate to /platform/[chatbotId]",
+            "The User Insights tab is selected by default",
+            "Review the sentiment trend chart to see satisfaction over time",
+            "Check 'Top user frustrations' for recurring pain points",
+            "Review 'Most dissatisfied users' and click 'Investigate' to see their conversations",
+            "Scroll to 'Support topics' to see what users are talking about",
+            "Check 'Revenue signals' for churn risk and buying signal indicators",
+            "Review 'Top intents' to understand what users are asking about"
+          ],
+          "expectedOutcome": "User has a comprehensive view of customer sentiment and can identify areas needing attention.",
+          "failureModes": [
+            "No data available if no conversations have been analyzed yet"
+          ],
+          "relatedFlows": [
+            "View assistant performance",
+            "Investigate dissatisfied user",
+            "Filter by date range"
+          ]
+        },
+        {
+          "name": "View assistant performance",
+          "description": "Review the Assistant Performance tab to identify problematic bot behaviors, resolution rates, quality issues, and capability gaps.",
+          "persona": "Engineering lead or bot prompt engineer who wants to improve chatbot response quality.",
+          "preconditions": [
+            "User is logged in",
+            "Chatbot has analyzed assistant messages"
+          ],
+          "steps": [
+            "Navigate to /platform/[chatbotId]",
+            "Click the 'Assistant Performance' tab",
+            "Review 'Behavior alerts' for problematic behaviors (hallucinating, dodging, verbose, redirecting) with severity levels",
+            "Check the 'Resolution outcomes' donut chart for resolution rates",
+            "Review 'Quality flags' for issues like hallucination risk and sensitive data exposure",
+            "Check 'Capability gaps' for unmet feature requests"
+          ],
+          "expectedOutcome": "User understands bot behavior patterns and can prioritize prompt improvements.",
+          "failureModes": [
+            "No assistant analysis data if assistant message analysis is disabled in settings"
+          ],
+          "relatedFlows": [
+            "View user insights",
+            "Configure analysis settings"
+          ]
+        },
+        {
+          "name": "Investigate dissatisfied user",
+          "description": "Click through from the 'Most dissatisfied users' section to view all conversations for a specific unhappy user, filtered by their email.",
+          "persona": "Customer success manager who wants to understand why a specific user is dissatisfied and take action.",
+          "preconditions": [
+            "User is logged in",
+            "Dashboard shows dissatisfied users with analyzed sentiment"
+          ],
+          "steps": [
+            "Navigate to /platform/[chatbotId]",
+            "Scroll to 'Most dissatisfied users' section in User Insights tab",
+            "Click the 'Investigate →' link next to the user's name",
+            "User is navigated to the conversations page filtered by that user's email"
+          ],
+          "expectedOutcome": "Conversations page shows only conversations from the selected user, allowing the team to review their interactions.",
+          "failureModes": [
+            "No conversations found for the user in the selected date range"
+          ],
+          "relatedFlows": [
+            "View conversation detail",
+            "View user insights"
+          ]
+        },
+        {
+          "name": "Filter by date range",
+          "description": "Change the date range for all dashboard analytics to focus on a specific time period.",
+          "persona": "Any dashboard user who wants to analyze data for a specific week, month, or custom range.",
+          "preconditions": [
+            "User is logged in",
+            "On the chatbot dashboard"
+          ],
+          "steps": [
+            "Navigate to /platform/[chatbotId]",
+            "Click the date range button (shows 'This month' by default)",
+            "Select a predefined range or pick custom dates",
+            "Dashboard data refreshes for the selected period"
+          ],
+          "expectedOutcome": "All dashboard widgets update to show data for the selected date range.",
+          "failureModes": [
+            "No data available for the selected period"
+          ],
+          "relatedFlows": [
+            "View user insights",
+            "View assistant performance"
+          ]
+        }
+      ]
+    },
+    {
+      "url": "/platform/[chatbotId]/workflows",
+      "title": "Workflows",
+      "description": "Workflow automation page for creating alert and action workflows that trigger based on conversation analysis conditions. Has three tabs: Workflows (list of configured workflows), Runs (execution history), and Templates (pre-built workflow templates). Shows empty state with 'Create workflow' button when no workflows exist.",
+      "elements": [
+        "button: Create workflow",
+        "tab: Workflows",
+        "tab: Runs",
+        "tab: Templates"
+      ],
+      "flows": [
+        {
+          "name": "Create workflow",
+          "description": "Set up an automated workflow that triggers alerts or actions when specific analysis conditions are met (e.g., negative sentiment detected, churn risk flagged).",
+          "persona": "CS lead or ops manager who wants automated alerts when important patterns are detected in chatbot conversations.",
+          "preconditions": [
+            "User is logged in",
+            "Chatbot exists"
+          ],
+          "steps": [
+            "Navigate to /platform/[chatbotId]/workflows",
+            "Click the '+ Create workflow' button",
+            "Configure trigger conditions (e.g., sentiment threshold, specific behavior detected)",
+            "Set up actions (e.g., Slack alert, email notification)",
+            "Save the workflow"
+          ],
+          "expectedOutcome": "A new workflow is created and will automatically trigger when its conditions are met during message analysis.",
+          "failureModes": [
+            "Plan limit on number of workflows reached",
+            "Invalid workflow configuration"
+          ],
+          "relatedFlows": [
+            "View workflow runs"
+          ]
+        }
+      ]
+    },
+    {
+      "url": "/platform/[chatbotId]/conversations",
+      "title": "Conversations List",
+      "description": "Paginated table of all conversations captured by this chatbot. Columns: User, Email, Organization, Messages, Sentiment (with colored badge and score), Language (flag), Plan, Last Message, Created. Supports text search, column sorting, filter button, view configuration, date range selection, and pagination (20 rows per page). Clicking a row navigates to the conversation detail page.",
+      "elements": [
+        "textbox: Filter conversations...",
+        "button: Filter",
+        "button: View",
+        "button: Select date range",
+        "table: conversations (sortable columns)",
+        "pagination: rows per page, page navigation"
+      ],
+      "flows": [
+        {
+          "name": "Browse conversations",
+          "description": "Browse, search, and filter all captured chatbot conversations to find specific interactions or patterns.",
+          "persona": "Team member reviewing recent conversations to understand user behavior and chatbot performance.",
+          "preconditions": [
+            "User is logged in",
+            "Chatbot has captured conversations"
+          ],
+          "steps": [
+            "Navigate to /platform/[chatbotId]/conversations",
+            "Browse the conversation table sorted by most recent",
+            "Optionally type in the search box to filter by user name, email, or organization",
+            "Click column headers to sort by Messages, Sentiment, Last Message, etc.",
+            "Use pagination controls to browse through pages",
+            "Click on a conversation row to view its detail"
+          ],
+          "expectedOutcome": "User can find and navigate to specific conversations for detailed review.",
+          "failureModes": [
+            "No conversations exist yet",
+            "Search returns no results"
+          ],
+          "relatedFlows": [
+            "View conversation detail",
+            "Filter by date range"
+          ]
+        }
+      ]
+    },
+    {
+      "url": "/platform/[chatbotId]/conversations/[conversationId]",
+      "title": "Conversation Detail",
+      "description": "Detailed view of a single conversation showing a chat-bubble interface with user and assistant messages in chronological order. Each message has timestamp, and analyzed messages show behavior/intent/sentiment badges (e.g., 'Dodging', 'Deflected', 'Helpful', 'conversational greeting'). Highlighted text spans within messages indicate detected patterns. Right sidebar shows: Overall Sentiment card, Conversation metadata (Messages, Conv ID, First/Last message, Created), User info (Name, Email, User ID), Organization info (Name, Org ID), Session info (Referrer, Device), Custom Metadata. Breadcrumb navigation back to conversations list. Filter and View buttons available.",
+      "elements": [
+        "breadcrumb: Conversations > [User Name]",
+        "button: Filter",
+        "button: View",
+        "button: message bubbles (clickable for analysis details)",
+        "button: behavior badges (Dodging, Deflected, Helpful, etc.)",
+        "button: intent badges (conversational greeting, etc.)",
+        "sidebar: Overall Sentiment",
+        "sidebar: Conversation metadata",
+        "sidebar: User info",
+        "sidebar: Organization info",
+        "sidebar: Session info",
+        "sidebar: Custom Metadata"
+      ],
+      "flows": [
+        {
+          "name": "Review conversation analysis",
+          "description": "Read through a full conversation and examine the AI-generated analysis badges on each message to understand user sentiment, assistant behavior, and conversation outcomes.",
+          "persona": "CS manager or prompt engineer investigating a specific conversation flagged by the system or reviewing a dissatisfied user's interaction.",
+          "preconditions": [
+            "User is logged in",
+            "Conversation exists and has been analyzed"
+          ],
+          "steps": [
+            "Navigate to the conversation detail page from the conversations list or an 'Investigate' link",
+            "Read through user and assistant messages in the chat bubble view",
+            "Review colored badges on messages: behavior tags (Dodging, Helpful), resolution tags (Deflected, Partially Resolved), intent tags",
+            "Click on highlighted text spans to see details of detected patterns",
+            "Check the right sidebar for overall sentiment, conversation metadata, user info, and organization context",
+            "Use breadcrumb to navigate back to the conversations list"
+          ],
+          "expectedOutcome": "User has a complete understanding of the conversation including what the user asked, how the bot responded, and what the AI analysis detected.",
+          "failureModes": [
+            "Analysis not yet complete (badges won't appear)",
+            "No sentiment data if analysis is disabled"
+          ],
+          "relatedFlows": [
+            "Browse conversations",
+            "Investigate dissatisfied user"
+          ]
+        }
+      ]
+    },
+    {
+      "url": "/platform/[chatbotId]/deep-search",
+      "title": "Deep Search",
+      "description": "Semantic search page that finds conversations by meaning rather than keywords. Features a search input with a placeholder example ('users asking about pricing' or 'billing issues'), a date range picker, and a 'Deep Search' button. Shows an empty state when no query has been entered.",
+      "elements": [
+        "textbox: Search by meaning",
+        "button: Deep Search",
+        "button: Select date range"
+      ],
+      "flows": [
+        {
+          "name": "Semantic search conversations",
+          "description": "Search for conversations using natural language queries that match by semantic meaning, not just keywords. For example, searching 'users frustrated with billing' would find conversations about payment issues even if the word 'billing' wasn't used.",
+          "persona": "Product manager or CS lead investigating a specific theme across all conversations without knowing the exact keywords users used.",
+          "preconditions": [
+            "User is logged in",
+            "Chatbot has captured and analyzed conversations"
+          ],
+          "steps": [
+            "Navigate to /platform/[chatbotId]/deep-search",
+            "Optionally set a date range using the date picker",
+            "Type a natural language query in the search box (e.g., 'users asking about pricing' or 'complaints about response time')",
+            "Click the 'Deep Search' button",
+            "Review the semantically matched conversation results"
+          ],
+          "expectedOutcome": "A list of conversations matching the semantic intent of the query is displayed, ranked by relevance.",
+          "failureModes": [
+            "No matching conversations found",
+            "Query too vague returns too many results"
+          ],
+          "relatedFlows": [
+            "Browse conversations",
+            "View conversation detail"
+          ]
+        }
+      ]
+    },
+    {
+      "url": "/platform/[chatbotId]/organizations",
+      "title": "Client Organizations",
+      "description": "Paginated table of customer organizations that have interacted with the chatbot. Columns: Organization, Plan (demo/client), Industry, MRR, Conversations, Users, Sentiment (with colored badge), Last Activity. Supports text search, filtering, view configuration, column sorting, and date range selection. 48 rows with pagination.",
+      "elements": [
+        "textbox: Filter organizations...",
+        "button: Filter",
+        "button: View",
+        "button: Select date range",
+        "table: organizations (sortable columns)",
+        "pagination controls"
+      ],
+      "flows": [
+        {
+          "name": "Browse client organizations",
+          "description": "View all customer organizations that have used the chatbot, sorted and filtered to understand which organizations are most active, most dissatisfied, or generate the most conversations.",
+          "persona": "Customer success manager wanting to identify high-risk or high-value client organizations.",
+          "preconditions": [
+            "User is logged in",
+            "Chatbot has captured conversations with organization metadata"
+          ],
+          "steps": [
+            "Navigate to /platform/[chatbotId]/organizations",
+            "Browse the organizations table",
+            "Sort by Sentiment to find the most dissatisfied organizations",
+            "Sort by Conversations or Users to find the most active organizations",
+            "Use the search box to find a specific organization",
+            "Click on an organization row to see its details"
+          ],
+          "expectedOutcome": "User can identify which client organizations need attention based on sentiment, activity, and engagement data.",
+          "failureModes": [
+            "No organization data if conversations don't include organization metadata"
+          ],
+          "relatedFlows": [
+            "Browse conversations",
+            "Browse chatbot users"
+          ]
+        }
+      ]
+    },
+    {
+      "url": "/platform/[chatbotId]/users",
+      "title": "Chatbot Users",
+      "description": "Paginated table of individual users who have interacted with the chatbot. Columns: User, Email, Organization, Plan, MRR, Conversations, Sentiment (with colored badge and score), Last Activity. Supports text search, filtering, view configuration, column sorting, and date range selection. 26 rows with pagination.",
+      "elements": [
+        "textbox: Filter users...",
+        "button: Filter",
+        "button: View",
+        "button: Select date range",
+        "table: users (sortable columns)",
+        "pagination controls"
+      ],
+      "flows": [
+        {
+          "name": "Browse chatbot users",
+          "description": "View all individual users who have conversed with the chatbot, with their aggregate sentiment scores and conversation counts, to identify specific users who need attention.",
+          "persona": "Customer success manager or support lead wanting to identify individual users who are struggling or highly engaged.",
+          "preconditions": [
+            "User is logged in",
+            "Chatbot has captured conversations with user metadata"
+          ],
+          "steps": [
+            "Navigate to /platform/[chatbotId]/users",
+            "Browse the users table",
+            "Sort by Sentiment to find the most dissatisfied users",
+            "Sort by Conversations to find the most active users",
+            "Use the search box to find a specific user by name or email",
+            "Click on a user row to see their details or conversations"
+          ],
+          "expectedOutcome": "User can identify which individual chatbot users need follow-up based on sentiment and engagement data.",
+          "failureModes": [
+            "No user data if conversations don't include user metadata"
+          ],
+          "relatedFlows": [
+            "Browse client organizations",
+            "Browse conversations"
+          ]
+        }
+      ]
+    },
+    {
+      "url": "/platform/[chatbotId]/analysis-config",
+      "title": "Analysis Config",
+      "description": "Configuration page for how chatbot conversations are analyzed. Has five tabs: Metadata (managed fields and discovered fields with accept/deny/track controls), Translation, User Analysis, Assistant Analysis, and Prompts. The Metadata tab shows managed fields table (Key, Type, Status, Used, Discovered, Actions) and discovered fields table (Key, Sample value, Occurrences) with '+ Track' buttons to start tracking new metadata keys.",
+      "elements": [
+        "tab: Metadata",
+        "tab: Translation",
+        "tab: User Analysis",
+        "tab: Assistant Analysis",
+        "tab: Prompts",
+        "table: managed fields",
+        "table: discovered fields",
+        "button: Track (per discovered field)",
+        "button: remove (per managed field)"
+      ],
+      "flows": [
+        {
+          "name": "Manage metadata fields",
+          "description": "Accept, deny, or track custom metadata keys sent by the SDK to control which fields appear as filters in the conversations table.",
+          "persona": "Developer or data team member configuring which SDK metadata fields are visible and filterable in the dashboard.",
+          "preconditions": [
+            "User is logged in",
+            "SDK is sending conversations with custom metadata"
+          ],
+          "steps": [
+            "Navigate to /platform/[chatbotId]/analysis-config",
+            "The Metadata tab is selected by default",
+            "Review 'Managed fields' to see currently tracked metadata keys and their status (Accepted/Denied)",
+            "Review 'Discovered fields' for new metadata keys found in conversations",
+            "Click '+ Track' on a discovered field to start managing it",
+            "Click the X button on a managed field to remove it"
+          ],
+          "expectedOutcome": "Metadata fields are configured, and accepted fields become available as filters in the conversations and other tables.",
+          "failureModes": [
+            "No discovered fields if SDK isn't sending custom metadata"
+          ],
+          "relatedFlows": [
+            "Configure analysis settings"
+          ]
+        },
+        {
+          "name": "Configure analysis settings",
+          "description": "Switch between the five configuration tabs (Metadata, Translation, User Analysis, Assistant Analysis, Prompts) to fine-tune how the AI analyzes conversations.",
+          "persona": "Technical user who wants to customize analysis behavior — for example, adjusting prompts, enabling translation, or modifying which user/assistant analysis signals are detected.",
+          "preconditions": [
+            "User is logged in"
+          ],
+          "steps": [
+            "Navigate to /platform/[chatbotId]/analysis-config",
+            "Click through the tabs: Metadata, Translation, User Analysis, Assistant Analysis, Prompts",
+            "Configure settings in each tab as needed"
+          ],
+          "expectedOutcome": "Analysis configuration is updated and future message analysis uses the new settings.",
+          "failureModes": [
+            "Invalid configuration values"
+          ],
+          "relatedFlows": [
+            "Manage metadata fields"
+          ]
+        }
+      ]
+    },
+    {
+      "url": "/platform/[chatbotId]/settings",
+      "title": "Chatbot Settings",
+      "description": "Comprehensive chatbot configuration page with six tabs: General (chatbot name, ID, creation date, message analysis toggles, delete chatbot), Company Info, API Keys, Members, Webhooks, Import/Export Data. The General tab includes toggles for enabling/disabling user and assistant message analysis, and a danger zone for permanently deleting the chatbot.",
+      "elements": [
+        "tab: General",
+        "tab: Company Info",
+        "tab: API Keys",
+        "tab: Members",
+        "tab: Webhooks",
+        "tab: Import/Export Data",
+        "textbox: Chatbot name",
+        "button: Save",
+        "button: Copy chatbot ID",
+        "switch: User message analysis",
+        "switch: Assistant message analysis",
+        "button: Delete chatbot"
+      ],
+      "flows": [
+        {
+          "name": "Rename chatbot",
+          "description": "Change the display name of a chatbot that appears throughout the dashboard.",
+          "persona": "Team member who wants to rename a chatbot for clarity (e.g., from 'test' to 'Production Support Bot').",
+          "preconditions": [
+            "User is logged in"
+          ],
+          "steps": [
+            "Navigate to /platform/[chatbotId]/settings",
+            "The General tab is selected by default",
+            "Clear the Chatbot name field and type the new name",
+            "Click the 'Save' button"
+          ],
+          "expectedOutcome": "Chatbot name is updated and reflected throughout the dashboard.",
+          "failureModes": [
+            "Empty name not allowed"
+          ],
+          "relatedFlows": []
+        },
+        {
+          "name": "Toggle message analysis",
+          "description": "Enable or disable automatic analysis for user messages and/or assistant messages to control which signals are extracted.",
+          "persona": "Developer or admin who wants to disable assistant analysis to reduce costs or focus only on user sentiment.",
+          "preconditions": [
+            "User is logged in"
+          ],
+          "steps": [
+            "Navigate to /platform/[chatbotId]/settings",
+            "Scroll to the 'Message analysis' section",
+            "Toggle the 'User message analysis' switch to enable/disable user analysis (sentiment, intent, topics, flags)",
+            "Toggle the 'Assistant message analysis' switch to enable/disable assistant analysis (behavior, outcome, quality, flags)"
+          ],
+          "expectedOutcome": "Future messages are analyzed (or not) according to the toggle settings.",
+          "failureModes": [],
+          "relatedFlows": [
+            "View user insights",
+            "View assistant performance"
+          ]
+        },
+        {
+          "name": "Delete chatbot",
+          "description": "Permanently delete a chatbot and all its associated conversations, messages, and analytics data. This is irreversible.",
+          "persona": "Admin who needs to remove a test or decommissioned chatbot.",
+          "preconditions": [
+            "User is logged in",
+            "User has appropriate permissions"
+          ],
+          "steps": [
+            "Navigate to /platform/[chatbotId]/settings",
+            "Scroll to the 'Danger zone' section at the bottom",
+            "Click the 'Delete chatbot' button",
+            "Confirm the deletion in the confirmation dialog"
+          ],
+          "expectedOutcome": "The chatbot and all its data are permanently deleted. User is redirected to the chatbot list at /platform.",
+          "failureModes": [
+            "User cancels the confirmation",
+            "Insufficient permissions"
+          ],
+          "relatedFlows": [
+            "Create new chatbot"
+          ]
+        },
+        {
+          "name": "Manage API keys",
+          "description": "View, create, or rotate API keys used by the SDK to send conversation data to this chatbot.",
+          "persona": "Developer integrating the OpenBat SDK who needs to copy or rotate the API key.",
+          "preconditions": [
+            "User is logged in"
+          ],
+          "steps": [
+            "Navigate to /platform/[chatbotId]/settings",
+            "Click the 'API Keys' tab",
+            "View existing API key prefix",
+            "Rotate the key if needed"
+          ],
+          "expectedOutcome": "API key is visible (prefix only) and can be rotated for security.",
+          "failureModes": [
+            "Rotating key invalidates the old key immediately"
+          ],
+          "relatedFlows": [
+            "Chatbot onboarding"
+          ]
+        }
+      ]
+    },
+    {
+      "url": "/platform/[chatbotId]/onboarding",
+      "title": "Chatbot Onboarding",
+      "description": "SDK setup instructions page shown after creating a new chatbot. Guides the user through installing and configuring the OpenBat SDK. If the chatbot is already onboarded (settings.onboarded = true), this page redirects back to the chatbot dashboard.",
+      "elements": [
+        "SDK setup instructions",
+        "Code snippets",
+        "API key display"
+      ],
+      "flows": [
+        {
+          "name": "Complete chatbot onboarding",
+          "description": "Follow the SDK setup instructions to integrate OpenBat with an AI chatbot, then mark onboarding as complete to access the full dashboard.",
+          "persona": "Developer who just created a new chatbot and needs to integrate the SDK into their application.",
+          "preconditions": [
+            "User is logged in",
+            "A new chatbot has just been created",
+            "Chatbot has not been onboarded yet"
+          ],
+          "steps": [
+            "After creating a chatbot, user is redirected to /platform/[chatbotId]/onboarding",
+            "Copy the API key shown on the page",
+            "Follow the SDK installation instructions (npm install, code snippet integration)",
+            "Test the integration by sending a test message",
+            "Mark onboarding as complete",
+            "User is redirected to the chatbot dashboard"
+          ],
+          "expectedOutcome": "SDK is integrated with the user's chatbot application. Future conversations are captured and analyzed automatically. User sees the full dashboard.",
+          "failureModes": [
+            "API key copied incorrectly",
+            "SDK not properly configured",
+            "Network/firewall blocking capture endpoint"
+          ],
+          "relatedFlows": [
+            "Create new chatbot",
+            "View chatbot dashboard"
+          ]
+        }
+      ]
+    }
+  ],
+  "flows": [
+    "Navigate to login",
+    "Navigate to sign up",
+    "Explore features via anchor links",
+    "Email login",
+    "Social auth login",
+    "Navigate to forgot password",
+    "Email sign up",
+    "Request password reset",
+    "Create new chatbot",
+    "Open chatbot dashboard",
+    "Switch chatbot view mode",
+    "Filter chatbots by status",
+    "Invite team member",
+    "Rename organization",
+    "Delete organization",
+    "View user insights",
+    "View assistant performance",
+    "Investigate dissatisfied user",
+    "Filter by date range",
+    "Create workflow",
+    "Browse conversations",
+    "Review conversation analysis",
+    "Semantic search conversations",
+    "Browse client organizations",
+    "Browse chatbot users",
+    "Manage metadata fields",
+    "Configure analysis settings",
+    "Rename chatbot",
+    "Toggle message analysis",
+    "Delete chatbot",
+    "Manage API keys",
+    "Complete chatbot onboarding"
+  ],
+  "totalPages": 17,
+  "totalFlows": 32
+}

@@ -1,0 +1,123 @@
+---
+title: "TypeScript"
+description: "Integrate OpenBat into any Node.js or TypeScript application to track and analyze chatbot conversations."
+---
+
+The TypeScript SDK works with any Node.js application. Track conversations from Express, Fastify, Koa, or any other framework.
+
+## Installation
+
+```bash
+npm install @openbat/sdk
+```
+
+## Initialize the client
+
+```typescript
+import { OpenBat } from "@openbat/sdk";
+
+const openbat = new OpenBat({
+  apiKey: process.env.OPENBAT_API_KEY,
+});
+```
+
+## Track a conversation
+
+```typescript
+await openbat.track({
+  conversationId: "conv-abc-123",
+  messages: [
+    { role: "user", content: "How do I reset my password?" },
+    { role: "assistant", content: "Go to Settings > Security and click 'Reset password'." },
+    { role: "user", content: "Thanks, that worked!" },
+    { role: "assistant", content: "Glad I could help! Let me know if you need anything else." },
+  ],
+  user: {
+    id: "user-456",
+    email: "jane@acme.com",
+    name: "Jane Smith",
+  },
+  organization: {
+    id: "org-789",
+    name: "Acme Corp",
+  },
+});
+```
+
+## Adding metadata
+
+```typescript
+await openbat.track({
+  conversationId: "conv-abc-123",
+  messages,
+  user: { id: "user-456", email: "jane@acme.com" },
+  organization: { id: "org-789", name: "Acme Corp" },
+  metadata: {
+    plan: "pro",
+    mrr: 99,
+    industry: "technology",
+    source: "support-widget",
+    sessionId: "sess-xyz",
+  },
+});
+```
+
+<Info>
+  Custom metadata fields are automatically discovered and can be tracked in [analysis configuration](/guides/analysis-configuration). Once tracked, they become available as filters in your conversations table.
+</Info>
+
+## Incremental tracking
+
+You can call `track` multiple times for the same conversation as new messages arrive:
+
+```typescript
+// First call with initial messages
+await openbat.track({
+  conversationId: "conv-abc-123",
+  messages: [
+    { role: "user", content: "Hello" },
+    { role: "assistant", content: "Hi! How can I help?" },
+  ],
+  user: { id: "user-456" },
+});
+
+// Later, send updated messages
+await openbat.track({
+  conversationId: "conv-abc-123",
+  messages: [
+    { role: "user", content: "Hello" },
+    { role: "assistant", content: "Hi! How can I help?" },
+    { role: "user", content: "I need help with billing" },
+    { role: "assistant", content: "I can help with that. What's the issue?" },
+  ],
+  user: { id: "user-456" },
+});
+```
+
+<Note>
+  When you send an updated message array for the same `conversationId`, OpenBat merges the data and re-analyzes new messages.
+</Note>
+
+## Error handling
+
+```typescript
+try {
+  await openbat.track({ conversationId, messages, user });
+} catch (error) {
+  console.error("OpenBat tracking failed:", error.message);
+  // Tracking failures should not break your chatbot
+}
+```
+
+<Tip>
+  OpenBat tracking is designed to be non-blocking. If tracking fails, your chatbot continues working normally. Log errors for debugging but don't let them affect the user experience.
+</Tip>
+
+## Configuration reference
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `apiKey` | `string` | — | Your OpenBat API key (required) |
+| `baseUrl` | `string` | `https://api.openbat.dev` | API endpoint |
+| `debug` | `boolean` | `false` | Enable debug logging |
+| `timeout` | `number` | `30000` | Request timeout in milliseconds |

@@ -1,0 +1,144 @@
+---
+title: "Quickstart"
+description: "Go from zero to your first analyzed conversation in under 5 minutes. Create an account, set up a chatbot, install the SDK, and see your dashboard."
+---
+
+<Steps>
+  <Step title="Create an account">
+    Go to [openbat.dev](https://openbat.dev) and click **Sign Up**.
+
+    - Enter your email, create a password (min 8 characters), and confirm it
+    - You can also sign up with Apple, Google, or Meta
+    - Your organization is created automatically (named after your email prefix)
+
+    ![Sign up page](/images/sign-up.png)
+  </Step>
+
+  <Step title="Create a chatbot">
+    From the dashboard, click **+ New chatbot**.
+
+    - Give your chatbot a name (e.g., "Customer Support Bot")
+    - Copy the API key — you'll need it for the SDK
+
+    ![Chatbot list](/images/chatbots-list.png)
+  </Step>
+
+  <Step title="Install the SDK">
+    Choose your integration method and add tracking to your chatbot.
+
+    <CodeGroup>
+      ```typescript Vercel AI SDK
+      import { openai } from "@ai-sdk/openai";
+      import { streamText } from "ai";
+      import { OpenBat } from "@openbat/sdk";
+
+      const openbat = new OpenBat({
+        apiKey: "your-api-key",
+      });
+
+      const result = streamText({
+        model: openai("gpt-4o"),
+        messages,
+      });
+
+      // Track the conversation
+      openbat.track({
+        conversationId: "conv-123",
+        messages,
+        user: { id: "user-1", email: "user@example.com" },
+      });
+      ```
+
+      ```typescript TypeScript
+      import { OpenBat } from "@openbat/sdk";
+
+      const openbat = new OpenBat({
+        apiKey: "your-api-key",
+      });
+
+      await openbat.track({
+        conversationId: "conv-123",
+        messages: [
+          { role: "user", content: "How do I reset my password?" },
+          { role: "assistant", content: "You can reset your password in Settings > Security." },
+        ],
+        user: { id: "user-1", email: "user@example.com" },
+        organization: { id: "org-1", name: "Acme Corp" },
+      });
+      ```
+
+      ```python Python
+      from openbat import OpenBat
+
+      client = OpenBat(api_key="your-api-key")
+
+      client.track(
+          conversation_id="conv-123",
+          messages=[
+              {"role": "user", "content": "How do I reset my password?"},
+              {"role": "assistant", "content": "You can reset your password in Settings > Security."},
+          ],
+          user={"id": "user-1", "email": "user@example.com"},
+          organization={"id": "org-1", "name": "Acme Corp"},
+      )
+      ```
+
+      ```bash REST API
+      curl -X POST https://api.openbat.dev/v1/track \
+        -H "Authorization: Bearer your-api-key" \
+        -H "Content-Type: application/json" \
+        -d '{
+          "conversationId": "conv-123",
+          "messages": [
+            {"role": "user", "content": "How do I reset my password?"},
+            {"role": "assistant", "content": "You can reset your password in Settings > Security."}
+          ],
+          "user": {"id": "user-1", "email": "user@example.com"},
+          "organization": {"id": "org-1", "name": "Acme Corp"}
+        }'
+      ```
+    </CodeGroup>
+  </Step>
+
+  <Step title="Send a test message">
+    Run your chatbot with the SDK installed and have a short conversation to generate data.
+
+    <Tip>
+      Include `user` and `organization` metadata to unlock user-level and org-level analytics.
+    </Tip>
+  </Step>
+
+  <Step title="View your dashboard">
+    Go back to OpenBat and click on your chatbot. The dashboard shows:
+
+    - **Conversation count** — total tracked conversations
+    - **Message count** — total messages across all conversations
+    - **Average sentiment** — how users feel overall
+    - **Analyzed messages** — messages processed with sentiment, intent, and flags
+
+    Click the **User Insights** tab to see sentiment trends and top frustrations. Click the **Assistant Performance** tab to see behavior alerts.
+
+    ![Dashboard](/images/dashboard.png)
+  </Step>
+</Steps>
+
+<Info title="What happens next">
+  OpenBat automatically analyzes every message as conversations flow in. You'll see sentiment scores, intent classifications, behavior flags, and more appear on your dashboard within seconds.
+</Info>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Dashboard guide" icon="chart-pie" href="/guides/dashboard">
+    Understand every metric and chart on your dashboard.
+  </Card>
+  <Card title="Conversations" icon="comments" href="/guides/conversations">
+    Browse, filter, and search through tracked conversations.
+  </Card>
+  <Card title="Deep search" icon="magnifying-glass" href="/guides/deep-search">
+    Query your conversation data with natural language.
+  </Card>
+  <Card title="Workflows" icon="bolt" href="/guides/workflows">
+    Set up automated actions based on conversation events.
+  </Card>
+</CardGroup>

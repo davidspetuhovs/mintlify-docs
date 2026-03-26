@@ -1,0 +1,61 @@
+---
+title: "Sentiment analysis"
+description: "How OpenBat scores user sentiment — per-message and aggregate — and where sentiment data appears across the platform."
+---
+
+Sentiment analysis is the core of OpenBat's user intelligence. Every user message is scored on a positive-to-negative scale, giving you a real-time view of how your users feel about their chatbot interactions.
+
+## How scoring works
+
+OpenBat analyzes each user message and assigns a sentiment score:
+
+- **Positive** (green badge) — User is satisfied, grateful, or expressing approval
+- **Neutral** (yellow badge) — User is asking a straightforward question with no emotional charge
+- **Negative** (red badge) — User is frustrated, confused, disappointed, or expressing disapproval
+
+Scores are numeric values that roll up into averages at the conversation, user, and organization level.
+
+## Where sentiment appears
+
+Sentiment data surfaces in several places across the platform:
+
+- **Dashboard overview strip** — Average sentiment for all conversations in the selected period with a trend indicator
+- **Dashboard sentiment trend chart** — Time-series visualization of sentiment over days, weeks, or months
+- **Dashboard "Most dissatisfied users"** — Ranked list of users with the lowest sentiment, with "Investigate →" links
+- **Dashboard "Sentiment by segment"** — Sentiment broken down by customer plan tier
+- **Conversations table** — Colored badge and score on each conversation row
+- **Conversation detail** — Per-message sentiment badge on each user message
+- **Users table** — Aggregate sentiment score and badge for each user
+- **Organizations table** — Aggregate sentiment score and badge for each organization
+
+## Sentiment trends
+
+The sentiment trend chart on the [dashboard](/guides/dashboard) shows how user satisfaction changes over time. Use this to:
+
+- Spot sudden drops in sentiment (possible incident or bad deployment)
+- Track the impact of prompt improvements
+- Compare sentiment across different time periods
+- Identify seasonal patterns in user satisfaction
+
+## Sentiment by segment
+
+Filter sentiment data by customer plan (e.g., Free, Pro, Enterprise) to understand:
+
+- Whether paid users are more or less satisfied than free users
+- Which plan tier has the most frustrated users
+- How sentiment differs across customer segments
+
+<Tip>
+If your Enterprise users have worse sentiment than Free users, it may indicate that your chatbot doesn't handle complex use cases well — a signal to review capability gaps.
+</Tip>
+
+## Acting on sentiment data
+
+- **Investigate dissatisfied users** — Click "Investigate →" on the dashboard to see their conversations and understand what went wrong
+- **Set up workflow alerts** — Create a [workflow](/guides/workflows) that triggers when sentiment drops below a threshold
+- **Track improvements** — After making prompt changes, watch the sentiment trend to measure impact
+- **Segment analysis** — Compare sentiment across plans to identify which customer groups need attention
+
+<Info>
+Sentiment analysis only runs on user messages (not assistant messages). Enable it in [analysis configuration](/guides/analysis-configuration) under the User Analysis tab.
+</Info>

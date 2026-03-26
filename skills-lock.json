@@ -1,6 +1,16 @@
 {
   "version": 1,
   "skills": {
+    "Knowledge Base Manager": {
+      "source": "daffy0208/ai-dev-standards",
+      "sourceType": "github",
+      "computedHash": "052edd4ace922f863b58d931b5de2227ac7026b5752481c8136d58937526b905"
+    },
+    "knowledge-base-builder": {
+      "source": "onewave-ai/claude-skills",
+      "sourceType": "github",
+      "computedHash": "ce9387e7894cabb23c58bfdad21071994cb9faa53e24bae39f196ba0ed077bd9"
+    },
     "mintlify": {
       "source": "mintlify.com",
       "sourceType": "well-known",
