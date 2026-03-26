@@ -7,7 +7,9 @@
     "light": "#FFFFFF",
     "dark": "#FFFFFF"
   },
-  "appearance": "dark",
+  "appearance": {
+    "default": "dark"
+  },
   "background": {
     "decoration": "grid"
   },
