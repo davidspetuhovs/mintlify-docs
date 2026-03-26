@@ -12,7 +12,7 @@
     "strict": true
   },
   "background": {
-    "decoration": "grid"
+    "decoration": "windows"
   },
   "favicon": "/favicon.svg",
   "logo": {
