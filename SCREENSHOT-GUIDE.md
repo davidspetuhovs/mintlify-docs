@@ -77,7 +77,7 @@ Once you create a replacement screenshot, drop it into `/images/` with the same 
 **What it currently shows:** The conversations table with columns for user, organization, messages, sentiment, language, and dates. Shows ~8 rows of conversation data with user names and org names. The sidebar shows full navigation.
 
 **What it should show:** A well-populated conversations table with:
-- Clear column headers (User, Organization, Messages, Sentiment, Language, Last active, Started)
+- Clear column headers (User, Organization, Plan, Messages, Sentiment, Language, Last Message, Created)
 - Sentiment badges in different colors (mix of positive, neutral, negative)
 - A visible search bar and filter controls at the top
 - At least 8-10 rows of realistic data
@@ -132,11 +132,12 @@ Once you create a replacement screenshot, drop it into `/images/` with the same 
 **What it currently shows:** The users table with columns for user name/email, organization, conversations count, avg sentiment, and other fields. Shows ~8 rows of user data. The "This month" filter is visible.
 
 **What it should show:** The users directory with:
-- Visible column headers: User, Plan, Industry, Organization, Conversations, Avg Sentiment, MRR, First seen
-- Filter controls and search bar at the top
+- Visible column headers: User, Plan, Organization, Conversations, Avg Sentiment, MRR, First seen
+- Filter controls, search bar, and date range selector at the top
 - Mix of sentiment values (some green/positive, some red/negative)
-- Realistic user data with varied plans and industries
-- The current screenshot is reasonable but ensure the Plan, Industry, and MRR columns are visible since the docs describe them
+- Realistic user data with varied plans
+- Pagination controls at the bottom
+- Note: Industry column was removed from the users table (it only exists for organizations)
 
 ---
 
@@ -186,9 +187,9 @@ Once you create a replacement screenshot, drop it into `/images/` with the same 
 
 **What it should show:** The settings page with:
 - A realistic chatbot name (not "test")
-- The General tab active showing the name field, API key (masked), and rotate/delete options
-- The tab navigation visible: General, Metadata, Webhooks, Access
-- Note: the current tab names in the screenshot (Company Info, API Keys, Import/Export Data) don't match what the docs describe (General, Metadata, Webhooks, Access) — this suggests the UI has changed or the screenshot is outdated
+- The General tab active showing the name field and delete option
+- The tab navigation visible: General, Company Info, API Keys, Members, Webhooks, Import/Export Data
+- The docs have been updated to match the actual UI tab structure (6 tabs)
 
 ---
 
@@ -261,13 +262,13 @@ Once you create a replacement screenshot, drop it into `/images/` with the same 
 
 ## NEW Screenshots to Add
 
-These are pages and sections that don't have screenshots yet but would significantly benefit from them. Each entry includes the suggested filename — create the image and I'll wire it into the docs.
+These screenshots have been **wired into the docs** already — the `![alt](/images/filename.png)` references exist in the MDX files. Create the actual image files and drop them into `/images/` to complete the setup.
 
 ---
 
-### NEW-1. `report-example.png` — Reports page (HIGH PRIORITY)
+### NEW-1. `report-example.png` — Reports page (HIGH PRIORITY) ✅ WIRED
 
-**Add to:** `guides/reports.mdx` — as hero image at the top (line 6, before "Reports are fully customizable...")
+**Already referenced in:** `guides/reports.mdx` — hero image at the top
 
 **What to capture:** A populated custom report showing:
 - The report name at the top (e.g., "Weekly CS Review")
@@ -279,9 +280,9 @@ These are pages and sections that don't have screenshots yet but would significa
 
 ---
 
-### NEW-2. `dashboard-user-analytics.png` — Dashboard User Analytics tab (HIGH PRIORITY)
+### NEW-2. `dashboard-user-analytics.png` — Dashboard User Analytics tab (HIGH PRIORITY) ✅ WIRED
 
-**Add to:** `guides/dashboard.mdx` — inside the "User analytics" tab content (after line 33, before "### Sentiment bands over time")
+**Already referenced in:** `guides/dashboard.mdx` — inside the "User analytics" tab content
 
 **What to capture:** The User Analytics tab fully scrolled to show:
 - The sentiment bands stacked area chart with visible data (satisfied/neutral/dissatisfied bands)
@@ -291,9 +292,9 @@ These are pages and sections that don't have screenshots yet but would significa
 
 ---
 
-### NEW-3. `dashboard-assistant-analytics.png` — Dashboard Assistant Analytics tab (HIGH PRIORITY)
+### NEW-3. `dashboard-assistant-analytics.png` — Dashboard Assistant Analytics tab (HIGH PRIORITY) ✅ WIRED
 
-**Add to:** `guides/dashboard.mdx` — inside the "Assistant analytics" tab content (after line 85, before "### Response quality")
+**Already referenced in:** `guides/dashboard.mdx` — inside the "Assistant analytics" tab content
 
 **What to capture:** The Assistant Analytics tab showing:
 - The response quality radar chart with scores across 6 dimensions
@@ -303,20 +304,15 @@ These are pages and sections that don't have screenshots yet but would significa
 
 ---
 
-### NEW-4. `settings-metadata.png` — Settings Metadata tab (HIGH PRIORITY)
+### ~~NEW-4. `settings-metadata.png`~~ — REMOVED
 
-**Add to:** `guides/settings.mdx` — inside the "Metadata" tab content (after line 46, before "## Metadata field schema")
-
-**What to capture:** The Settings > Metadata tab showing:
-- The managed fields table with columns: Name, Type, Required
-- At least 2-3 example fields (e.g., `subscription_tier` string, `trial_days_remaining` number)
-- The "Discovered metadata keys" section below with untracked keys and promote/ignore actions
+**Status:** No longer needed. The Metadata tab has been moved out of the Settings page and into the Analysis Configuration page. Metadata is now documented in `guides/analysis-configuration.mdx` instead.
 
 ---
 
-### NEW-5. `settings-webhooks.png` — Settings Webhooks tab (HIGH PRIORITY)
+### NEW-5. `settings-webhooks.png` — Settings Webhooks tab (HIGH PRIORITY) ✅ WIRED
 
-**Add to:** `guides/settings.mdx` — inside the "Webhooks" tab content (after line 81, before "## Define a webhook")
+**Already referenced in:** `guides/settings.mdx` — inside the "Webhooks" tab content
 
 **What to capture:** The Settings > Webhooks tab showing:
 - A table of defined webhooks with columns: Name, URL, Type (slack/http), Enabled toggle
@@ -325,20 +321,20 @@ These are pages and sections that don't have screenshots yet but would significa
 
 ---
 
-### NEW-6. `settings-access.png` — Settings Access tab (MODERATE PRIORITY)
+### NEW-6. `settings-access.png` — Settings Members tab (MODERATE PRIORITY) ✅ WIRED
 
-**Add to:** `guides/settings.mdx` — inside the "Access" tab content (after line 101, before "## Default behavior")
+**Already referenced in:** `guides/settings.mdx` — inside the "Members" tab content
 
-**What to capture:** The Settings > Access tab showing:
-- The access control toggle (restrict access on/off)
+**What to capture:** The Settings > Members tab showing:
 - The members list with name, email, and role columns
 - The "Add member" action/button
+- Note: The tab has been renamed from "Access" to "Members" in the docs to match the actual UI
 
 ---
 
-### NEW-7. `translation-settings.png` — Translation configuration (MODERATE PRIORITY)
+### NEW-7. `translation-settings.png` — Translation configuration (MODERATE PRIORITY) ✅ WIRED
 
-**Add to:** `guides/translation.mdx` — after the "Enabling translation" section
+**Already referenced in:** `guides/translation.mdx` — after the "Enabling translation" section
 
 **What to capture:** The translation settings showing:
 - The toggle to enable/disable translation
@@ -347,9 +343,9 @@ These are pages and sections that don't have screenshots yet but would significa
 
 ---
 
-### NEW-8. `translation-conversation.png` — Translated conversation view (MODERATE PRIORITY)
+### NEW-8. `translation-conversation.png` — Translated conversation view (MODERATE PRIORITY) ✅ WIRED
 
-**Add to:** `guides/translation.mdx` — after the "Viewing translated conversations" section
+**Already referenced in:** `guides/translation.mdx` — after the "Viewing translated conversations" section
 
 **What to capture:** A conversation detail view with translated messages:
 - A message with the "Translated from [language]" indicator badge
@@ -358,9 +354,9 @@ These are pages and sections that don't have screenshots yet but would significa
 
 ---
 
-### NEW-9. `workflow-builder.png` — Workflow creation steps (MODERATE PRIORITY)
+### NEW-9. `workflow-builder.png` — Workflow creation steps (MODERATE PRIORITY) ✅ WIRED
 
-**Add to:** `guides/workflows.mdx` — inside the "Create a workflow" Steps section (after Step 3 "Add conditions")
+**Already referenced in:** `guides/workflows.mdx` — after the "Create a workflow" Steps section
 
 **What to capture:** The workflow builder/editor showing:
 - The trigger selector (User message / Assistant message / Any message)
@@ -369,9 +365,9 @@ These are pages and sections that don't have screenshots yet but would significa
 
 ---
 
-### NEW-10. `workflow-runs.png` — Workflow execution history (MODERATE PRIORITY)
+### NEW-10. `workflow-runs.png` — Workflow execution history (MODERATE PRIORITY) ✅ WIRED
 
-**Add to:** `guides/workflows.mdx` — after the "## Runs tab" heading (line 129)
+**Already referenced in:** `guides/workflows.mdx` — after the "Runs tab" heading
 
 **What to capture:** The Runs tab showing:
 - The execution history table with columns: Workflow, Status, Matched conditions, Actions executed, Triggered at
@@ -390,9 +386,9 @@ These are pages and sections that don't have screenshots yet but would significa
 
 ---
 
-### NEW-12. `analysis-intents.png` — Intent definitions (MODERATE PRIORITY)
+### NEW-12. `analysis-intents.png` — Intent definitions (MODERATE PRIORITY) ✅ WIRED
 
-**Add to:** `guides/analysis-configuration.mdx` — inside the "Intent classification" section (after "#### Defining intents")
+**Already referenced in:** `guides/analysis-configuration.mdx` — inside the "Intent classification" section
 
 **What to capture:** The intent definition list showing:
 - A table/list of defined intents with Slug, Display name, and Description columns
@@ -445,7 +441,7 @@ These are pages and sections that don't have screenshots yet but would significa
 | 8 | `users.png` | Okay | Ensure all documented columns (Plan, MRR) are visible |
 | 9 | `organizations.png` | Okay | Minor cleanup, ensure all columns visible |
 | 10 | `workflows.png` | Low resolution | Re-capture showing workflow builder or list clearly |
-| 11 | `chatbot-settings.png` | Possibly outdated | Tab names don't match docs — re-capture current UI |
+| 11 | `chatbot-settings.png` | Outdated | Docs updated to match real UI (6 tabs) — re-capture with realistic chatbot name |
 | 12 | `org-members.png` | WRONG | Currently shows chatbots list — needs Members page |
 | 13 | `org-settings.png` | WRONG | Currently shows chatbots list — needs Org Settings page |
 | 14 | `analysis-config.png` | Wrong section | Shows metadata fields, not analysis config toggles |
@@ -453,25 +449,27 @@ These are pages and sections that don't have screenshots yet but would significa
 
 ### New Screenshots to Create (add to `/images/`)
 
-| # | Suggested Filename | Priority | Target Page | What to Capture |
-|---|-------------------|----------|-------------|-----------------|
-| N1 | `report-example.png` | HIGH | `guides/reports.mdx` | Populated custom report with stat/chart/list widgets |
-| N2 | `dashboard-user-analytics.png` | HIGH | `guides/dashboard.mdx` | Sentiment bands chart, dissatisfied users, frustrations |
-| N3 | `dashboard-assistant-analytics.png` | HIGH | `guides/dashboard.mdx` | Radar chart, behavior alerts, resolution outcomes |
-| N4 | `settings-metadata.png` | HIGH | `guides/settings.mdx` | Metadata tab with managed fields and discovered keys |
-| N5 | `settings-webhooks.png` | HIGH | `guides/settings.mdx` | Webhooks tab with configured endpoints |
-| N6 | `settings-access.png` | MODERATE | `guides/settings.mdx` | Access tab with member list and restrict toggle |
-| N7 | `translation-settings.png` | MODERATE | `guides/translation.mdx` | Translation toggle, primary language selector |
-| N8 | `translation-conversation.png` | MODERATE | `guides/translation.mdx` | Translated messages with language indicator |
-| N9 | `workflow-builder.png` | MODERATE | `guides/workflows.mdx` | Trigger/conditions/actions editor |
-| N10 | `workflow-runs.png` | MODERATE | `guides/workflows.mdx` | Runs tab with execution history |
-| N11 | `workflow-templates.png` | LOW | `guides/workflows.mdx` | Templates tab with recipe cards |
-| N12 | `analysis-intents.png` | MODERATE | `guides/analysis-configuration.mdx` | Intent definitions list with Generate button |
-| N13 | `conversation-badges-closeup.png` | LOW | `guides/conversations.mdx` | Zoomed-in analysis badges on messages |
-| N14 | `api-key-settings.png` | LOW | `sdk/installation.mdx`, `api-reference/authentication.mdx` | Settings General tab with API key location |
+| # | Suggested Filename | Priority | Status | Target Page | What to Capture |
+|---|-------------------|----------|--------|-------------|-----------------|
+| N1 | `report-example.png` | HIGH | ✅ Wired | `guides/reports.mdx` | Populated custom report with stat/chart/list widgets |
+| N2 | `dashboard-user-analytics.png` | HIGH | ✅ Wired | `guides/dashboard.mdx` | Sentiment bands chart, dissatisfied users, frustrations |
+| N3 | `dashboard-assistant-analytics.png` | HIGH | ✅ Wired | `guides/dashboard.mdx` | Radar chart, behavior alerts, resolution outcomes |
+| ~~N4~~ | ~~`settings-metadata.png`~~ | ~~HIGH~~ | Removed | ~~`guides/settings.mdx`~~ | Metadata moved to Analysis Config page |
+| N5 | `settings-webhooks.png` | HIGH | ✅ Wired | `guides/settings.mdx` | Webhooks tab with configured endpoints |
+| N6 | `settings-access.png` | MODERATE | ✅ Wired | `guides/settings.mdx` | Members tab with member list |
+| N7 | `translation-settings.png` | MODERATE | ✅ Wired | `guides/translation.mdx` | Translation toggle, primary language selector |
+| N8 | `translation-conversation.png` | MODERATE | ✅ Wired | `guides/translation.mdx` | Translated messages with language indicator |
+| N9 | `workflow-builder.png` | MODERATE | ✅ Wired | `guides/workflows.mdx` | Trigger/conditions/actions editor |
+| N10 | `workflow-runs.png` | MODERATE | ✅ Wired | `guides/workflows.mdx` | Runs tab with execution history |
+| N11 | `workflow-templates.png` | LOW | Not wired | `guides/workflows.mdx` | Templates tab with recipe cards |
+| N12 | `analysis-intents.png` | MODERATE | ✅ Wired | `guides/analysis-configuration.mdx` | Intent definitions list with Generate button |
+| N13 | `conversation-badges-closeup.png` | LOW | Not wired | `guides/conversations.mdx` | Zoomed-in analysis badges on messages |
+| N14 | `api-key-settings.png` | LOW | Not wired | `sdk/installation.mdx`, `api-reference/authentication.mdx` | Settings API Keys tab with key location |
 
 ### Totals
 
 - **15 existing** screenshots to replace/fix
-- **14 new** screenshots to create
-- **29 total** screenshots for complete coverage
+- **10 new** screenshots wired into docs (need image files created)
+- **3 new** screenshots not yet wired (low priority, can be added later)
+- **1 removed** (`settings-metadata.png` — Metadata moved to Analysis Config)
+- **28 total** screenshots for complete coverage

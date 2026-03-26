@@ -1,11 +1,11 @@
 ---
 title: "Settings"
-description: "Configure your chatbot's name, API keys, metadata schema, webhooks, and access control."
+description: "Configure your chatbot's name, company info, API keys, members, webhooks, and data import/export."
 ---
 
 import ApiKeyWarning from "/snippets/api-key-warning.mdx";
 
-The settings page is where you configure how your chatbot operates — its identity, API credentials, metadata schema, webhook integrations, and who can access it. Navigate to **Settings** from your chatbot's sidebar.
+The settings page is where you configure how your chatbot operates — its identity, company information, API credentials, team access, webhook integrations, and data management. Navigate to **Settings** from your chatbot's sidebar.
 
 ![Chatbot settings](/images/chatbot-settings.png)
 
@@ -16,6 +16,24 @@ The settings page is where you configure how your chatbot operates — its ident
     ## Chatbot name
 
     Edit the display name of your chatbot. This name appears in the sidebar, dashboard headers, and reports. Changes save immediately when you submit.
+
+    ### Delete chatbot
+
+    <Warning>
+      Deleting a chatbot is irreversible. All conversations, messages, analysis data, workflows, and webhooks associated with this chatbot are permanently deleted.
+    </Warning>
+
+    Use this only when you are certain you no longer need the chatbot or any of its data.
+  </Tab>
+
+  <Tab title="Company Info">
+    The Company Info tab stores your company or organization information. These details provide context that can be used across the platform.
+
+    Fill in relevant fields about your company to help OpenBat better understand the domain and context of your chatbot's conversations.
+  </Tab>
+
+  <Tab title="API Keys">
+    The API Keys tab manages the credentials your SDK uses to authenticate with OpenBat.
 
     ## API key
 
@@ -32,53 +50,34 @@ The settings page is where you configure how your chatbot operates — its ident
     </Warning>
 
     The new full key is displayed once after rotation. Copy it and update your integration before leaving the page.
-
-    ### Delete chatbot
-
-    <Warning>
-      Deleting a chatbot is irreversible. All conversations, messages, analysis data, workflows, and webhooks associated with this chatbot are permanently deleted.
-    </Warning>
-
-    Use this only when you are certain you no longer need the chatbot or any of its data.
   </Tab>
 
-  <Tab title="Metadata">
-    The Metadata tab lets you define and manage the custom metadata fields your SDK integration passes to OpenBat.
+  <Tab title="Members">
+    The Members tab controls which organization members can view and manage a specific chatbot.
 
-    ## Metadata field schema
+    ![Members](/images/settings-access.png)
 
-    Define which custom fields your SDK sends via the `custom` parameter. For each field, you configure:
+    ## Default behavior
 
-    | Property | Description |
-    |---|---|
-    | Name | The field key your SDK sends (e.g., `subscription_tier`) |
-    | Type | The expected data type |
-    | Required | Whether the field must be present on every event |
+    By default, all organization members have access to all chatbots in the org. No configuration is needed unless you want to restrict access.
 
-    ### Supported types
+    ## Restrict access
 
-    | Type | Description | Example value |
-    |---|---|---|
-    | `string` | Text values | `"enterprise"` |
-    | `number` | Numeric values | `42` |
-    | `boolean` | True or false | `true` |
+    You can limit a chatbot to specific members only. This is useful for:
 
-    Fields sent by your SDK that do not match the schema produce warnings in the dashboard.
+    - **Client-facing chatbots** where only the relevant account team should have access
+    - **Sensitive internal chatbots** with restricted visibility
+    - **Team-specific chatbots** managed by different sub-teams within your org
 
-    **Example use case:** if your chatbot is embedded in a multi-tenant SaaS app, you might define fields like `subscription_tier`, `trial_days_remaining`, or `feature_flags` to segment conversations by customer context.
+    ## Manage members
 
-    ## Discovered metadata keys
-
-    OpenBat automatically detects custom keys your SDK is already sending, even if they are not in your schema. Discovered keys appear in this section, where you can:
-
-    - **Promote** a key to your official schema — adds it as a tracked field with a type and required setting
-    - **Ignore** a key — dismisses it from the discovered list
-
-    This gives you a live view of what your integration is actually sending alongside what you have formally defined, making it straightforward to keep the schema in sync.
+    The Members tab shows all members who currently have access, including their name, email, and role. Use the **Add member** action to grant access to an org member who does not have it yet.
   </Tab>
 
   <Tab title="Webhooks">
     The Webhooks tab is where you define the webhook endpoints used by [workflows](/guides/workflows) as action targets.
+
+    ![Webhooks](/images/settings-webhooks.png)
 
     ## Define a webhook
 
@@ -98,30 +97,22 @@ The settings page is where you configure how your chatbot operates — its ident
     Configure your webhooks here before referencing them in a workflow. See [workflows](/guides/workflows) for how to use webhooks as actions.
   </Tab>
 
-  <Tab title="Access">
-    The Access tab controls which organization members can view and manage a specific chatbot.
+  <Tab title="Import/Export Data">
+    The Import/Export Data tab allows you to import and export conversation data for your chatbot.
 
-    ## Default behavior
+    ## Import data
 
-    By default, all organization members have access to all chatbots in the org. No configuration is needed unless you want to restrict access.
+    Upload conversation data to populate your chatbot with existing conversations. This is useful when migrating from another platform or loading historical data for analysis.
 
-    ## Restrict access
+    ## Export data
 
-    You can limit a chatbot to specific members only. This is useful for:
-
-    - **Client-facing chatbots** where only the relevant account team should have access
-    - **Sensitive internal chatbots** with restricted visibility
-    - **Team-specific chatbots** managed by different sub-teams within your org
-
-    ## Manage members
-
-    The Access tab shows all members who currently have access, including their name, email, and role. Use the **Add member** action to grant access to an org member who does not have it yet.
+    Export your chatbot's conversation data for backup, reporting, or external analysis purposes.
   </Tab>
 </Tabs>
 
-## Other settings
+## Related settings
 
-The settings page also includes tabs for analysis and translation configuration, which are covered in their own guides:
+For metadata field management and analysis configuration, see the dedicated guides:
 
-- [Analysis configuration](/guides/analysis-configuration) — configure intent, topic, flag, behavior, outcome, and quality settings
+- [Analysis configuration](/guides/analysis-configuration) — configure metadata fields, intent, topic, flag, behavior, outcome, and quality settings
 - [Translation](/guides/translation) — set up automatic language detection and translation for multilingual conversations

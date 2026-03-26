@@ -7,7 +7,7 @@ description: "Customize how OpenBat analyzes conversations. Define intents, topi
 
 Analysis configuration controls what OpenBat extracts from every conversation. You can toggle each analysis type on or off, define custom vocabularies for intents, topics, and flags, and let OpenBat auto-discover new patterns from your data.
 
-All analysis settings live in your chatbot's **Settings** page under the **User Analysis** and **Assistant Analysis** tabs.
+All analysis settings live in your chatbot's **Analysis Configuration** page, accessible from the chatbot sidebar. The page is organized into five tabs: **Metadata**, **Translation**, **User Analysis**, **Assistant Analysis**, and **Prompts**.
 
 <Tabs>
   <Tab title="User analysis">
@@ -29,6 +29,8 @@ All analysis settings live in your chatbot's **Settings** page under the **User 
     Each user message is assigned exactly one intent from your custom intent list. If the model's confidence falls below 0.35 on all known intents, it suggests a new one automatically. You can approve or reject these suggestions.
 
     #### Defining intents
+
+    ![Intent definitions](/images/analysis-intents.png)
 
     Each intent definition has three fields:
 
@@ -154,3 +156,13 @@ To use it, open the relevant definition list in your analysis settings and selec
 <Info>
   Generate Definitions works best when you already have a meaningful volume of conversations. If your chatbot is new, start by defining a few intents or topics manually and let auto-discovery fill in the gaps over time.
 </Info>
+
+## Prompts tab
+
+The **Prompts** tab lets you view and edit the LLM prompts that OpenBat uses during conversation analysis. Every analysis type — sentiment scoring, intent classification, topic detection, flag detection, behavior classification, outcome classification, and response quality scoring — is driven by an underlying prompt. The Prompts tab exposes these prompts so you can fine-tune how the LLM interprets your conversations.
+
+Use this when the default prompts produce results that do not match your expectations. For example, if sentiment scores skew too negative for your domain, you can adjust the sentiment prompt to better reflect the tone norms of your user base.
+
+<Warning>
+  Editing prompts affects all future analysis for this chatbot. Changes do not retroactively reprocess past conversations. Test prompt changes on a few conversations before committing to a rewrite.
+</Warning>

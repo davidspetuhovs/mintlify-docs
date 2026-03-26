@@ -19,6 +19,8 @@ Trigger (new message analyzed)
 
 ## Create a workflow
 
+The workflow editor uses a visual node-based interface where you connect triggers, conditions, and actions on a canvas.
+
 <Steps>
   <Step title="Open the workflows page">
     Navigate to **Workflows** from your chatbot's sidebar and click **Create workflow**.
@@ -36,6 +38,8 @@ Trigger (new message analyzed)
     Save and toggle the workflow to enabled. It begins evaluating on the next analyzed message.
   </Step>
 </Steps>
+
+![Workflow builder](/images/workflow-builder.png)
 
 You can also start from a pre-built template on the **Templates** tab to skip the setup for common patterns.
 
@@ -128,6 +132,8 @@ Webhooks are defined in **Settings → Webhooks** and selected by name in the wo
 
 ## Runs tab
 
+![Workflow runs](/images/workflow-runs.png)
+
 The **Runs** tab shows execution history for all workflows on your chatbot. Use it to debug workflows that are not firing as expected.
 
 | Column | Description |
@@ -144,7 +150,7 @@ The **Runs** tab shows execution history for all workflows on your chatbot. Use 
 |---|---|
 | Success | Conditions matched and all actions executed successfully |
 | Failed | Conditions matched but an action (e.g., webhook call) failed |
-| Skipped | Workflow evaluated but conditions did not match |
+| Skipped | Workflow evaluated but conditions did not match. Skipped runs are not logged unless explicitly enabled. |
 
 ## Templates
 

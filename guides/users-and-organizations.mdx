@@ -17,7 +17,6 @@ OpenBat separates analytics by the external entities you pass through the SDK â€
     |--------|-------------|
     | **User** | Name and email, pulled from SDK metadata |
     | **Plan** | Subscription plan (e.g., Free, Pro, Enterprise) |
-    | **Industry** | The user's industry, if provided |
     | **Organization** | Which organization they belong to |
     | **Conversations** | Total conversation count |
     | **Avg Sentiment** | Average sentiment score across all conversations |
@@ -30,15 +29,15 @@ OpenBat separates analytics by the external entities you pass through the SDK â€
 
     **Faceted filters:**
     - Plan (multi-select)
-    - Industry (multi-select)
     - Organization (specific org or any)
 
     **Range filters:**
     - Conversation count (min/max)
     - Average sentiment (min/max) â€” find your most or least satisfied users
     - MRR (min/max) â€” narrow results to high-value accounts
+    - Date range â€” filter users by when they were first seen
 
-    You can sort by any column in ascending or descending order.
+    The table is paginated. You can sort by any column in ascending or descending order.
 
     **Clicking a user row** filters the [conversations](/guides/dashboard) view to show only that user's conversations.
   </Tab>
@@ -74,8 +73,9 @@ OpenBat separates analytics by the external entities you pass through the SDK â€
     - User count (min/max) â€” find orgs with high adoption
     - Average sentiment (min/max)
     - MRR (min/max)
+    - Date range â€” filter organizations by when they were first seen
 
-    You can sort by any column in ascending or descending order.
+    The table is paginated. You can sort by any column in ascending or descending order.
 
     **Clicking an organization row** filters the [conversations](/guides/dashboard) view to show only that org's conversations.
   </Tab>
@@ -108,7 +108,7 @@ client.recordMessages({
 ```
 
 <Info>
-  Fields not provided appear as empty in the table and are not available as filters. Richer metadata means richer filtering and sorting.
+  Fields not provided appear as empty in the table and are not available as filters. Richer metadata means richer filtering and sorting. See the [SDK documentation](/sdk/recording-messages) for the full metadata schema.
 </Info>
 
 ## Use cases
@@ -124,6 +124,14 @@ Filter conversations for buying signals and cross-reference with high-sentiment 
 ### QBR prep
 
 Pull up a specific organization to review their conversation volume, average sentiment, and typical interaction patterns. You get an account-level summary without digging through individual conversations.
+
+### Adoption analysis
+
+Sort organizations by user count or conversation count to find your most and least engaged accounts. Low adoption in a high-MRR account may indicate onboarding issues or a need for enablement outreach.
+
+### Account health
+
+For any user, see conversation volume and sentiment trend at a glance. At the organization level, sort by sentiment ascending and filter by MRR to find at-risk high-value accounts before they escalate.
 
 ### Segment analysis
 

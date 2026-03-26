@@ -8,7 +8,9 @@ The OpenBat SDK is a lightweight TypeScript client that captures conversation da
 ```typescript
 import { OpenBat } from 'openbat';
 
-const client = new OpenBat();
+const client = new OpenBat({
+  apiKey: process.env.OPENBAT_API_KEY
+});
 
 await client.recordMessages({
   conversationId: "conv_123",
@@ -34,7 +36,7 @@ await client.recordMessages({
 </Check>
 
 <Check>
-**Configurable** — disable the SDK in test or CI environments with a single environment variable. No code changes needed.
+**Environment-first config** — the SDK reads `OPENBAT_API_KEY` automatically so you never hard-code secrets. Disable it in test or CI environments with a single environment variable (`OPENBAT_ENABLED=false`). No code changes needed.
 </Check>
 
 ```bash
@@ -49,9 +51,10 @@ Every call to `recordMessages` accepts a conversation ID, an array of messages, 
 | Data | Description |
 |------|-------------|
 | **Conversation messages** | User, assistant, and system messages with optional timestamps |
-| **User metadata** | Name, email, plan, MRR, industry, account creation date |
-| **Organization metadata** | Company name, plan, MRR, industry |
-| **Session metadata** | Page URL, referrer, device type, country |
+| **User metadata** | `user.id`, name, email, plan, MRR, industry, account creation date |
+| **Organization metadata** | `organization.id`, company name, plan, MRR, industry |
+| **Session metadata** | `session.id`, page URL, referrer, device type, country |
+| **Headers** | Forward request headers to enable automatic geo and device detection |
 | **Custom fields** | Any key-value pairs matching your chatbot's metadata schema |
 
 ## Next steps

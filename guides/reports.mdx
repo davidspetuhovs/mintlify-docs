@@ -3,7 +3,9 @@ title: "Reports"
 description: "Build custom analytics dashboards with configurable widgets. Track the metrics that matter most to your team."
 ---
 
-Reports are fully customizable dashboards -- a configurable canvas of widgets pulled from the same analytics data that powers the [main dashboard](/guides/dashboard). Build a report once, share the URL with your team, and adjust the time range on the fly.
+![Reports](/images/report-example.png)
+
+Reports are fully customizable dashboards — a configurable canvas of widgets pulled from the same analytics data that powers the [main dashboard](/guides/dashboard). Build a report once, share the URL with your team, and adjust the time range on the fly.
 
 ## What is a report?
 
@@ -13,7 +15,7 @@ A report is a named, saved layout of widgets. Each report has:
 - A **default time range** between 1 and 90 days
 - An ordered **grid of widgets**, each sized as a third, half, or full row width
 
-Reports appear in the chatbot sidebar under "Reports," showing up to 6 recent reports by name. Clicking a report opens it directly. The most recently updated report is where you land when navigating to the reports section.
+Reports appear in the chatbot sidebar under "Reports," showing up to 6 recent reports by name. Beyond those, a "View all" link reveals the full list. Clicking a report opens it directly. The most recently updated report is where you land when navigating to the reports section.
 
 ## Creating a report
 
@@ -22,7 +24,7 @@ Reports appear in the chatbot sidebar under "Reports," showing up to 6 recent re
     Click **Create Report** from the reports index or the sidebar "+" button.
   </Step>
   <Step title="Configure name and time range">
-    Give your report a name and choose a default time period (1--90 days).
+    Give your report a name and choose a default time period (1–90 days).
   </Step>
   <Step title="Add widgets">
     The report opens as an empty canvas. Add widgets from the widget library to populate it.
@@ -46,7 +48,7 @@ Headline numbers that each display the current value plus a trend indicator comp
 | Widget | What it shows |
 |--------|---------------|
 | **Total conversations** | All conversations in the selected period |
-| **Average sentiment** | Weighted sentiment score with a human-readable label |
+| **Average sentiment** | Average sentiment score with a human-readable label |
 | **Resolution rate** | Percentage of conversations resolved (fully or partially) |
 | **Churn risk count** | Conversations flagged with a churn risk signal |
 | **Buying signal count** | Conversations flagged with a buying signal |
@@ -107,16 +109,26 @@ Each widget occupies a fraction of the report grid row.
 | **Half** | 1/2 of the row | Charts, medium tables |
 | **Full** | Entire row | Wide charts, detailed tables |
 
-Widgets reflow responsively -- on mobile, all widgets display at full width regardless of size setting.
+Widgets reflow responsively — on mobile, all widgets display at full width regardless of size setting.
 
 ## Time range control
 
 Every report stores a default time range set during creation. When viewing a report, a day-range selector lets you override the default on the fly without changing the saved configuration.
 
-- One report can serve as both a 30-day view and a 7-day view -- just adjust the selector
+- One report can serve as both a 30-day view and a 7-day view — just adjust the selector
 - Sharing a URL with `?days=7` overrides the default for that viewing session
 - The report's saved default is never changed by URL overrides
 
 <Tip>
   Build a single report for stakeholder review and let each viewer pick their own time range. The saved default acts as a sensible starting point.
 </Tip>
+
+## Query deduplication
+
+When a report contains multiple widgets of the same type, OpenBat batches the underlying queries — running one query per unique widget type regardless of how many instances exist. This keeps report loading fast even for complex multi-widget layouts.
+
+## Use cases
+
+**Stakeholder reporting:** Build a weekly exec report with the 3–4 metrics leadership cares about (conversations, sentiment trend, resolution rate, top topics). Share the link and let each viewer adjust the time range themselves without needing to understand the full platform.
+
+**Team-specific views:** A CS team might want an "At-Risk Accounts" report showing churn risk count, frustrated users, and low-sentiment conversations. Engineering wants a "Bot Health" report with behavior alerts, capability gaps, and resolution outcomes. One platform, multiple stakeholders, each with their own focused view.

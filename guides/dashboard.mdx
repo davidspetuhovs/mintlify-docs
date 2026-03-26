@@ -22,15 +22,18 @@ Each metric includes a trend arrow comparing the current period against the equi
 
 ## Filters
 
-You can control the data shown across both tabs with two controls:
+You can control the data shown across both tabs with three controls:
 
 - **Period selector** -- choose between 7 days, 14 days, or 30 days. The default is 30 days. This affects all charts and tables on the page.
+- **Segment by Plan** -- a combobox filter that lets you narrow dashboard data to users on a specific subscription plan. Useful for comparing behavior and satisfaction across pricing tiers.
 - **Tab selector** -- switch between User Analytics and Assistant Analytics.
 
 <Tabs>
   <Tab title="User analytics">
 
     This tab answers: who are your most frustrated users, what are they asking about, and what is driving dissatisfaction?
+
+    ![User analytics tab](/images/dashboard-user-analytics.png)
 
     ### Sentiment bands over time
 
@@ -78,10 +81,28 @@ You can control the data shown across both tabs with two controls:
 
     Auto-discovered topics appear when the LLM encounters a recurring pattern not yet in your topic vocabulary. This is a signal that your topic list needs expanding.
 
+    ### Revenue signals
+
+    Highlights conversations that contain buying intent, upsell opportunities, or churn risk language. Each signal includes the user, the conversation snippet that triggered it, and a confidence score. Use this to surface commercial opportunities hidden inside support conversations.
+
+    ### Top intents
+
+    A ranked bar chart of the most common user intents detected across conversations in the selected period. Unlike support topics, intents capture what the user is trying to do (e.g. "cancel subscription", "upgrade plan", "reset password") rather than the subject area. Comparing intents over time helps you understand shifts in user needs.
+
+    ### Activity heatmap
+
+    A calendar-style heatmap showing conversation volume by day and hour. Darker cells indicate higher activity. Use this to identify peak usage windows, plan staffing for live-agent handoff, and spot unusual activity spikes that may indicate an incident.
+
+    ### Languages
+
+    A breakdown of conversations by detected language. For each language you see the conversation count and its percentage of total volume. This helps you prioritize localization efforts and identify user segments that may need dedicated support resources.
+
   </Tab>
   <Tab title="Assistant analytics">
 
     This tab answers: how well is your assistant performing, what behaviors is it exhibiting, and where is it failing?
+
+    ![Assistant analytics tab](/images/dashboard-assistant-analytics.png)
 
     ### Response quality
 

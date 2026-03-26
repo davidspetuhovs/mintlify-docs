@@ -22,7 +22,7 @@ Translation is off by default. You can enable it during chatbot creation or from
 
 <Steps>
   <Step title="Open the translation settings">
-    Go to your chatbot settings and select the **Translation** tab.
+    Go to the **Analysis Configuration** page for your chatbot and find the translation settings.
   </Step>
   <Step title="Turn on auto-translate">
     Toggle **Auto-translate messages** to on. When enabled, all new incoming messages are language-detected and translated if needed.
@@ -33,6 +33,8 @@ Translation is off by default. You can enable it during chatbot creation or from
 </Steps>
 
 You can also set the primary language during chatbot creation. The default is English.
+
+![Translation settings](/images/translation-settings.png)
 
 ## Supported languages
 
@@ -62,6 +64,7 @@ Translation affects how several features process and display data.
 | Intent classification | Runs on translated text so intents match your primary-language vocabulary. |
 | Topic detection | Runs on translated text. |
 | Flag detection | Runs on translated text. Signals like churn risk are detected regardless of language. |
+| Assistant analysis | Assistant messages are also translated and analyzed. |
 | Deep search | Embeddings use translated content. Searching in your primary language finds results from any language. |
 | Workflows | Conditions evaluate against translated text. |
 | Reports | All metrics are based on analysis of translated text. |
@@ -74,6 +77,10 @@ In the conversation detail view, a toggle button switches between two modes:
 - **Original** — shows the raw message as the user wrote it. Analysis highlights are hidden because highlight positions reference the translated text.
 
 The toggle switches all messages in the conversation at once.
+
+On mobile, the same toggle appears in the message list header bar.
+
+![Translated conversation](/images/translation-conversation.png)
 
 ## Cost
 

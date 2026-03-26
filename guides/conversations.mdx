@@ -13,7 +13,7 @@ The conversation list is a paginated table showing all conversations for your ch
 
 ### Table columns
 
-Every column is sortable. The default sort is **Last active**, newest first.
+Every column is sortable. The default sort is **Last Message**, newest first.
 
 | Column | Description |
 |--------|-------------|
@@ -22,12 +22,15 @@ Every column is sortable. The default sort is **Last active**, newest first.
 | Messages | Total message count in the conversation |
 | Sentiment | Average sentiment score with a label badge |
 | Language | Detected language badge (shown when auto-translation is enabled and a non-primary language is detected) |
-| Last active | When the last message was received |
-| Started | When the conversation began |
+| Plan | The user's plan tier (e.g., Free, Pro, Enterprise) |
+| Last Message | When the last message was received |
+| Created | When the conversation began |
 
 ### Search and filters
 
 **Free-text search** works across user name, email, user ID, and conversation ID. Type any of these values into the search bar to find matching conversations.
+
+<Tip>For semantic, meaning-based search across your conversations, see the [Deep Search](/guides/deep-search) page. Deep Search complements keyword search by letting you find conversations by concept rather than exact terms.</Tip>
 
 **Faceted filters** are multi-select dropdowns that let you narrow results by dimension:
 
@@ -51,6 +54,7 @@ Every column is sortable. The default sort is **Last active**, newest first.
 | Average sentiment | Only conversations with sentiment below -0.3 |
 | User MRR | Conversations from users paying $500 to $2000 per month |
 | Organization MRR | Conversations from organizations in a specific revenue range |
+| Date range | Conversations within a specific time period (e.g., last 7 days, custom date range) |
 
 ### Pagination
 
@@ -90,6 +94,10 @@ Each assistant message displays the message content along with:
 - **Outcome badge** indicating the resolution status of the response (e.g., fully_resolved, capability_failure)
 - **Quality dimensions** when available
 - **Flag badges** for any assistant-side flags
+
+### System messages
+
+System messages are displayed in the transcript with a distinct system role indicator, visually separating them from user and assistant messages.
 
 ### Translated messages
 
@@ -136,6 +144,7 @@ Behavior badges appear on assistant messages and describe how the assistant resp
 | redirecting | The assistant redirected the user elsewhere |
 | verbose | The assistant gave an unnecessarily long response |
 | robotic | The assistant responded in a stiff, unnatural way |
+| other | The assistant's behavior does not fit the predefined categories |
 
 ### Outcomes
 
@@ -148,6 +157,7 @@ Outcome badges appear on assistant messages and describe the resolution status.
 | deflected | The assistant deflected without resolving the issue |
 | capability_failure | The assistant could not handle the request |
 | incorrect | The assistant provided a wrong answer |
+| other | The outcome does not fit the predefined categories |
 
 ### Flags
 
