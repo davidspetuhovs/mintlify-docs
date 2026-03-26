@@ -1,3 +1,7 @@
-#navbar a[href="https://openbat.dev"] {
+#topbar-cta-button span {
   color: #000000 !important;
+}
+
+#topbar-cta-button svg {
+  color: rgba(0, 0, 0, 0.9) !important;
 }
