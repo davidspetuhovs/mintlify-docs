@@ -15,8 +15,8 @@
   },
   "favicon": "/favicon.svg",
   "logo": {
-    "light": "/logo/openbat-logo-light.svg",
-    "dark": "/logo/openbat-logo-dark.svg"
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
   },
   "navigation": {
     "tabs": [
