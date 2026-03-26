@@ -3,12 +3,13 @@
   "theme": "mint",
   "name": "OpenBat",
   "colors": {
-    "primary": "#FFFFFF",
-    "light": "#FFFFFF",
-    "dark": "#FFFFFF"
+    "primary": "#4ADE80",
+    "light": "#16A34A",
+    "dark": "#4ADE80"
   },
   "appearance": {
-    "default": "dark"
+    "default": "dark",
+    "strict": true
   },
   "background": {
     "decoration": "grid"
