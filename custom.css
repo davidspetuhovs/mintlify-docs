@@ -1,6 +1,0 @@
-[class*="navbar"] a[class*="button"],
-[class*="navbar"] a[class*="cta"],
-.navbar-cta,
-nav a[href="https://openbat.dev"] {
-  color: #000000 !important;
-}
