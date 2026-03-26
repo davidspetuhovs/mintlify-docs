@@ -12,7 +12,7 @@
     "strict": true
   },
   "background": {
-    "decoration": "gradient"
+    "decoration": "grid"
   },
   "favicon": "/favicon.svg",
   "logo": {
