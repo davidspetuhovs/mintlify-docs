@@ -1,0 +1,76 @@
+# Segment by plan
+
+## Overview
+
+| Property | Value |
+|----------|-------|
+| **Flow** | Segment by plan |
+| **Starting Page** | Chatbot Dashboard |
+| **URL** | `/platform/[chatbotId]` |
+| **Application** | http://localhost:3000 |
+| **Discovered** | 2026-03-26T09:34:43.182Z |
+
+## Page Context
+
+Overview dashboard with stats (conversations, messages, avg sentiment, analyzed today), date range selector, segment filter, and two tabs: User Insights and Assistant Performance
+
+## Business Purpose
+
+This flow allows users to **segment by plan** from the Chatbot Dashboard page.
+
+## Related Flows (Same Page)
+
+- [View user insights](view-user-insights.md)
+- [View assistant performance](view-assistant-performance.md)
+- [Change date range](change-date-range.md)
+- [Investigate dissatisfied user](investigate-dissatisfied-user.md)
+
+## Available UI Elements
+
+The following interactive elements are available on this page:
+
+- button: date range selector
+- combobox: Segment by Plan
+- tab: User Insights
+- tab: Assistant Performance
+- chart: User sentiment trend
+- table: Top user frustrations
+- table: Most dissatisfied users
+- table: Support topics
+- section: Revenue signals
+- chart: Top intents
+- section: Sentiment by segment
+- chart: Activity heatmap
+- section: Languages
+- section: Behavior alerts (Assistant Performance)
+- chart: Resolution outcomes (Assistant Performance)
+
+## Steps
+
+### Step 1: Navigate to starting page
+
+Navigate to `/platform/[chatbotId]` and verify the page loads correctly.
+
+### Step 2: Interact with combobox: Segment by Plan
+
+Use the **combobox: Segment by Plan** element to progress through the flow.
+
+{{screenshot_2}}
+
+### Step 3: Interact with section: Sentiment by segment
+
+Use the **section: Sentiment by segment** element to progress through the flow.
+
+{{screenshot_3}}
+
+### Step 4: Verify outcome
+
+Verify that the "Segment by plan" completed successfully and the expected state change occurred.
+
+{{screenshot_4}}
+
+## Navigation Path
+
+```
+http://localhost:3000 → /platform/[chatbotId] → [Segment by plan]
+```

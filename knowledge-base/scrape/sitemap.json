@@ -1,0 +1,372 @@
+{
+  "baseUrl": "http://localhost:3000",
+  "timestamp": "2026-03-26T09:34:43.182Z",
+  "pages": [
+    {
+      "url": "/",
+      "title": "Landing Page",
+      "description": "Public marketing page with hero, features, pricing (6 tiers), FAQs, testimonials, code examples, and CTAs",
+      "elements": [
+        "link: Features (anchor)",
+        "link: Pricing (anchor)",
+        "link: FAQs (anchor)",
+        "link: Login",
+        "link: Sign Up",
+        "button: Start Free",
+        "button: Book a Demo",
+        "tabs: Vercel AI SDK / TypeScript / Python / REST API",
+        "button: FAQ accordions (5)",
+        "button: Missed Upsell / Feature Gap Risk / Bot Hallucination"
+      ],
+      "flows": [
+        "Sign up flow",
+        "Login flow",
+        "View pricing plans",
+        "View code examples",
+        "Expand FAQ answers"
+      ]
+    },
+    {
+      "url": "/auth/login",
+      "title": "Login Page",
+      "description": "Email/password login with social auth (Apple, Google, Meta) and forgot password link",
+      "elements": [
+        "textbox: Email",
+        "textbox: Password",
+        "button: Login",
+        "button: Login with Apple",
+        "button: Login with Google",
+        "button: Login with Meta",
+        "link: Forgot your password?",
+        "link: Terms of Service",
+        "link: Privacy Policy"
+      ],
+      "flows": [
+        "Email/password login",
+        "Social auth login",
+        "Forgot password flow"
+      ]
+    },
+    {
+      "url": "/auth/sign-up",
+      "title": "Sign Up Page",
+      "description": "Account creation form with email, password, confirm password, social auth options",
+      "elements": [
+        "textbox: Email",
+        "textbox: Password",
+        "textbox: Confirm Password",
+        "button: Create Account",
+        "button: Login with Apple",
+        "button: Login with Google",
+        "button: Login with Meta",
+        "link: Sign in"
+      ],
+      "flows": [
+        "Email sign up",
+        "Social auth sign up"
+      ]
+    },
+    {
+      "url": "/auth/forgot-password",
+      "title": "Forgot Password Page",
+      "description": "Password reset form with email input",
+      "elements": [
+        "textbox: Email",
+        "button: Send reset email",
+        "link: Login"
+      ],
+      "flows": [
+        "Password reset flow"
+      ]
+    },
+    {
+      "url": "/platform",
+      "title": "Dashboard - Chatbots List",
+      "description": "Main authenticated dashboard showing all chatbots with card/list view toggle, status tabs (Active/Pending/Archive), and new chatbot button",
+      "elements": [
+        "button: New chatbot",
+        "button: Active/Pending/Archive tabs",
+        "button: Card view",
+        "button: List view",
+        "button: chatbot context menu (Open/Archive/Delete)",
+        "link: Chatbots",
+        "link: Members",
+        "link: Settings",
+        "button: user profile dropdown (Settings, Log out)"
+      ],
+      "flows": [
+        "Create new chatbot",
+        "Open chatbot",
+        "Archive chatbot",
+        "Delete chatbot",
+        "Switch card/list view",
+        "Filter by status",
+        "Log out"
+      ]
+    },
+    {
+      "url": "/platform/members",
+      "title": "Organization Members",
+      "description": "Team member management with email, role, and join date",
+      "elements": [
+        "table: Email/Role/Joined",
+        "button: Invite member"
+      ],
+      "flows": [
+        "Invite member flow"
+      ]
+    },
+    {
+      "url": "/platform/settings",
+      "title": "Organization Settings",
+      "description": "Organization name editing and danger zone with delete option",
+      "elements": [
+        "textbox: Organization name",
+        "button: Save",
+        "button: Delete organization"
+      ],
+      "flows": [
+        "Rename organization",
+        "Delete organization"
+      ]
+    },
+    {
+      "url": "/platform/[chatbotId]",
+      "title": "Chatbot Dashboard",
+      "description": "Overview dashboard with stats (conversations, messages, avg sentiment, analyzed today), date range selector, segment filter, and two tabs: User Insights and Assistant Performance",
+      "elements": [
+        "button: date range selector",
+        "combobox: Segment by Plan",
+        "tab: User Insights",
+        "tab: Assistant Performance",
+        "chart: User sentiment trend",
+        "table: Top user frustrations",
+        "table: Most dissatisfied users",
+        "table: Support topics",
+        "section: Revenue signals",
+        "chart: Top intents",
+        "section: Sentiment by segment",
+        "chart: Activity heatmap",
+        "section: Languages",
+        "section: Behavior alerts (Assistant Performance)",
+        "chart: Resolution outcomes (Assistant Performance)"
+      ],
+      "flows": [
+        "View user insights",
+        "View assistant performance",
+        "Change date range",
+        "Segment by plan",
+        "Investigate dissatisfied user"
+      ]
+    },
+    {
+      "url": "/platform/[chatbotId]/workflows",
+      "title": "Workflows",
+      "description": "Workflow automation page with Workflows/Runs/Templates tabs",
+      "elements": [
+        "button: Create workflow",
+        "tab: Workflows",
+        "tab: Runs",
+        "tab: Templates"
+      ],
+      "flows": [
+        "Create workflow"
+      ]
+    },
+    {
+      "url": "/platform/[chatbotId]/conversations",
+      "title": "Conversations List",
+      "description": "Paginated conversation table with sortable columns, search, filters, and date range. Supports filtering by user or org via query params",
+      "elements": [
+        "textbox: Filter conversations",
+        "button: Filter",
+        "button: View",
+        "button: date range",
+        "table: User/Email/Organization/Messages/Sentiment/Language/Plan/Last Message/Created",
+        "pagination controls",
+        "combobox: rows per page"
+      ],
+      "flows": [
+        "Search conversations",
+        "Sort by column",
+        "Filter conversations",
+        "Navigate to conversation detail",
+        "Change page"
+      ]
+    },
+    {
+      "url": "/platform/[chatbotId]/conversations/[id]",
+      "title": "Conversation Detail",
+      "description": "Chat bubble view of a conversation with right sidebar showing overall sentiment, conversation metadata, and user info",
+      "elements": [
+        "breadcrumb: Conversations > User",
+        "button: Filter",
+        "button: View",
+        "section: Overall Sentiment",
+        "section: Conversation metadata (messages, conv ID, timestamps)",
+        "section: User info"
+      ],
+      "flows": [
+        "View conversation messages",
+        "Navigate back to conversations"
+      ]
+    },
+    {
+      "url": "/platform/[chatbotId]/deep-search",
+      "title": "Deep Search",
+      "description": "Semantic search across conversations by meaning, not just keywords",
+      "elements": [
+        "textbox: Search query",
+        "button: Deep Search",
+        "button: date range"
+      ],
+      "flows": [
+        "Semantic search conversations"
+      ]
+    },
+    {
+      "url": "/platform/[chatbotId]/organizations",
+      "title": "Client Organizations",
+      "description": "Table of customer organizations with plan, industry, MRR, conversations, users, sentiment, last activity. Clicking a row filters conversations by that org",
+      "elements": [
+        "textbox: Filter organizations",
+        "button: Filter",
+        "button: View",
+        "button: date range",
+        "table: Organization/Plan/Industry/MRR/Conversations/Users/Sentiment/Last Activity",
+        "pagination controls"
+      ],
+      "flows": [
+        "Browse organizations",
+        "Filter by organization",
+        "Sort by column"
+      ]
+    },
+    {
+      "url": "/platform/[chatbotId]/users",
+      "title": "Client Users",
+      "description": "Table of chatbot users with email, organization, plan, MRR, conversations, sentiment, last activity. Clicking a row filters conversations by that user",
+      "elements": [
+        "textbox: Filter users",
+        "button: Filter",
+        "button: View",
+        "button: date range",
+        "table: User/Email/Organization/Plan/MRR/Conversations/Sentiment/Last Activity",
+        "pagination controls"
+      ],
+      "flows": [
+        "Browse users",
+        "Filter by user",
+        "Sort by column"
+      ]
+    },
+    {
+      "url": "/platform/[chatbotId]/analysis-config",
+      "title": "Analysis Config",
+      "description": "Configuration for conversation analysis with 5 tabs: Metadata, Translation, User Analysis, Assistant Analysis, Prompts",
+      "elements": [
+        "tab: Metadata",
+        "tab: Translation",
+        "tab: User Analysis",
+        "tab: Assistant Analysis",
+        "tab: Prompts",
+        "table: Managed fields (Key/Type/Status/Used/Discovered/Actions)",
+        "table: Discovered fields (Key/Sample value/Occurrences)",
+        "button: Track field"
+      ],
+      "flows": [
+        "Manage metadata fields",
+        "Configure translation",
+        "Configure user analysis",
+        "Configure assistant analysis",
+        "Edit prompts"
+      ]
+    },
+    {
+      "url": "/platform/[chatbotId]/settings",
+      "title": "Chatbot Settings",
+      "description": "Chatbot configuration with 6 tabs: General, Company Info, API Keys, Members, Webhooks, Import/Export Data",
+      "elements": [
+        "tab: General",
+        "tab: Company Info",
+        "tab: API Keys",
+        "tab: Members",
+        "tab: Webhooks",
+        "tab: Import/Export Data",
+        "textbox: Chatbot name",
+        "button: Save",
+        "button: Copy Chatbot ID"
+      ],
+      "flows": [
+        "Rename chatbot",
+        "Manage API keys",
+        "Manage members",
+        "Configure webhooks",
+        "Import/Export data"
+      ]
+    },
+    {
+      "url": "/platform/[chatbotId]/onboarding",
+      "title": "Chatbot Onboarding",
+      "description": "SDK setup instructions for new chatbots. Redirects to dashboard if already onboarded",
+      "elements": [],
+      "flows": [
+        "Complete onboarding flow"
+      ]
+    }
+  ],
+  "flows": [
+    "Sign up flow",
+    "Login flow",
+    "View pricing plans",
+    "View code examples",
+    "Expand FAQ answers",
+    "Email/password login",
+    "Social auth login",
+    "Forgot password flow",
+    "Email sign up",
+    "Social auth sign up",
+    "Password reset flow",
+    "Create new chatbot",
+    "Open chatbot",
+    "Archive chatbot",
+    "Delete chatbot",
+    "Switch card/list view",
+    "Filter by status",
+    "Log out",
+    "Invite member flow",
+    "Rename organization",
+    "Delete organization",
+    "View user insights",
+    "View assistant performance",
+    "Change date range",
+    "Segment by plan",
+    "Investigate dissatisfied user",
+    "Create workflow",
+    "Search conversations",
+    "Sort by column",
+    "Filter conversations",
+    "Navigate to conversation detail",
+    "Change page",
+    "View conversation messages",
+    "Navigate back to conversations",
+    "Semantic search conversations",
+    "Browse organizations",
+    "Filter by organization",
+    "Browse users",
+    "Filter by user",
+    "Manage metadata fields",
+    "Configure translation",
+    "Configure user analysis",
+    "Configure assistant analysis",
+    "Edit prompts",
+    "Rename chatbot",
+    "Manage API keys",
+    "Manage members",
+    "Configure webhooks",
+    "Import/Export data",
+    "Complete onboarding flow"
+  ],
+  "totalPages": 17,
+  "totalFlows": 50
+}
