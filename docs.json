@@ -4,7 +4,7 @@
   "name": "OpenBat",
   "colors": {
     "primary": "#ffffff",
-    "light": "#FFFFFF",
+    "light": "#000000",
     "dark": "#FFFFFF"
   },
   "appearance": {
