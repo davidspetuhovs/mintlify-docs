@@ -50,6 +50,26 @@ Configure webhook destinations for workflow alerts (Discord, Slack, custom). See
 
 Export conversations as JSON or import historical data from JSON/CSV. See [Data import and export](/features/data-import-export) for a full walkthrough.
 
+## Chatbot lifecycle
+
+From the main dashboard at `/platform`, right-click or click the **...** menu on any chatbot card to manage its lifecycle:
+
+<Frame>
+  <img src="/docs/state-screenshots/state-platform-chatbot-context-menu.png" alt="Chatbot context menu showing Open chatbot, Archive, and Delete options" />
+</Frame>
+
+- **Open chatbot** — navigate to the chatbot's analytics dashboard
+- **Archive** — move the chatbot to the **Archive** tab. Archived chatbots stop receiving new conversations but retain all historical data. You can restore them later.
+- **Delete** — permanently remove the chatbot and all associated data. This action cannot be undone.
+
+Chatbots have three statuses visible in the dashboard tabs:
+
+| Status | Description |
+|--------|-------------|
+| **Active** | Receiving and analyzing conversations |
+| **Pending** | Created but awaiting SDK integration or first conversation |
+| **Archive** | Paused and hidden from the main view |
+
 ## Next steps
 
 <CardGroup cols={3}>

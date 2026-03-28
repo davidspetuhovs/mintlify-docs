@@ -59,7 +59,8 @@
               "platform/authentication",
               "platform/organizations",
               "platform/members-and-roles",
-              "platform/chatbot-settings"
+              "platform/chatbot-settings",
+              "platform/navigation-map"
             ]
           }
         ]
@@ -74,7 +75,8 @@
               "guides/set-up-sentiment-alerts",
               "guides/customize-analysis-prompts",
               "guides/manage-metadata-fields",
-              "guides/export-and-analyze-data"
+              "guides/configure-assistant-analysis",
+              "guides/manage-chatbot-lifecycle"
             ]
           }
         ]
@@ -87,7 +89,9 @@
             "pages": [
               "architecture/overview",
               "architecture/data-model",
-              "architecture/analysis-pipeline"
+              "architecture/analysis-pipeline",
+              "architecture/interactive-elements",
+              "architecture/test-plan"
             ]
           }
         ]
@@ -121,6 +125,12 @@
       "href": "https://openbat.dev"
     }
   },
+  "redirects": [
+    {
+      "source": "/guides/export-and-analyze-data",
+      "destination": "/features/data-import-export"
+    }
+  ],
   "footer": {
     "socials": {
       "x": "https://x.com/openbatdev",

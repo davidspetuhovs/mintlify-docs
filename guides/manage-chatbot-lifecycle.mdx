@@ -1,0 +1,80 @@
+---
+title: "Manage chatbot lifecycle"
+description: "Archive, restore, and delete chatbots from your organization dashboard"
+---
+
+Every chatbot in OpenBat has a status: **Active**, **Pending**, or **Archive**. This guide explains what each status means and how to manage your chatbots' lifecycle.
+
+## Chatbot statuses
+
+| Status | Description |
+|--------|-------------|
+| **Active** | Receiving and analyzing conversations via the SDK |
+| **Pending** | Created but hasn't received its first conversation yet |
+| **Archive** | Paused — not receiving new conversations, but historical data is preserved |
+
+View chatbots by status using the tabs on the main dashboard at `/platform`:
+
+<Frame>
+  <img src="/docs/state-screenshots/state-platform-archive-tab.png" alt="Archive tab on the chatbot dashboard" />
+</Frame>
+
+## Archive a chatbot
+
+Archiving pauses a chatbot without deleting any data. Archived chatbots stop receiving new conversations.
+
+<Steps>
+  <Step title="Open the chatbot menu">
+    On the main dashboard at `/platform`, click the **...** button on the chatbot card you want to archive.
+
+    <Frame>
+      <img src="/docs/state-screenshots/state-platform-chatbot-context-menu.png" alt="Chatbot context menu showing Open, Archive, and Delete options" />
+    </Frame>
+  </Step>
+  <Step title="Click Archive">
+    Select **Archive** from the context menu. The chatbot moves to the **Archive** tab.
+  </Step>
+</Steps>
+
+<Note>
+  Archived chatbots retain all conversation data, analysis results, and settings. You can restore them later by moving them back to Active status.
+</Note>
+
+## Delete a chatbot
+
+Deleting a chatbot permanently removes it and all associated data.
+
+<Steps>
+  <Step title="Open the chatbot menu">
+    Click the **...** button on the chatbot card.
+  </Step>
+  <Step title="Click Delete">
+    Select **Delete** from the context menu (shown in red).
+  </Step>
+  <Step title="Confirm deletion">
+    Confirm the deletion in the dialog. This action cannot be undone.
+  </Step>
+</Steps>
+
+<Warning>
+  Deleting a chatbot permanently removes all conversations, analysis results, workflows, webhooks, and settings. This cannot be reversed. Consider archiving instead if you might need the data later.
+</Warning>
+
+## Pending chatbots
+
+When you create a new chatbot, it starts in **Pending** status until it receives its first conversation via the SDK. Once the first conversation arrives, it automatically moves to **Active**.
+
+<Frame>
+  <img src="/docs/state-screenshots/state-platform-pending-tab.png" alt="Pending tab showing chatbots awaiting their first conversation" />
+</Frame>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Create your first chatbot" icon="plus" href="/getting-started/create-your-first-chatbot">
+    Add a new chatbot to your organization.
+  </Card>
+  <Card title="Chatbot settings" icon="gear" href="/platform/chatbot-settings">
+    Configure an existing chatbot.
+  </Card>
+</CardGroup>

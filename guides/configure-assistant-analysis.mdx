@@ -1,0 +1,71 @@
+---
+title: "Configure assistant analysis"
+description: "Toggle behavior detection for your chatbot's responses and add custom behavior classifications"
+---
+
+OpenBat can classify your chatbot's responses into behavior categories like Helpful, Hallucinating, or Dodging. This guide shows you how to enable, disable, and customize these classifications.
+
+## Prerequisites
+
+- You have an active chatbot with analyzed conversations
+- You have Admin or Owner access to the chatbot
+
+## Toggle behavior detection
+
+<Steps>
+  <Step title="Navigate to analysis config">
+    Go to `/platform/{chatbotId}/analysis-config` and click the **Assistant Analysis** tab.
+
+    <Frame>
+      <img src="/docs/state-screenshots/state-analysis-config-assistant.png" alt="Assistant Analysis tab with behavior classification toggles" />
+    </Frame>
+  </Step>
+  <Step title="Enable or disable the behavior toggle">
+    Use the main **Behavior** toggle to turn assistant analysis on or off entirely.
+  </Step>
+  <Step title="Configure individual behaviors">
+    Toggle each behavior classification independently:
+
+    | Behavior | What it detects |
+    |----------|----------------|
+    | **Helpful** | Provides useful, accurate responses |
+    | **Yes-Man** | Agrees with everything without critical thinking |
+    | **Dodging** | Avoids answering the question directly |
+    | **Over-Apologizing** | Excessive unnecessary apologies |
+    | **Hallucinating** | Providing incorrect or fabricated information |
+    | **Redirecting** | Sends user elsewhere instead of helping |
+    | **Verbose** | Unnecessarily long responses |
+    | **Robotic** | Unnatural, template-like responses |
+    | **Other** | Catch-all for unclassified behaviors |
+  </Step>
+  <Step title="Save your changes">
+    Changes are saved automatically when you toggle a behavior.
+  </Step>
+</Steps>
+
+## Add custom behaviors
+
+If the built-in behaviors don't cover your needs, create your own:
+
+1. Click **+ Add custom** below the behavior list
+2. Enter a name and description for the new behavior
+3. OpenBat uses the description to guide AI detection, so be specific about what the behavior looks like in conversation
+
+<Tip>
+  Write descriptions that include examples of what the behavior looks like. Instead of "Bad tone", write "Responses that use condescending language, dismiss the user's concern, or make the user feel unintelligent."
+</Tip>
+
+## Where behavior flags appear
+
+Once enabled, behavior flags appear as clickable tags on assistant messages in the [conversation detail](/features/conversations) view. They also aggregate in the **Behavior alerts** section on the [Assistant Performance](/features/analytics-dashboard) tab of the dashboard.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Analysis config" icon="sliders" href="/features/analysis-config">
+    Full reference for all analysis settings.
+  </Card>
+  <Card title="Customize prompts" icon="pencil" href="/guides/customize-analysis-prompts">
+    Edit the AI prompts that power analysis.
+  </Card>
+</CardGroup>

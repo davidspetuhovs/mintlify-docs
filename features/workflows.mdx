@@ -61,14 +61,34 @@ You can filter templates by:
 
 ### From scratch
 
-Click **+ Create workflow** on the **Workflows** tab. Enter a workflow name, configure trigger conditions, and set up actions.
+<Steps>
+  <Step title="Open the creation form">
+    Click **+ Create workflow** on the **Workflows** tab. An inline form appears with a name field.
 
-<Frame>
-  <img src="/docs/state-screenshots/state-workflows-create-modal.png" alt="Workflow creation form with name field and setup options" />
-</Frame>
+    <Frame>
+      <img src="/docs/state-screenshots/state-workflows-create-modal.png" alt="Workflow creation form with name field and setup options" />
+    </Frame>
+  </Step>
+  <Step title="Name your workflow">
+    Enter a descriptive name (e.g., "Alert on negative sentiment").
+  </Step>
+  <Step title="Configure trigger conditions">
+    Define what triggers the workflow. Available trigger signals include:
+    - Sentiment score below a threshold
+    - Specific user flags detected (e.g., Churn Risk, Frustrated User)
+    - Specific assistant behaviors detected (e.g., Hallucinating, Dodging)
+    - Topic matches or spikes
+  </Step>
+  <Step title="Set up actions">
+    Choose a webhook destination for the alert. You can send to Discord, Slack, or a custom HTTP endpoint.
+  </Step>
+  <Step title="Save and activate">
+    Click **Create** to save the workflow. It begins monitoring conversations immediately.
+  </Step>
+</Steps>
 
 <Note>
-  Workflows require at least one [webhook destination](/integrations/webhooks) configured in your chatbot settings to deliver alerts.
+  Workflows require at least one [webhook destination](/integrations/webhooks) configured in your chatbot settings before you can set up actions.
 </Note>
 
 ## Workflow runs
