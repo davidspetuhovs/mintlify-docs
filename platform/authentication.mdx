@@ -1,0 +1,75 @@
+---
+title: "Authentication"
+description: "Sign up, log in, and reset your password with email or social providers"
+---
+
+OpenBat supports email/password authentication and social sign-in with Apple, Google, and Meta.
+
+## Sign up
+
+Create an account at `/auth/sign-up`:
+
+<Steps>
+  <Step title="Enter your email">
+    Provide a valid email address.
+  </Step>
+  <Step title="Create a password">
+    Enter a password with at least 8 characters.
+  </Step>
+  <Step title="Confirm your password">
+    Re-enter your password to confirm.
+  </Step>
+  <Step title="Click Create Account">
+    Submit the form. You're redirected to the platform to create your first organization.
+  </Step>
+</Steps>
+
+You can also sign up using Apple, Google, or Meta by clicking the corresponding social auth button.
+
+## Log in
+
+Sign in at `/auth/login` with your email and password, or use a social provider.
+
+The login page features a split layout with the form on the left and a decorative image on the right.
+
+### Email login
+
+Enter your email and password, then click **Login**. On success, you're redirected to the dashboard at `/platform`.
+
+### Social login
+
+Click **Login with Apple**, **Login with Google**, or **Login with Meta** to authenticate via OAuth. Complete the provider's flow and you'll be redirected back to the dashboard.
+
+## Reset your password
+
+If you've forgotten your password:
+
+<Steps>
+  <Step title="Go to the login page">
+    Navigate to `/auth/login`.
+  </Step>
+  <Step title="Click Forgot your password">
+    Click the **Forgot your password?** link below the login form.
+  </Step>
+  <Step title="Enter your email">
+    On the password reset page at `/auth/forgot-password`, enter the email address associated with your account.
+  </Step>
+  <Step title="Check your email">
+    Click **Send reset email**. Check your inbox for a link to set a new password.
+  </Step>
+</Steps>
+
+<Note>
+  If you don't see the reset email, check your spam folder. Reset links expire after a set period.
+</Note>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/getting-started/quickstart">
+    Get up and running after signing in.
+  </Card>
+  <Card title="Organizations" icon="building" href="/platform/organizations">
+    Create and manage your organizations.
+  </Card>
+</CardGroup>

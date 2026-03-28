@@ -1,0 +1,129 @@
+---
+title: "Quickstart"
+description: "Sign up and start analyzing your first chatbot conversations in under 5 minutes"
+---
+
+<Tip>
+  Setup takes under 5 minutes. You need an email address and a chatbot that sends conversations via one of the supported SDKs.
+</Tip>
+
+<Steps>
+  <Step title="Create your account">
+    Go to [openbat.dev](https://openbat.dev) and click **Sign Up**. You can create an account with email and password, or sign in with Apple, Google, or Meta.
+
+    Your password must be at least 8 characters long.
+
+    <Frame>
+      <img src="/docs/screenshots/page-3.png" alt="OpenBat sign up page with email and social auth options" />
+    </Frame>
+  </Step>
+
+  <Step title="Create a chatbot">
+    After signing in, you land on the dashboard at `/platform`. Click **+ New chatbot**, enter a name (up to 100 characters), and click **Continue to setup**.
+
+    <Frame>
+      <img src="/docs/state-screenshots/state-platform-new-chatbot-modal.png" alt="Create chatbot modal with name field and character counter" />
+    </Frame>
+  </Step>
+
+  <Step title="Get your API key">
+    Navigate to your chatbot's **Settings** > **API Keys** tab. Copy the API key — you'll need it to authenticate SDK requests.
+
+    <Frame>
+      <img src="/docs/state-screenshots/state-chatbot-settings-api-keys.png" alt="API key management with copy and rotate buttons" />
+    </Frame>
+
+    <Warning>
+      Keep your API key secret. Never commit it to version control or expose it in client-side code.
+    </Warning>
+  </Step>
+
+  <Step title="Send your first conversation">
+    Install the SDK for your language and start sending conversations:
+
+    <CodeGroup>
+    ```typescript Vercel AI SDK
+    import { openBat } from '@openbat/vercel-ai';
+
+    const analytics = openBat({
+      apiKey: process.env.OPENBAT_API_KEY,
+    });
+
+    // Wrap your AI SDK chat handler
+    export const POST = analytics.wrapHandler(async (req) => {
+      // your existing chat handler
+    });
+    ```
+
+    ```typescript TypeScript
+    import { OpenBat } from '@openbat/sdk';
+
+    const client = new OpenBat({
+      apiKey: process.env.OPENBAT_API_KEY,
+    });
+
+    await client.conversations.create({
+      messages: [
+        { role: 'user', content: 'How do I reset my password?' },
+        { role: 'assistant', content: 'Go to Settings > Security...' },
+      ],
+      metadata: {
+        userId: 'user_123',
+        email: 'user@example.com',
+      },
+    });
+    ```
+
+    ```python Python
+    from openbat import OpenBat
+
+    client = OpenBat(api_key=os.environ["OPENBAT_API_KEY"])
+
+    client.conversations.create(
+        messages=[
+            {"role": "user", "content": "How do I reset my password?"},
+            {"role": "assistant", "content": "Go to Settings > Security..."},
+        ],
+        metadata={
+            "user_id": "user_123",
+            "email": "user@example.com",
+        },
+    )
+    ```
+
+    ```bash REST API
+    curl -X POST https://api.openbat.dev/v1/conversations \
+      -H "Authorization: Bearer $OPENBAT_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "messages": [
+          {"role": "user", "content": "How do I reset my password?"},
+          {"role": "assistant", "content": "Go to Settings > Security..."}
+        ],
+        "metadata": {
+          "userId": "user_123",
+          "email": "user@example.com"
+        }
+      }'
+    ```
+    </CodeGroup>
+  </Step>
+
+  <Step title="View your dashboard">
+    Head to your chatbot's dashboard to see conversations flowing in. OpenBat automatically analyzes each message for sentiment, intent, topics, and behavior flags.
+  </Step>
+</Steps>
+
+## What to do next
+
+<CardGroup cols={3}>
+  <Card title="Create your first chatbot" icon="robot" href="/getting-started/create-your-first-chatbot">
+    Detailed chatbot setup and configuration walkthrough.
+  </Card>
+  <Card title="Set up alerts" icon="bell" href="/guides/set-up-sentiment-alerts">
+    Get notified when negative sentiment is detected.
+  </Card>
+  <Card title="Customize analysis" icon="sliders" href="/features/analysis-config">
+    Configure which signals OpenBat detects.
+  </Card>
+</CardGroup>

@@ -1,0 +1,86 @@
+---
+title: "Architecture overview"
+description: "Technical overview of the OpenBat platform including tech stack, URL structure, and authentication model"
+---
+
+This section provides a technical reference for how OpenBat is structured, useful for developers integrating with the platform or understanding its capabilities.
+
+## Tech stack
+
+| Layer | Technology |
+|-------|-----------|
+| **Frontend** | Next.js (App Router), shadcn/ui + Tailwind CSS |
+| **Charts** | Charting library (sentiment trends, donut charts, activity heatmaps) |
+| **Backend** | Next.js Route Handlers / Server Actions |
+| **AI pipeline** | LLM-based analysis (prompt-driven, configurable per chatbot) |
+| **Semantic search** | Vector embeddings + similarity search |
+| **Authentication** | Email/password + social OAuth (Apple, Google, Meta) |
+
+## URL structure
+
+```
+/                                          → Public marketing site
+/auth/*                                    → Authentication (login, sign-up, forgot-password)
+/platform                                  → Organization-scoped chatbot list
+/platform/members                          → Organization members
+/platform/settings                         → Organization settings
+/platform/{chatbotId}                      → Chatbot analytics dashboard
+/platform/{chatbotId}/workflows            → Workflow automation
+/platform/{chatbotId}/conversations        → Conversation browser
+/platform/{chatbotId}/conversations/{id}   → Conversation detail
+/platform/{chatbotId}/deep-search          → Semantic search
+/platform/{chatbotId}/organizations        → Client organizations
+/platform/{chatbotId}/users                → Client users
+/platform/{chatbotId}/analysis-config      → Analysis configuration
+/platform/{chatbotId}/settings             → Chatbot settings
+```
+
+The URL structure reflects a two-level hierarchy: **organization** (at `/platform`) and **chatbot** (at `/platform/{chatbotId}`). All chatbot sub-resources are scoped to the chatbot ID.
+
+## Authentication model
+
+| Level | Scope | Roles | URL |
+|-------|-------|-------|-----|
+| **Organization** | All chatbots in the org | Owner, Admin, Member | `/platform/members` |
+| **Chatbot** | Single chatbot | Member (addable) | `/platform/{chatbotId}/settings` > Members |
+
+Authentication methods:
+- **Email/password** — standard registration and login with password requirements (8+ characters)
+- **Social OAuth** — Apple, Google, and Meta via OAuth redirect flows
+- **Password reset** — self-service via email
+
+The sidebar organization switcher indicates the authenticated session carries organization context, allowing seamless switching between organizations.
+
+## API surface
+
+### External API (SDK to OpenBat)
+
+- Conversation ingestion endpoint (authenticated via API key)
+- Message data with user/assistant roles
+- Custom metadata fields
+- Session context (page URL, referrer, device, country)
+
+### Internal API (frontend to backend)
+
+- CRUD operations for organizations, chatbots, members, workflows, webhooks
+- Analytics queries for dashboard KPIs, sentiment trends, resolution outcomes
+- Search: keyword filtering and semantic deep search
+- Configuration: analysis flags, prompts, translation settings
+- Data import and export
+
+### Outbound integrations
+
+- Webhook delivery to Discord, Slack, and custom HTTP endpoints
+- Social OAuth provider communication
+- AI/LLM provider calls for the analysis pipeline
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Data model" icon="database" href="/architecture/data-model">
+    Entity relationships and multi-tenancy design.
+  </Card>
+  <Card title="Analysis pipeline" icon="microchip" href="/architecture/analysis-pipeline">
+    How conversations are analyzed end-to-end.
+  </Card>
+</CardGroup>

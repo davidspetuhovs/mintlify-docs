@@ -1,0 +1,79 @@
+---
+title: "Client management"
+description: "Track organizations and individual users who interact with your chatbot, with revenue and sentiment metrics"
+---
+
+OpenBat tracks two types of clients — the organizations and individual users who interact with your chatbot. This data is sent via your SDK as conversation metadata and aggregated in dedicated tables.
+
+<Note>
+  **Platform organizations** (your team on OpenBat) and **client organizations** (your customers interacting with the chatbot) are separate concepts. This page covers client organizations and users.
+</Note>
+
+## Organizations
+
+The organizations page at `/platform/{chatbotId}/organizations` lists every customer organization that has interacted with your chatbot.
+
+<Frame>
+  <img src="/docs/screenshots/page-13.png" alt="Client organizations table with plan, industry, MRR, sentiment, and activity data" />
+</Frame>
+
+### Table columns
+
+| Column | Description |
+|--------|-------------|
+| **Organization** | Customer organization name |
+| **Plan** | Subscription tier |
+| **Industry** | Organization's industry |
+| **MRR** | Monthly recurring revenue |
+| **Conversations** | Total conversation count |
+| **Users** | Number of individual users |
+| **Sentiment** | Average sentiment score |
+| **Last activity** | Most recent conversation timestamp |
+
+### Filtering and sorting
+
+- **Search** — filter by keyword using the search box
+- **Filter** — advanced filter popover for multi-field filtering
+- **Sort** — click any column header to sort ascending or descending
+- **View** — toggle column visibility
+- **Date range** — filter by time period (defaults to This month)
+
+<Tip>
+  Sort by **Sentiment** ascending to find your unhappiest customer organizations. Sort by **MRR** descending to prioritize high-value accounts.
+</Tip>
+
+## Users
+
+The users page at `/platform/{chatbotId}/users` lists individual users who have interacted with your chatbot.
+
+### Table columns
+
+| Column | Description |
+|--------|-------------|
+| **User** | User's display name |
+| **Email** | Email address |
+| **Organization** | Organization the user belongs to |
+| **Plan** | Subscription tier |
+| **MRR** | Monthly recurring revenue |
+| **Conversations** | Total conversation count |
+| **Sentiment** | Average sentiment score |
+| **Last activity** | Most recent conversation timestamp |
+
+The users table supports the same search, filter, sort, column visibility, and date range controls as the organizations table.
+
+## Data requirements
+
+Client organization and user data comes from the metadata you send with each conversation via the SDK. If conversations don't include metadata fields like `organization`, `email`, `plan`, or `mrr`, these tables will show limited data.
+
+See [Install the SDK](/getting-started/install-the-sdk) for details on sending metadata with conversations.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Investigate users" icon="user-magnifying-glass" href="/guides/investigate-dissatisfied-users">
+    Drill into dissatisfied users and review their conversations.
+  </Card>
+  <Card title="Conversations" icon="messages" href="/features/conversations">
+    Browse and filter individual conversation threads.
+  </Card>
+</CardGroup>

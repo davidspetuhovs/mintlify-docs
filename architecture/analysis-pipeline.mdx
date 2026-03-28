@@ -1,0 +1,88 @@
+---
+title: "Analysis pipeline"
+description: "How OpenBat processes conversations through AI-powered sentiment scoring, intent classification, and flag detection"
+---
+
+OpenBat's analysis pipeline runs AI-powered analysis on every conversation message. This page describes how the pipeline works end-to-end.
+
+## Pipeline stages
+
+```
+Ingestion → Translation (optional) → Analysis → Storage → Surfacing
+```
+
+### 1. Ingestion
+
+Conversations arrive via the SDK or REST API, authenticated by API key. Each conversation contains messages, metadata, and session context.
+
+### 2. Translation (optional)
+
+If auto-translation is enabled in [Analysis Config](/features/analysis-config), messages in non-primary languages are translated before analysis. The original text is preserved alongside the translation.
+
+### 3. Analysis
+
+Each message is processed through four configurable AI prompts:
+
+| Prompt | Output |
+|--------|--------|
+| **Sentiment** | Numeric score and label per message |
+| **Intent** | Classified user intent (e.g., "asking about pricing") |
+| **Topics** | Extracted topics (e.g., "billing", "integration") |
+| **Flags** | Detected user signals (churn risk, buying signal, etc.) |
+
+In addition, assistant messages are analyzed for behavior classifications:
+- Helpful, Yes-Man, Dodging, Over-Apologizing, Hallucinating, Redirecting, Verbose, Robotic
+
+And conversations are assessed for resolution status:
+- Fully Resolved, Partially Resolved, Unresolved
+
+### 4. Storage
+
+Analysis results are stored as annotations linked to individual messages and aggregated at the conversation level. The **Analyzed Today** KPI on the dashboard reflects the daily throughput of this stage.
+
+### 5. Surfacing
+
+Annotations surface across the platform:
+
+| Where | What appears |
+|-------|-------------|
+| **Dashboard KPIs** | Average sentiment, analyzed count |
+| **User Insights** | Sentiment trends, top frustrations, revenue signals |
+| **Assistant Performance** | Behavior alerts, resolution outcomes, quality flags |
+| **Conversation detail** | Per-message clickable annotations |
+| **Conversations table** | Sentiment column with color-coded badges |
+| **Workflow triggers** | Conditions evaluated against analysis results |
+
+## Configurable prompts
+
+Each chatbot has its own set of analysis prompts, editable from [Analysis Config](/features/analysis-config) > **Prompts** tab. This means different chatbots can be tuned for different domains — a customer support bot and a sales bot can have different sentiment calibrations.
+
+Unmodified prompts use system defaults. See [Customize analysis prompts](/guides/customize-analysis-prompts) for a guide on editing them.
+
+## Semantic search infrastructure
+
+The [Deep Search](/features/deep-search) feature relies on a separate vector embedding pipeline:
+
+1. Conversation content is embedded into vector representations
+2. Vectors are stored in a vector database
+3. Search queries are embedded and compared using cosine similarity
+4. Results are ranked by semantic relevance
+
+This runs independently from the annotation pipeline and powers meaning-based search.
+
+## Workflow trigger evaluation
+
+After analysis completes, OpenBat evaluates active [workflows](/features/workflows) against the new annotations. If a workflow's conditions match (e.g., sentiment below threshold, hallucination detected), the workflow triggers and executes its configured action (webhook delivery).
+
+Workflow execution results are logged as runs with status tracking (Pending, Triggered, Success, Failed, Skipped).
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Analysis configuration" icon="sliders" href="/features/analysis-config">
+    Configure the analysis pipeline for your chatbot.
+  </Card>
+  <Card title="Data model" icon="database" href="/architecture/data-model">
+    Entity relationships and data structures.
+  </Card>
+</CardGroup>

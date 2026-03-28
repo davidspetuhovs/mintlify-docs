@@ -1,0 +1,113 @@
+---
+title: "Conversations"
+description: "Browse, filter, and analyze individual chatbot conversations with message-level AI annotations"
+---
+
+The conversations page at `/platform/{chatbotId}/conversations` provides a browsable, filterable table of every conversation your chatbot has had. Click into any conversation to see the full message thread with AI analysis annotations.
+
+## Conversation list
+
+The table displays the following columns:
+
+| Column | Description |
+|--------|-------------|
+| **User** | Name of the end user |
+| **Email** | User's email address |
+| **Organization** | User's organization |
+| **Messages** | Message count in the conversation |
+| **Sentiment** | Average sentiment with color-coded badge |
+| **Plan** | User's subscription plan |
+| **Last message** | Timestamp of the most recent message |
+| **Created** | When the conversation started |
+
+### Search and filter
+
+Use the search box to filter conversations by keyword. For advanced filtering, click the **Filter** button to open the filter popover:
+
+<Frame>
+  <img src="/docs/state-screenshots/state-conversations-filter.png" alt="Filter popover with fields for User Industry, Org Plan, Device, Language, and more" />
+</Frame>
+
+Available filter fields include:
+- User Industry
+- Org Plan
+- Device
+- Language
+- Template name
+- Messages (count range)
+- Sentiment average (score range)
+- User MRR
+- Org MRR
+
+### Column visibility
+
+Click the **View** button to show or hide columns. There are 11 toggleable columns.
+
+<Frame>
+  <img src="/docs/state-screenshots/state-conversations-view.png" alt="Column visibility toggle showing 11 toggleable columns" />
+</Frame>
+
+### Date range and pagination
+
+Use the date range button to filter conversations by time period (defaults to **This month**). Pagination controls at the bottom let you set rows per page (10, 20, 50, or 100) and navigate between pages.
+
+<Frame>
+  <img src="/docs/state-screenshots/state-conversations-pagination.png" alt="Pagination controls with rows per page selector" />
+</Frame>
+
+## Conversation detail
+
+Click on any conversation row to open the full thread at `/platform/{chatbotId}/conversations/{conversationId}`.
+
+### Message thread
+
+Each message shows the sender (user or assistant) and the message text. AI analysis annotations are displayed as clickable highlights and tags:
+
+- **Sentiment tags** — color-coded sentiment scores (e.g., "Very Negative", "Positive")
+- **Behavior flags** — detected user behaviors (e.g., "Frustrated User", "Buying Signal")
+- **Quality flags** — assistant quality issues (e.g., "premature closure", "hallucination")
+- **Resolution status** — how the conversation was resolved (e.g., "Fully Resolved")
+
+Click on any annotation to see the AI's reasoning and detailed analysis:
+
+<Frame>
+  <img src="/docs/state-screenshots/state-conversation-detail-annotation.png" alt="Sentiment annotation detail panel showing score, reasoning, and message preview" />
+</Frame>
+
+### Sidebar metadata
+
+The right sidebar shows contextual information about the conversation:
+
+<Accordion title="Overall sentiment">
+  Aggregate sentiment score and distribution across all messages in the conversation.
+</Accordion>
+
+<Accordion title="Conversation metadata">
+  Message count, conversation ID, start and end timestamps.
+</Accordion>
+
+<Accordion title="User info">
+  Name, email, user ID, subscription plan, industry, and MRR (monthly recurring revenue).
+</Accordion>
+
+<Accordion title="Organization info">
+  Organization name, org ID, plan, industry, and MRR.
+</Accordion>
+
+<Accordion title="Session info">
+  Session ID, page URL, referrer, device type, and country.
+</Accordion>
+
+## Next steps
+
+<CardGroup cols={3}>
+  <Card title="Deep search" icon="magnifying-glass" href="/features/deep-search">
+    Find conversations by meaning instead of keywords.
+  </Card>
+  <Card title="Analysis config" icon="sliders" href="/features/analysis-config">
+    Customize which annotations OpenBat generates.
+  </Card>
+  <Card title="Client management" icon="building" href="/features/client-management">
+    Track organizations and users across conversations.
+  </Card>
+</CardGroup>

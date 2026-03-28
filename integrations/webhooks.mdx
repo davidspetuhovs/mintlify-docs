@@ -1,0 +1,66 @@
+---
+title: "Webhooks"
+description: "Send workflow alerts to Discord, Slack, or custom HTTP endpoints"
+---
+
+Webhooks deliver workflow alerts to external services when OpenBat detects specific conversation patterns. Configure webhook destinations at `/platform/{chatbotId}/settings` > **Webhooks**.
+
+<Frame>
+  <img src="/docs/state-screenshots/state-chatbot-settings-webhooks.png" alt="Webhooks tab showing options for Discord, Slack, and custom endpoints" />
+</Frame>
+
+## Supported destinations
+
+| Type | Description |
+|------|-------------|
+| **Discord** | Sends formatted messages to a Discord channel via webhook URL |
+| **Slack** | Sends formatted messages to a Slack channel via incoming webhook |
+| **Custom** | Posts JSON payloads to any HTTP endpoint |
+
+## Set up a webhook
+
+<Steps>
+  <Step title="Navigate to webhooks">
+    Go to your chatbot's **Settings** > **Webhooks** tab.
+  </Step>
+  <Step title="Click Add webhook">
+    Click the **+ Add webhook** button.
+  </Step>
+  <Step title="Configure the destination">
+    Enter the webhook URL and select the type (Discord, Slack, or Custom).
+
+    <Tabs>
+      <Tab title="Discord">
+        1. In Discord, go to **Server Settings** > **Integrations** > **Webhooks**
+        2. Click **New Webhook**, choose a channel, and copy the URL
+        3. Paste the webhook URL in OpenBat
+      </Tab>
+      <Tab title="Slack">
+        1. In Slack, go to your workspace's **App Management** > **Incoming Webhooks**
+        2. Add a new webhook to the desired channel and copy the URL
+        3. Paste the webhook URL in OpenBat
+      </Tab>
+      <Tab title="Custom">
+        Enter any HTTPS endpoint URL. OpenBat sends a JSON POST request with the alert payload.
+      </Tab>
+    </Tabs>
+  </Step>
+  <Step title="Save">
+    Save the webhook destination. It's now available as an action target when creating [workflows](/features/workflows).
+  </Step>
+</Steps>
+
+<Note>
+  You can configure multiple webhook destinations per chatbot. Each workflow can target a different destination.
+</Note>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Workflows" icon="bolt" href="/features/workflows">
+    Create automated alerts using your webhook destinations.
+  </Card>
+  <Card title="Set up alerts" icon="bell" href="/guides/set-up-sentiment-alerts">
+    Step-by-step guide to your first sentiment alert.
+  </Card>
+</CardGroup>

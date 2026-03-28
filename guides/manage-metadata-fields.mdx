@@ -1,0 +1,73 @@
+---
+title: "Manage metadata fields"
+description: "Track custom metadata sent from your SDK to use as filters in the conversations table"
+---
+
+When your SDK sends custom metadata with conversations, OpenBat auto-discovers those fields. You can then choose to track them, making them available as filters in the conversations table.
+
+## How metadata discovery works
+
+1. Your SDK sends conversations with metadata (e.g., `plan`, `industry`, `mrr`)
+2. OpenBat detects new metadata keys it hasn't seen before
+3. New keys appear in the **Discovered fields** table on the Metadata tab
+4. You choose to **Track**, **Accept**, or **Deny** each field
+
+## Track metadata fields
+
+<Steps>
+  <Step title="Send metadata from your SDK">
+    Include metadata in your conversation payloads. See [Install the SDK](/getting-started/install-the-sdk) for examples.
+
+    ```typescript
+    await client.conversations.create({
+      messages: [...],
+      metadata: {
+        userId: 'user_123',
+        email: 'user@example.com',
+        plan: 'enterprise',
+        mrr: 499,
+        industry: 'Developer Tools',
+      },
+    });
+    ```
+  </Step>
+  <Step title="Navigate to the metadata tab">
+    Go to `/platform/{chatbotId}/analysis-config` and stay on the **Metadata** tab.
+  </Step>
+  <Step title="Review discovered fields">
+    New fields appear in the **Discovered fields** table. Common auto-discovered fields include:
+
+    | Field | Source |
+    |-------|--------|
+    | browser | SDK session context |
+    | device | SDK session context |
+    | ip | Request metadata |
+    | language | Browser language |
+    | os | Operating system |
+    | referer | Referring URL |
+    | userAgent | Browser user agent |
+  </Step>
+  <Step title="Track or deny each field">
+    For each discovered field:
+    - Click **+ Track** to add it to managed fields (makes it available as a conversation filter)
+    - Click **Accept** to acknowledge without tracking
+    - Click **Deny** to reject the field
+
+    Tracked fields move from **Discovered fields** to **Managed fields** and become available as filter columns in the [conversations table](/features/conversations).
+  </Step>
+</Steps>
+
+<Tip>
+  Track fields you actively want to filter and segment by. Deny fields you don't need to keep the interface clean and focused.
+</Tip>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Analysis configuration" icon="sliders" href="/features/analysis-config">
+    Explore all configuration options.
+  </Card>
+  <Card title="Conversations" icon="messages" href="/features/conversations">
+    Filter conversations using your tracked metadata fields.
+  </Card>
+</CardGroup>

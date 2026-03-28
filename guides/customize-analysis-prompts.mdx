@@ -1,0 +1,67 @@
+---
+title: "Customize analysis prompts"
+description: "Edit the AI prompts that control how OpenBat scores sentiment, classifies intent, and detects flags"
+---
+
+OpenBat uses AI prompts to power its analysis pipeline. You can customize these prompts to better fit your product's domain and terminology.
+
+## Available prompts
+
+| Prompt | What it controls |
+|--------|-----------------|
+| **Sentiment** | How sentiment scores are calculated from message text |
+| **Intent** | How user intents are classified (e.g., "asking about pricing", "requesting support") |
+| **Topics** | How topics are extracted from conversations |
+| **Flags** | How user flags are detected (e.g., churn risk, buying signal) |
+
+## Edit a prompt
+
+<Steps>
+  <Step title="Navigate to analysis config">
+    Go to `/platform/{chatbotId}/analysis-config` and click the **Prompts** tab.
+
+    <Frame>
+      <img src="/docs/state-screenshots/state-analysis-config-prompts.png" alt="Prompts tab showing four editable prompt cards with Default labels" />
+    </Frame>
+  </Step>
+  <Step title="Select a prompt">
+    Click on the prompt card you want to modify (Sentiment, Intent, Topics, or Flags). Unmodified prompts display a **Default** label.
+  </Step>
+  <Step title="Edit the prompt text">
+    Modify the prompt to better fit your domain. For example, you might adjust the sentiment prompt to weight certain phrases differently for your industry.
+  </Step>
+  <Step title="Save changes">
+    Save the updated prompt. Future analyses use the customized prompt. The **Default** label is removed once you make changes.
+  </Step>
+</Steps>
+
+<Note>
+  You can revert to the system default prompt at any time from the editor.
+</Note>
+
+## Prompt writing tips
+
+<Tip>
+  Write clear, specific instructions. The more context you provide about your product and users, the more accurate the analysis will be.
+</Tip>
+
+- **Be specific about your domain** — mention your product name, industry terminology, and common user scenarios
+- **Define what matters** — if certain topics are more important for your business, call them out explicitly
+- **Include examples** — provide sample messages and the expected classification to guide the AI
+- **Test incrementally** — make small changes and review the results before making major rewrites
+- **Keep it concise** — overly long prompts can confuse the model rather than helping it
+
+<Warning>
+  Poorly written prompts can degrade analysis quality. Test changes against a sample of conversations before relying on modified prompts in production. If results become unreliable, revert to the system default.
+</Warning>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Analysis configuration" icon="sliders" href="/features/analysis-config">
+    Explore all configuration options including flags and behaviors.
+  </Card>
+  <Card title="Analytics dashboard" icon="chart-line" href="/features/analytics-dashboard">
+    See how your prompt changes affect analysis results.
+  </Card>
+</CardGroup>

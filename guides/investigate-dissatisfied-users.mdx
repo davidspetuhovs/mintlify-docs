@@ -1,0 +1,73 @@
+---
+title: "Investigate dissatisfied users"
+description: "Identify unhappy users from the analytics dashboard and drill into their conversations to understand what went wrong"
+---
+
+When your chatbot's analytics show dissatisfied users, you can drill into their specific conversations to understand the root cause and take action.
+
+## Find dissatisfied users
+
+<Steps>
+  <Step title="Open the chatbot dashboard">
+    Navigate to `/platform/{chatbotId}` and make sure you're on the **User Insights** tab.
+  </Step>
+  <Step title="Scroll to Most dissatisfied users">
+    In the User Insights tab, find the **Most dissatisfied users** section. This table shows users with the lowest average sentiment scores, along with their email, organization, and conversation count.
+  </Step>
+  <Step title="Click Investigate">
+    Click **Investigate →** next to the user you want to examine. This takes you to the [conversations page](/features/conversations) filtered to show only that user's conversations.
+  </Step>
+  <Step title="Open a conversation">
+    Click on a conversation row to open the full message thread with AI analysis annotations.
+  </Step>
+  <Step title="Review analysis annotations">
+    Look at the highlighted annotations on each message:
+
+    - **Sentiment tags** — shows how negative each message scored
+    - **Behavior flags** — indicates signals like "Frustrated User" or "Churn Risk"
+    - **Quality flags** — highlights assistant issues like "premature closure" or "hallucination"
+    - **Resolution status** — shows whether the conversation was resolved
+
+    Click any annotation to see the AI's detailed reasoning.
+
+    <Frame>
+      <img src="/docs/state-screenshots/state-conversation-detail-annotation.png" alt="Sentiment annotation detail showing score, reasoning, and message preview" />
+    </Frame>
+  </Step>
+  <Step title="Check the sidebar metadata">
+    The right sidebar provides additional context:
+
+    - **Overall sentiment** — aggregate score for the entire conversation
+    - **User info** — name, email, plan, industry, MRR
+    - **Organization info** — org name, plan, MRR
+    - **Session info** — device, country, referrer URL
+  </Step>
+</Steps>
+
+## What to look for
+
+| Signal | What it means | Action |
+|--------|--------------|--------|
+| Multiple "Very Negative" tags | Sustained negative experience | Review assistant responses for quality issues |
+| "Frustrated User" flag | User expressed frustration explicitly | Check if the assistant addressed their concern |
+| "Hallucinating" quality flag | Assistant provided incorrect information | Update your knowledge base or analysis prompts |
+| "Premature closure" flag | Conversation ended without resolution | Review resolution workflow |
+| High MRR + negative sentiment | High-value customer at risk | Prioritize personal outreach |
+
+<Tip>
+  Combine this investigation with [workflow alerts](/features/workflows) to get notified automatically when dissatisfied users are detected, rather than checking manually.
+</Tip>
+
+## Next steps
+
+<CardGroup cols={3}>
+  <Card title="Analytics dashboard" icon="chart-line" href="/features/analytics-dashboard">
+    Monitor trends across all users.
+  </Card>
+  <Card title="Set up alerts" icon="bell" href="/guides/set-up-sentiment-alerts">
+    Get notified automatically about negative sentiment.
+  </Card>
+  <Card title="Customize analysis" icon="sliders" href="/features/analysis-config">
+    Adjust which signals OpenBat detects.
+  </Card>
+</CardGroup>

@@ -1,0 +1,78 @@
+---
+title: "Create your first chatbot"
+description: "Add a chatbot to your organization and configure it to receive conversation data"
+---
+
+A chatbot in OpenBat represents a single AI assistant you want to analyze. Each chatbot gets its own API key, analytics dashboard, conversation history, and configuration.
+
+## Create the chatbot
+
+<Steps>
+  <Step title="Open the dashboard">
+    Navigate to [openbat.dev/platform](https://openbat.dev/platform). You'll see all chatbots in your current organization displayed as cards.
+
+    <Frame>
+      <img src="/docs/screenshots/page-5.png" alt="Dashboard showing chatbot cards with names, activity, and conversation counts" />
+    </Frame>
+  </Step>
+
+  <Step title="Click New chatbot">
+    Click the **+ New chatbot** button in the top right. A modal opens with a name field.
+
+    <Frame>
+      <img src="/docs/state-screenshots/state-platform-new-chatbot-modal.png" alt="Create chatbot modal with name field and 100-character limit" />
+    </Frame>
+
+    Enter a descriptive name (up to 100 characters) and click **Continue to setup**.
+  </Step>
+
+  <Step title="Get your API key">
+    After creation, navigate to **Settings** > **API Keys**. Your API key is shown masked — click the copy button to copy it.
+
+    <Frame>
+      <img src="/docs/state-screenshots/state-chatbot-settings-api-keys.png" alt="API key tab showing masked key with copy and rotate buttons" />
+    </Frame>
+
+    <Warning>
+      If you rotate your API key, the old key is immediately invalidated. All existing SDK integrations will stop working until you update them with the new key.
+    </Warning>
+  </Step>
+
+  <Step title="Configure webhooks (optional)">
+    If you want workflow alerts sent to Slack, Discord, or a custom endpoint, set up webhooks now under **Settings** > **Webhooks**.
+
+    <Frame>
+      <img src="/docs/state-screenshots/state-chatbot-settings-webhooks.png" alt="Webhooks tab with options for Discord, Slack, and custom endpoints" />
+    </Frame>
+  </Step>
+
+  <Step title="Install the SDK">
+    Connect your AI chatbot to OpenBat using one of the four supported integration methods. See [Install the SDK](/getting-started/install-the-sdk) for detailed instructions.
+  </Step>
+</Steps>
+
+## Chatbot statuses
+
+<Note>
+  Chatbots have three statuses, visible as tabs on the dashboard:
+
+  - **Active** — receiving and analyzing conversations
+  - **Pending** — created but not yet receiving data
+  - **Archive** — no longer active, data preserved
+</Note>
+
+You can switch between card view and list view using the toggle buttons on the dashboard. The context menu on each chatbot card (click **...**) lets you open, archive, or delete a chatbot.
+
+## Next steps
+
+<CardGroup cols={3}>
+  <Card title="Install the SDK" icon="plug" href="/getting-started/install-the-sdk">
+    Connect your chatbot and start sending conversations.
+  </Card>
+  <Card title="API keys" icon="key" href="/integrations/api-keys">
+    Manage, copy, and rotate your API keys.
+  </Card>
+  <Card title="Analytics dashboard" icon="chart-line" href="/features/analytics-dashboard">
+    Explore your chatbot's performance data.
+  </Card>
+</CardGroup>

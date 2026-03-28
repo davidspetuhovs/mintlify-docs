@@ -1,0 +1,56 @@
+---
+title: "Deep search"
+description: "Find conversations by meaning using semantic search instead of keyword matching"
+---
+
+Deep search at `/platform/{chatbotId}/deep-search` lets you find conversations using natural language queries that match by meaning rather than exact keywords. This is useful for discovering patterns and themes that traditional keyword search would miss.
+
+<Frame>
+  <img src="/docs/screenshots/page-12.png" alt="Deep search interface with semantic search input and date range selector" />
+</Frame>
+
+## How it works
+
+Deep search uses vector embeddings to understand the semantic meaning of your query and match it against conversation content. Instead of looking for exact word matches, it finds conversations that are conceptually related to your search.
+
+## Using deep search
+
+<Steps>
+  <Step title="Navigate to deep search">
+    Go to **Deep Search** in the chatbot sidebar navigation.
+  </Step>
+  <Step title="Set a date range (optional)">
+    Click the date range button to narrow results to a specific time period. Defaults to **This month**.
+  </Step>
+  <Step title="Enter a natural language query">
+    Type a description of what you're looking for in the search box. Be descriptive — semantic search works best with natural language.
+  </Step>
+  <Step title="Review results">
+    Click **Deep Search** to run the query. Results are ranked by semantic relevance to your query.
+  </Step>
+</Steps>
+
+## Example queries
+
+| Query | What it finds |
+|-------|--------------|
+| "users asking about pricing" | Conversations where users discuss costs, plans, or billing |
+| "billing issues" | Conversations about payment problems, invoice questions, refunds |
+| "frustrated about wait times" | Conversations expressing dissatisfaction with response speed |
+| "wants to integrate with Slack" | Conversations mentioning Slack integration needs |
+| "confused about setup" | Conversations where users struggle with onboarding |
+
+<Tip>
+  Use deep search when you're exploring thematic patterns. Use the regular [conversation filters](/features/conversations) when you know specific attributes you want to filter by (user, organization, sentiment score, plan).
+</Tip>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Conversations" icon="messages" href="/features/conversations">
+    Browse and filter conversations with column-based filters.
+  </Card>
+  <Card title="Analytics dashboard" icon="chart-line" href="/features/analytics-dashboard">
+    See aggregated trends across all conversations.
+  </Card>
+</CardGroup>

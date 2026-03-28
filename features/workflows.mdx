@@ -1,0 +1,104 @@
+---
+title: "Workflows"
+description: "Automate alerts and actions based on conversation analysis patterns like negative sentiment or hallucination detection"
+---
+
+Workflows at `/platform/{chatbotId}/workflows` let you automate responses to conversation analysis patterns. When OpenBat detects specific signals — like negative sentiment, hallucination, or churn risk — a workflow can trigger an alert to Slack, Discord, or a custom webhook.
+
+The page has three tabs: **Workflows**, **Runs**, and **Templates**.
+
+## Templates
+
+The **Templates** tab provides six pre-built workflows you can use as starting points:
+
+<Frame>
+  <img src="/docs/state-screenshots/state-workflows-templates-tab.png" alt="Six workflow templates organized by category with source and category filters" />
+</Frame>
+
+<CardGroup cols={2}>
+  <Card title="Negative Sentiment Alert" icon="face-frown">
+    Triggers when conversation sentiment drops below a threshold. Category: Alerting.
+  </Card>
+  <Card title="Escalation on Frustration" icon="arrow-up-right-from-square">
+    Escalates when a user is flagged as frustrated. Category: Escalation.
+  </Card>
+  <Card title="Topic Spike Monitor" icon="chart-line-up">
+    Alerts when a specific topic sees unusual activity. Category: Reporting.
+  </Card>
+  <Card title="Chatbot Quality Gate" icon="shield-check">
+    Flags conversations where assistant quality drops. Category: Moderation.
+  </Card>
+  <Card title="Hallucination Flag" icon="triangle-exclamation">
+    Detects and alerts on assistant hallucination. Category: Moderation.
+  </Card>
+  <Card title="Positive Feedback Tracker" icon="thumbs-up">
+    Tracks positive user feedback for reporting. Category: General.
+  </Card>
+</CardGroup>
+
+You can filter templates by:
+- **Source**: All, Public, Your Org
+- **Category**: All, Alerting, Escalation, Reporting, Moderation, General
+
+## Create a workflow
+
+### From a template
+
+<Steps>
+  <Step title="Go to the Templates tab">
+    Navigate to **Workflows** > **Templates**.
+  </Step>
+  <Step title="Select a template">
+    Click on a template card to use it as a starting point.
+  </Step>
+  <Step title="Configure conditions and actions">
+    Adjust the trigger conditions and action destinations (webhook endpoints) for your use case.
+  </Step>
+  <Step title="Save and activate">
+    Save the workflow. It begins monitoring conversations immediately.
+  </Step>
+</Steps>
+
+### From scratch
+
+Click **+ Create workflow** on the **Workflows** tab. Enter a workflow name, configure trigger conditions, and set up actions.
+
+<Frame>
+  <img src="/docs/state-screenshots/state-workflows-create-modal.png" alt="Workflow creation form with name field and setup options" />
+</Frame>
+
+<Note>
+  Workflows require at least one [webhook destination](/integrations/webhooks) configured in your chatbot settings to deliver alerts.
+</Note>
+
+## Workflow runs
+
+The **Runs** tab shows the execution history of all workflows. Each run has a status:
+
+<Frame>
+  <img src="/docs/state-screenshots/state-workflows-runs-tab.png" alt="Workflow runs tab with status filters" />
+</Frame>
+
+| Status | Description |
+|--------|-------------|
+| **Pending** | Workflow triggered, awaiting execution |
+| **Triggered** | Actively executing |
+| **Success** | Completed and alert delivered |
+| **Failed** | Execution failed (check webhook configuration) |
+| **Skipped** | Conditions not met, no action taken |
+
+Use the status filter buttons to view runs by status: All, Pending, Triggered, Skipped, Success, or Failed.
+
+## Next steps
+
+<CardGroup cols={3}>
+  <Card title="Set up alerts" icon="bell" href="/guides/set-up-sentiment-alerts">
+    Step-by-step guide to creating your first alert.
+  </Card>
+  <Card title="Webhooks" icon="webhook" href="/integrations/webhooks">
+    Configure Discord, Slack, or custom endpoints.
+  </Card>
+  <Card title="Analysis config" icon="sliders" href="/features/analysis-config">
+    Control which signals trigger workflows.
+  </Card>
+</CardGroup>

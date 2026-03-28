@@ -1,0 +1,70 @@
+---
+title: "Members and roles"
+description: "Invite team members and assign roles at the organization and chatbot level"
+---
+
+OpenBat has two levels of member management: **organization-level** (applies to all chatbots) and **chatbot-level** (access to a specific chatbot).
+
+## Organization members
+
+Manage organization members at `/platform/members`. The table shows each member's email, role, and join date.
+
+### Invite a member
+
+<Steps>
+  <Step title="Click Invite member">
+    Click the **+ Invite member** button on the members page.
+
+    <Frame>
+      <img src="/docs/state-screenshots/state-platform-members-invite.png" alt="Invite member modal with email field and role dropdown" />
+    </Frame>
+  </Step>
+  <Step title="Enter their email">
+    Type the new member's email address.
+  </Step>
+  <Step title="Select a role">
+    Choose a role from the dropdown:
+
+    <Frame>
+      <img src="/docs/state-screenshots/state-platform-members-role-dropdown.png" alt="Role dropdown showing Admin and Member options" />
+    </Frame>
+  </Step>
+  <Step title="Send the invitation">
+    Click **Invite**. The member receives an email invitation and appears in the table once they accept.
+  </Step>
+</Steps>
+
+### Roles
+
+<Accordion title="Owner">
+  Full access to all chatbots and settings. Can rename and delete the organization, manage members, and perform all admin actions. Assigned to the organization creator.
+</Accordion>
+
+<Accordion title="Admin">
+  Can manage chatbots and invite new members. Has access to all chatbot dashboards, settings, and configurations within the organization.
+</Accordion>
+
+<Accordion title="Member">
+  Read-only access. Can view dashboards, conversations, and analytics but cannot modify settings or invite members.
+</Accordion>
+
+## Chatbot members
+
+Individual chatbots can have their own member list, managed from `/platform/{chatbotId}/settings` > **Members** tab.
+
+<Frame>
+  <img src="/docs/state-screenshots/state-chatbot-settings-members.png" alt="Chatbot members tab showing member table and Add member button" />
+</Frame>
+
+Click **+ Add member** to give a specific user access to this chatbot. Chatbot-level access is useful when you want to grant someone access to a single chatbot without adding them to the entire organization.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Organizations" icon="building" href="/platform/organizations">
+    Create and manage your organizations.
+  </Card>
+  <Card title="Chatbot settings" icon="gear" href="/platform/chatbot-settings">
+    Configure individual chatbot options.
+  </Card>
+</CardGroup>

@@ -1,0 +1,65 @@
+---
+title: "Organizations"
+description: "Create, switch, rename, and delete organizations that group your chatbots and team members"
+---
+
+Organizations are the top-level container in OpenBat. Each organization has its own set of chatbots, members, and settings. You can belong to multiple organizations and switch between them.
+
+## Switch organizations
+
+Click the **organization switcher** at the top of the sidebar to switch between organizations or create a new one.
+
+<Frame>
+  <img src="/docs/state-screenshots/state-platform-org-switcher.png" alt="Organization switcher dropdown showing current org and Create organization option" />
+</Frame>
+
+The switcher displays your current organization and lists all organizations you belong to. Select a different org to switch context — the dashboard updates to show that organization's chatbots.
+
+## Create an organization
+
+Click **+ Create organization** in the organization switcher dropdown. Enter a name and confirm. You're switched to the new organization immediately.
+
+## Rename an organization
+
+<Steps>
+  <Step title="Navigate to settings">
+    Go to **Settings** in the sidebar (at `/platform/settings`).
+  </Step>
+  <Step title="Edit the name">
+    Change the **Organization name** field.
+  </Step>
+  <Step title="Save">
+    Click **Save**. The name updates across the platform, including the sidebar switcher.
+  </Step>
+</Steps>
+
+## Delete an organization
+
+<Warning>
+  Deleting an organization permanently removes all its data — chatbots, conversations, analysis results, workflows, and member associations. This action cannot be undone.
+</Warning>
+
+<Steps>
+  <Step title="Navigate to settings">
+    Go to **Settings** at `/platform/settings`.
+  </Step>
+  <Step title="Scroll to the danger zone">
+    Find the **Danger zone** section at the bottom of the page.
+  </Step>
+  <Step title="Click Delete organization">
+    Click the **Delete organization** button and confirm in the dialog.
+  </Step>
+</Steps>
+
+Only organization **Owners** can rename or delete an organization.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Members and roles" icon="users" href="/platform/members-and-roles">
+    Invite team members and manage access.
+  </Card>
+  <Card title="Create a chatbot" icon="robot" href="/getting-started/create-your-first-chatbot">
+    Add your first chatbot to the organization.
+  </Card>
+</CardGroup>

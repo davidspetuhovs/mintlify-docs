@@ -1,0 +1,157 @@
+---
+title: "Install the SDK"
+description: "Connect your AI chatbot to OpenBat using the Vercel AI SDK, TypeScript, Python, or REST API"
+---
+
+OpenBat supports four integration methods. Choose the one that fits your stack.
+
+<Warning>
+  Never expose your API key in client-side code. Always use environment variables and keep your key on the server.
+</Warning>
+
+## Installation
+
+<Tabs>
+  <Tab title="Vercel AI SDK">
+    The Vercel AI SDK integration wraps your existing chat handler to automatically capture conversations.
+
+    ```bash
+    npm install @openbat/vercel-ai
+    ```
+
+    ```typescript app/api/chat/route.ts
+    import { openBat } from '@openbat/vercel-ai';
+
+    const analytics = openBat({
+      apiKey: process.env.OPENBAT_API_KEY,
+    });
+
+    export const POST = analytics.wrapHandler(async (req) => {
+      // your existing AI SDK chat handler
+    });
+    ```
+
+    This method automatically captures all messages, user metadata, and session context without changes to your existing code.
+  </Tab>
+
+  <Tab title="TypeScript">
+    The TypeScript SDK gives you full control over what conversations and metadata you send.
+
+    ```bash
+    npm install @openbat/sdk
+    ```
+
+    ```typescript
+    import { OpenBat } from '@openbat/sdk';
+
+    const client = new OpenBat({
+      apiKey: process.env.OPENBAT_API_KEY,
+    });
+
+    await client.conversations.create({
+      messages: [
+        { role: 'user', content: 'How do I upgrade my plan?' },
+        { role: 'assistant', content: 'You can upgrade from Settings > Billing.' },
+      ],
+      metadata: {
+        userId: 'user_123',
+        email: 'user@example.com',
+        organization: 'Acme Corp',
+        plan: 'pro',
+        mrr: 99,
+      },
+    });
+    ```
+  </Tab>
+
+  <Tab title="Python">
+    ```bash
+    pip install openbat
+    ```
+
+    ```python
+    import os
+    from openbat import OpenBat
+
+    client = OpenBat(api_key=os.environ["OPENBAT_API_KEY"])
+
+    client.conversations.create(
+        messages=[
+            {"role": "user", "content": "How do I upgrade my plan?"},
+            {"role": "assistant", "content": "You can upgrade from Settings > Billing."},
+        ],
+        metadata={
+            "user_id": "user_123",
+            "email": "user@example.com",
+            "organization": "Acme Corp",
+            "plan": "pro",
+            "mrr": 99,
+        },
+    )
+    ```
+  </Tab>
+
+  <Tab title="REST API">
+    Use the REST API from any language or platform.
+
+    ```bash
+    curl -X POST https://api.openbat.dev/v1/conversations \
+      -H "Authorization: Bearer $OPENBAT_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "messages": [
+          {"role": "user", "content": "How do I upgrade my plan?"},
+          {"role": "assistant", "content": "You can upgrade from Settings > Billing."}
+        ],
+        "metadata": {
+          "userId": "user_123",
+          "email": "user@example.com",
+          "organization": "Acme Corp",
+          "plan": "pro",
+          "mrr": 99
+        }
+      }'
+    ```
+  </Tab>
+</Tabs>
+
+## Metadata fields
+
+You can send custom metadata with each conversation. Common fields include:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `userId` | string | Your internal user identifier |
+| `email` | string | User's email address |
+| `organization` | string | User's organization name |
+| `plan` | string | User's subscription plan |
+| `mrr` | number | Monthly recurring revenue |
+| `industry` | string | User's industry |
+
+OpenBat automatically discovers metadata fields sent from the SDK. You can track or deny discovered fields from the [Analysis Config](/features/analysis-config) > **Metadata** tab.
+
+## Session context
+
+The SDK automatically captures session context when running in a browser environment:
+
+- Browser and device type
+- Operating system
+- Page URL and referrer
+- Language
+- Country (via IP geolocation)
+
+This data appears in the conversation detail sidebar under **Session info**.
+
+## Next steps
+
+<CardGroup cols={3}>
+  <Card title="SDK reference" icon="book" href="/integrations/sdk-reference">
+    Full SDK documentation and advanced usage.
+  </Card>
+  <Card title="Manage metadata" icon="tags" href="/guides/manage-metadata-fields">
+    Track and filter by custom metadata fields.
+  </Card>
+  <Card title="View conversations" icon="messages" href="/features/conversations">
+    Browse and filter your analyzed conversations.
+  </Card>
+</CardGroup>

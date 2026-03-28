@@ -1,0 +1,114 @@
+---
+title: "Data model"
+description: "Entity relationships, multi-tenancy model, and key data structures in OpenBat"
+---
+
+## Entity relationships
+
+```
+User (platform user)
+  └── belongs to → Organization (many-to-many, with roles)
+        └── has many → Chatbot
+              ├── has many → Conversation
+              │     └── has many → Message
+              │           └── has many → AnalysisAnnotation
+              ├── has many → Workflow
+              │     └── has many → WorkflowRun
+              ├── has many → ClientOrganization
+              │     └── has many → ClientUser
+              ├── has one → AnalysisConfig
+              │     ├── MetadataFields[]
+              │     ├── UserFlags[]
+              │     ├── AssistantBehaviors[]
+              │     └── AnalysisPrompts[]
+              ├── has many → ApiKey
+              ├── has many → Webhook
+              └── has many → ChatbotMember
+```
+
+## Multi-tenancy
+
+OpenBat has a two-level tenancy model:
+
+| Level | Entity | Description |
+|-------|--------|-------------|
+| **Platform** | Organization | Your team using OpenBat. Contains chatbots, members, settings. |
+| **Client** | ClientOrganization, ClientUser | Your customers interacting with the chatbot. Tracked via SDK metadata. |
+
+These are separate entities. A **platform organization** at `/platform/members` represents your team. **Client organizations** at `/platform/{chatbotId}/organizations` represent the end users of your chatbot.
+
+## Key entities
+
+### Conversation
+
+A conversation represents a single chat session between a user and your chatbot.
+
+| Field | Description |
+|-------|-------------|
+| Conversation ID | Unique identifier |
+| Messages | Array of user and assistant messages |
+| Metadata | Custom fields from SDK (userId, email, plan, mrr, etc.) |
+| Session | Browser context (page URL, referrer, device, country) |
+| Created / Last message | Timestamps |
+
+### AnalysisAnnotation
+
+Each message can have multiple annotations produced by the analysis pipeline:
+
+| Type | Examples |
+|------|---------|
+| **Sentiment** | Score (-1 to 1), label ("Very Negative", "Positive") |
+| **Behavior flags** | Frustrated User, Churn Risk, Buying Signal |
+| **Quality flags** | Hallucination, premature closure, dodging |
+| **Resolution** | Fully Resolved, Partially Resolved, Unresolved |
+| **Intent** | Asking about pricing, requesting support |
+| **Topics** | Billing, integration, onboarding |
+
+### Workflow
+
+| Field | Description |
+|-------|-------------|
+| Name | Descriptive workflow name |
+| Conditions | Analysis signals that trigger the workflow |
+| Actions | What happens when triggered (webhook call) |
+| Status | Active or inactive |
+
+### WorkflowRun
+
+| Field | Description |
+|-------|-------------|
+| Workflow | Parent workflow reference |
+| Status | Pending, Triggered, Success, Failed, Skipped |
+| Timestamp | When the run occurred |
+
+## Revenue tracking
+
+Client entities (ClientOrganization and ClientUser) include revenue fields:
+
+- **MRR** — monthly recurring revenue
+- **Plan** — subscription tier name
+
+These fields are populated from SDK metadata and enable revenue-aware analysis. The analytics dashboard uses MRR data for revenue signals (churn risk on high-MRR accounts, buying signals).
+
+## Session tracking
+
+The conversation detail sidebar displays session metadata:
+
+| Field | Source |
+|-------|--------|
+| Session ID | SDK-generated |
+| Page URL | Browser location where chat occurred |
+| Referrer | Previous page URL |
+| Device | Desktop, mobile, tablet |
+| Country | IP-based geolocation |
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Architecture overview" icon="sitemap" href="/architecture/overview">
+    Tech stack, URL structure, and API surface.
+  </Card>
+  <Card title="Analysis pipeline" icon="microchip" href="/architecture/analysis-pipeline">
+    How the AI analysis processes conversations.
+  </Card>
+</CardGroup>

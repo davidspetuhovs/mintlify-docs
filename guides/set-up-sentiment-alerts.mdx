@@ -1,0 +1,68 @@
+---
+title: "Set up sentiment alerts"
+description: "Create a workflow that sends a notification to Slack or Discord when negative sentiment is detected"
+---
+
+This guide walks you through setting up an automated alert that notifies your team whenever OpenBat detects negative sentiment in a chatbot conversation.
+
+## Prerequisites
+
+- A chatbot with conversations being analyzed
+- A Slack or Discord channel where you want to receive alerts
+
+## Set up the alert
+
+<Steps>
+  <Step title="Configure a webhook destination">
+    First, set up the webhook that will receive alerts.
+
+    1. Navigate to your chatbot's **Settings** > **Webhooks** tab
+    2. Click **+ Add webhook**
+    3. Enter your Slack incoming webhook URL or Discord webhook URL
+    4. Select the type (Slack or Discord)
+    5. Save
+
+    See [Webhooks](/integrations/webhooks) for detailed setup instructions for each platform.
+  </Step>
+  <Step title="Go to workflow templates">
+    Navigate to **Workflows** > **Templates** tab at `/platform/{chatbotId}/workflows`.
+  </Step>
+  <Step title="Select Negative Sentiment Alert">
+    Find the **Negative Sentiment Alert** template in the Alerting category and click on it.
+  </Step>
+  <Step title="Configure the trigger">
+    Set the sentiment threshold that triggers the alert. For example, trigger when the conversation sentiment score drops below a certain value.
+  </Step>
+  <Step title="Set the action destination">
+    Select the webhook you configured in step 1 as the action destination.
+  </Step>
+  <Step title="Save and activate">
+    Save the workflow. It starts monitoring conversations immediately. When a conversation matches the trigger conditions, an alert is sent to your configured channel.
+  </Step>
+</Steps>
+
+## Verify it works
+
+Go to the **Workflows** > **Runs** tab to monitor execution history. Successful alerts show a **Success** status. If you see **Failed** runs, check your webhook URL and destination configuration.
+
+## Other useful templates
+
+Once you have sentiment alerts working, consider these additional templates:
+
+| Template | Use case |
+|----------|----------|
+| **Escalation on Frustration** | Alert when a user is flagged as frustrated |
+| **Hallucination Flag** | Alert when the assistant hallucinates |
+| **Chatbot Quality Gate** | Alert when assistant quality drops |
+| **Topic Spike Monitor** | Alert when a topic sees unusual activity |
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Workflows" icon="bolt" href="/features/workflows">
+    Explore all workflow capabilities and templates.
+  </Card>
+  <Card title="Investigate users" icon="user-magnifying-glass" href="/guides/investigate-dissatisfied-users">
+    Drill into the conversations that triggered alerts.
+  </Card>
+</CardGroup>

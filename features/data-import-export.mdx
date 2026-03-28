@@ -1,0 +1,65 @@
+---
+title: "Data import and export"
+description: "Export conversations as JSON or import historical data from JSON and CSV files"
+---
+
+OpenBat supports exporting your conversation data for offline analysis and importing historical conversations from external sources. Both options are available at `/platform/{chatbotId}/settings` > **Import/Export Data**.
+
+<Frame>
+  <img src="/docs/state-screenshots/state-chatbot-settings-import-export.png" alt="Import/Export Data tab showing JSON export with analysis toggle and CSV/JSON import" />
+</Frame>
+
+## Export conversations
+
+<Steps>
+  <Step title="Navigate to Import/Export">
+    Go to your chatbot's **Settings** > **Import/Export Data** tab.
+  </Step>
+  <Step title="Select export format">
+    Choose the export format from the dropdown. Currently **JSON** is supported.
+  </Step>
+  <Step title="Include analysis results (optional)">
+    Check **Include analysis results** to export sentiment scores, behavior flags, quality flags, and other annotations alongside the raw conversation data.
+  </Step>
+  <Step title="Click Export">
+    Click the **Export** button. The file downloads to your computer.
+  </Step>
+</Steps>
+
+<Note>
+  Large exports may take time for chatbots with many conversations. The file includes all conversations within the current date range.
+</Note>
+
+## Import conversations
+
+Import historical conversation data to analyze it with OpenBat. This is useful when migrating from another tool or when you have existing conversation logs.
+
+<Steps>
+  <Step title="Download the template (optional)">
+    Click **Download template CSV** to get a file showing the expected data format and column structure.
+  </Step>
+  <Step title="Prepare your data">
+    Format your conversations as JSON or CSV matching the template structure.
+  </Step>
+  <Step title="Upload the file">
+    Click **Choose File** and select your JSON or CSV file.
+  </Step>
+  <Step title="Import">
+    Click **Import** to upload and process the data. Imported conversations appear in the conversations list and are queued for analysis.
+  </Step>
+</Steps>
+
+<Warning>
+  Make sure your file matches the expected schema. Invalid formats or mismatched columns will cause the import to fail. Download the CSV template first to verify the expected structure.
+</Warning>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Conversations" icon="messages" href="/features/conversations">
+    Browse your imported conversations.
+  </Card>
+  <Card title="Chatbot settings" icon="gear" href="/platform/chatbot-settings">
+    Manage other chatbot configuration options.
+  </Card>
+</CardGroup>

@@ -20,13 +20,90 @@
     "dark": "/logo/dark.svg"
   },
   "navigation": {
-    "tabs": [],
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Getting started",
+            "pages": [
+              "introduction",
+              "getting-started/quickstart",
+              "getting-started/create-your-first-chatbot",
+              "getting-started/install-the-sdk"
+            ]
+          },
+          {
+            "group": "Features",
+            "pages": [
+              "features/analytics-dashboard",
+              "features/conversations",
+              "features/deep-search",
+              "features/workflows",
+              "features/analysis-config",
+              "features/client-management",
+              "features/data-import-export"
+            ]
+          },
+          {
+            "group": "Integrations",
+            "pages": [
+              "integrations/sdk-reference",
+              "integrations/webhooks",
+              "integrations/api-keys"
+            ]
+          },
+          {
+            "group": "Platform",
+            "pages": [
+              "platform/authentication",
+              "platform/organizations",
+              "platform/members-and-roles",
+              "platform/chatbot-settings"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Guides",
+        "groups": [
+          {
+            "group": "How-to guides",
+            "pages": [
+              "guides/investigate-dissatisfied-users",
+              "guides/set-up-sentiment-alerts",
+              "guides/customize-analysis-prompts",
+              "guides/manage-metadata-fields",
+              "guides/export-and-analyze-data"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Architecture",
+        "groups": [
+          {
+            "group": "Technical reference",
+            "pages": [
+              "architecture/overview",
+              "architecture/data-model",
+              "architecture/analysis-pipeline"
+            ]
+          }
+        ]
+      }
+    ],
     "global": {
       "anchors": [
         {
           "anchor": "App",
           "href": "https://openbat.dev",
           "icon": "browser"
+        },
+        {
+          "anchor": "Changelog",
+          "href": "/changelog",
+          "icon": "clock-rotate-left"
         }
       ]
     }

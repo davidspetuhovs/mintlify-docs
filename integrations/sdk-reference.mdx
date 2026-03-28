@@ -1,0 +1,194 @@
+---
+title: "SDK reference"
+description: "Integrate OpenBat with your AI chatbot using the Vercel AI SDK, TypeScript, Python, or REST API"
+---
+
+OpenBat provides four integration methods to capture your chatbot's conversations. Each sends conversation data to the OpenBat API for analysis.
+
+## Vercel AI SDK
+
+The Vercel AI SDK wrapper automatically captures conversations from your existing chat handler with zero code changes to your application logic.
+
+```bash
+npm install @openbat/vercel-ai
+```
+
+```typescript app/api/chat/route.ts
+import { openBat } from '@openbat/vercel-ai';
+import { streamText } from 'ai';
+
+const analytics = openBat({
+  apiKey: process.env.OPENBAT_API_KEY,
+});
+
+export const POST = analytics.wrapHandler(async (req) => {
+  const { messages } = await req.json();
+
+  const result = streamText({
+    model: 'anthropic/claude-sonnet-4.6',
+    messages,
+  });
+
+  return result.toUIMessageStreamResponse();
+});
+```
+
+The wrapper automatically captures:
+- All user and assistant messages
+- Conversation metadata (if provided)
+- Session context (browser, device, referrer)
+
+## TypeScript SDK
+
+The TypeScript SDK gives you explicit control over when and what data is sent.
+
+```bash
+npm install @openbat/sdk
+```
+
+```typescript
+import { OpenBat } from '@openbat/sdk';
+
+const client = new OpenBat({
+  apiKey: process.env.OPENBAT_API_KEY,
+});
+
+// Create a conversation with full metadata
+await client.conversations.create({
+  messages: [
+    { role: 'user', content: 'Can I export my data as CSV?' },
+    { role: 'assistant', content: 'Yes, go to Settings > Import/Export Data and select CSV format.' },
+  ],
+  metadata: {
+    userId: 'user_456',
+    email: 'jane@acme.com',
+    organization: 'Acme Corp',
+    plan: 'enterprise',
+    mrr: 499,
+    industry: 'Developer Tools',
+  },
+  session: {
+    pageUrl: 'https://app.acme.com/dashboard',
+    referrer: 'https://google.com',
+    device: 'desktop',
+    country: 'US',
+  },
+});
+```
+
+## Python SDK
+
+```bash
+pip install openbat
+```
+
+```python
+import os
+from openbat import OpenBat
+
+client = OpenBat(api_key=os.environ["OPENBAT_API_KEY"])
+
+client.conversations.create(
+    messages=[
+        {"role": "user", "content": "Can I export my data as CSV?"},
+        {"role": "assistant", "content": "Yes, go to Settings > Import/Export Data and select CSV format."},
+    ],
+    metadata={
+        "user_id": "user_456",
+        "email": "jane@acme.com",
+        "organization": "Acme Corp",
+        "plan": "enterprise",
+        "mrr": 499,
+        "industry": "Developer Tools",
+    },
+    session={
+        "page_url": "https://app.acme.com/dashboard",
+        "referrer": "https://google.com",
+        "device": "desktop",
+        "country": "US",
+    },
+)
+```
+
+## REST API
+
+Use the REST API from any language or platform.
+
+```bash
+curl -X POST https://api.openbat.dev/v1/conversations \
+  -H "Authorization: Bearer $OPENBAT_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "messages": [
+      {"role": "user", "content": "Can I export my data as CSV?"},
+      {"role": "assistant", "content": "Yes, go to Settings > Import/Export Data and select CSV format."}
+    ],
+    "metadata": {
+      "userId": "user_456",
+      "email": "jane@acme.com",
+      "organization": "Acme Corp",
+      "plan": "enterprise",
+      "mrr": 499,
+      "industry": "Developer Tools"
+    },
+    "session": {
+      "pageUrl": "https://app.acme.com/dashboard",
+      "referrer": "https://google.com",
+      "device": "desktop",
+      "country": "US"
+    }
+  }'
+```
+
+### Response
+
+A successful request returns:
+
+```json
+{
+  "id": "conv_abc123",
+  "status": "queued",
+  "messageCount": 2
+}
+```
+
+## Metadata reference
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `userId` | string | No | Your internal user identifier |
+| `email` | string | No | User's email address |
+| `organization` | string | No | User's organization name |
+| `plan` | string | No | Subscription plan tier |
+| `mrr` | number | No | Monthly recurring revenue |
+| `industry` | string | No | Organization's industry |
+
+You can send any additional custom fields. OpenBat auto-discovers new metadata keys — manage them from [Analysis Config](/features/analysis-config) > **Metadata** tab.
+
+## Session context reference
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `pageUrl` | string | URL where the conversation occurred |
+| `referrer` | string | Referring URL |
+| `device` | string | Device type (desktop, mobile, tablet) |
+| `country` | string | User's country (ISO code) |
+| `language` | string | Browser language |
+| `browser` | string | Browser name and version |
+| `os` | string | Operating system |
+
+Session context is automatically captured by the Vercel AI SDK wrapper. For other SDKs, include it explicitly.
+
+## Next steps
+
+<CardGroup cols={3}>
+  <Card title="API keys" icon="key" href="/integrations/api-keys">
+    Manage and rotate your API keys.
+  </Card>
+  <Card title="Webhooks" icon="webhook" href="/integrations/webhooks">
+    Set up alert destinations for workflows.
+  </Card>
+  <Card title="Manage metadata" icon="tags" href="/guides/manage-metadata-fields">
+    Track custom metadata fields for filtering.
+  </Card>
+</CardGroup>

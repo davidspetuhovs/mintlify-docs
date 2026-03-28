@@ -1,0 +1,121 @@
+---
+title: "Analysis configuration"
+description: "Customize how OpenBat analyzes your chatbot conversations with metadata tracking, translation, flags, behaviors, and prompts"
+---
+
+The analysis configuration page at `/platform/{chatbotId}/analysis-config` controls how OpenBat processes and annotates your conversations. It has five tabs, each managing a different aspect of the analysis pipeline.
+
+<Frame>
+  <img src="/docs/screenshots/page-15.png" alt="Analysis configuration page showing the Metadata tab with discovered fields" />
+</Frame>
+
+## Metadata
+
+Manage custom metadata fields sent via your SDK. When OpenBat receives metadata keys it hasn't seen before, they appear in the **Discovered fields** table.
+
+For each discovered field, you can:
+- **Track** — add it to managed fields, making it available as a filter in the conversations table
+- **Accept** — acknowledge the field without tracking
+- **Deny** — reject the field
+
+Common auto-discovered fields include: browser, device, IP, language, OS, referer, and userAgent.
+
+<Tip>
+  Track the fields you want to use for filtering and segmenting conversations. Deny fields you don't need to keep the interface clean.
+</Tip>
+
+## Translation
+
+<Frame>
+  <img src="/docs/state-screenshots/state-analysis-config-translation.png" alt="Translation settings with auto-translate toggle and primary language selector" />
+</Frame>
+
+Enable **Auto-translate messages** to translate non-primary-language messages before analysis. This ensures consistent sentiment and intent scoring regardless of the original language.
+
+Select your **Primary language** (e.g., English) from the dropdown. Messages in other languages are translated to the primary language before analysis. The original message text is preserved alongside the translation.
+
+<Note>
+  Auto-translation adds one additional AI call per non-primary-language message, which may increase costs for chatbots with high volumes of multilingual conversations.
+</Note>
+
+## User analysis
+
+<Frame>
+  <img src="/docs/state-screenshots/state-analysis-config-user-analysis.png" alt="User Analysis tab showing sentiment toggle, flag toggles, and custom flag creation" />
+</Frame>
+
+Control what signals OpenBat detects in user messages:
+
+### Sentiment scoring
+
+Toggle sentiment analysis on or off. When enabled, every message receives a sentiment score.
+
+### User flags
+
+Enable or disable detection for each built-in flag:
+
+| Flag | Description |
+|------|-------------|
+| **Churn Risk** | User language suggesting they may leave |
+| **Frustrated User** | Expressions of frustration or anger |
+| **Buying Signal** | Interest in upgrading or purchasing |
+| **Competitor Mention** | References to competing products |
+| **Urgent Request** | Time-sensitive or high-priority needs |
+| **Confused User** | Signs of confusion or misunderstanding |
+
+Click **+ Add custom** to create your own flags. Define a name and description — OpenBat uses the description to guide AI detection.
+
+## Assistant analysis
+
+<Frame>
+  <img src="/docs/state-screenshots/state-analysis-config-assistant.png" alt="Assistant Analysis tab with behavior classification toggles for 9 behavior types" />
+</Frame>
+
+Classify assistant response behaviors. Toggle detection for each behavior:
+
+| Behavior | Description |
+|----------|-------------|
+| **Helpful** | Provides useful, accurate responses |
+| **Yes-Man** | Agrees with everything without critical thinking |
+| **Dodging** | Avoids answering the question directly |
+| **Over-Apologizing** | Excessive unnecessary apologies |
+| **Hallucinating** | Providing incorrect or fabricated information |
+| **Redirecting** | Sends user elsewhere instead of helping |
+| **Verbose** | Unnecessarily long responses |
+| **Robotic** | Unnatural, template-like responses |
+| **Other** | Catch-all for unclassified behaviors |
+
+Click **+ Add custom** to define additional behavior classifications.
+
+## Prompts
+
+<Frame>
+  <img src="/docs/state-screenshots/state-analysis-config-prompts.png" alt="Prompts tab showing editable AI prompts for Sentiment, Intent, Topics, and Flags" />
+</Frame>
+
+Edit the AI prompts that power the analysis pipeline. Four prompts are available:
+
+- **Sentiment** — controls how sentiment scores are calculated
+- **Intent** — defines how user intents are classified
+- **Topics** — guides topic extraction from conversations
+- **Flags** — determines how user flags are detected
+
+Unmodified prompts show a **Default** label. Click on a prompt card to edit it. You can always revert to the system default from the editor.
+
+<Warning>
+  Poorly written prompts can produce unreliable analysis results. Test changes with a sample of conversations before relying on modified prompts in production.
+</Warning>
+
+## Next steps
+
+<CardGroup cols={3}>
+  <Card title="Customize prompts" icon="pencil" href="/guides/customize-analysis-prompts">
+    Step-by-step guide to editing analysis prompts.
+  </Card>
+  <Card title="Manage metadata" icon="tags" href="/guides/manage-metadata-fields">
+    Track custom metadata from your SDK.
+  </Card>
+  <Card title="Analytics dashboard" icon="chart-line" href="/features/analytics-dashboard">
+    See the results of your analysis configuration.
+  </Card>
+</CardGroup>

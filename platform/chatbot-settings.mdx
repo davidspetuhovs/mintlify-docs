@@ -1,0 +1,65 @@
+---
+title: "Chatbot settings"
+description: "Configure your chatbot name, company info, API keys, members, webhooks, and data import/export"
+---
+
+Chatbot settings at `/platform/{chatbotId}/settings` give you control over your chatbot's configuration across six tabs.
+
+<Frame>
+  <img src="/docs/screenshots/page-16.png" alt="Chatbot settings page showing the General tab with name and ID" />
+</Frame>
+
+## General
+
+The General tab displays:
+- **Chatbot name** — editable, click **Save** to update
+- **Chatbot ID** — unique identifier with a copy button
+- **Created** — when the chatbot was created
+
+## Company info
+
+<Frame>
+  <img src="/docs/state-screenshots/state-chatbot-settings-company-info.png" alt="Company Info tab with product details form" />
+</Frame>
+
+Provide context about your product to improve analysis accuracy:
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| **Product name** | Yes | Your product's name |
+| **Website URL** | Yes | Your product's website |
+| **Documentation URL** | No | Link to your documentation |
+| **Industry** | Yes | Select from dropdown (e.g., Developer Tools) |
+| **What does your product do?** | Yes | Brief description of your product |
+
+This information helps OpenBat's AI tailor its analysis to your specific product domain.
+
+## API keys
+
+View, copy, and rotate your chatbot's API key. See [API keys](/integrations/api-keys) for full documentation.
+
+## Members
+
+Manage chatbot-level member access. See [Members and roles](/platform/members-and-roles) for details on organization and chatbot-level access.
+
+## Webhooks
+
+Configure webhook destinations for workflow alerts (Discord, Slack, custom). See [Webhooks](/integrations/webhooks) for setup instructions.
+
+## Import/Export data
+
+Export conversations as JSON or import historical data from JSON/CSV. See [Data import and export](/features/data-import-export) for a full walkthrough.
+
+## Next steps
+
+<CardGroup cols={3}>
+  <Card title="API keys" icon="key" href="/integrations/api-keys">
+    Manage your authentication keys.
+  </Card>
+  <Card title="Webhooks" icon="webhook" href="/integrations/webhooks">
+    Set up alert destinations.
+  </Card>
+  <Card title="Import/export" icon="file-arrow-up" href="/features/data-import-export">
+    Move data in and out of OpenBat.
+  </Card>
+</CardGroup>

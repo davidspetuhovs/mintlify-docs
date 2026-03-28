@@ -1,0 +1,45 @@
+---
+title: "API keys"
+description: "Manage, copy, and rotate the API keys that authenticate your SDK requests"
+---
+
+Every chatbot has an API key used to authenticate SDK and REST API requests. Manage your key at `/platform/{chatbotId}/settings` > **API Keys**.
+
+<Frame>
+  <img src="/docs/state-screenshots/state-chatbot-settings-api-keys.png" alt="API Keys tab showing masked key with copy and rotate buttons" />
+</Frame>
+
+## View your key
+
+Your API key is displayed in a masked format for security. Only the prefix is visible.
+
+## Copy your key
+
+Click the **copy** button next to the key to copy the full API key to your clipboard. Use this when setting up your SDK integration.
+
+## Rotate your key
+
+If your key has been compromised or you need a fresh one, click **Rotate key** to generate a new API key.
+
+<Warning>
+  Rotating your API key **immediately invalidates** the old key. All existing SDK integrations using the old key will stop sending data until you update them with the new key. Make sure to update your environment variables before rotating.
+</Warning>
+
+## Security best practices
+
+- Store your API key in environment variables (e.g., `OPENBAT_API_KEY`)
+- Never commit API keys to version control
+- Never expose API keys in client-side code
+- Rotate keys immediately if you suspect they've been compromised
+- Use different chatbots (and therefore different keys) for development and production
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Install the SDK" icon="plug" href="/getting-started/install-the-sdk">
+    Use your API key to connect your chatbot.
+  </Card>
+  <Card title="SDK reference" icon="book" href="/integrations/sdk-reference">
+    Full SDK documentation and code examples.
+  </Card>
+</CardGroup>
