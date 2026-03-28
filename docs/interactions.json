@@ -1,0 +1,581 @@
+[
+  {
+    "pageUrl": "/",
+    "modals": [],
+    "dropdowns": [],
+    "drawers": [],
+    "tabs": [
+      "Vercel AI SDK",
+      "TypeScript",
+      "Python",
+      "REST API"
+    ],
+    "accordions": [
+      "How long does setup take?",
+      "Is my data secure?",
+      "What gets analyzed?",
+      "Which frameworks does it work with?",
+      "What if I go over my message limit?"
+    ],
+    "forms": [],
+    "states": [
+      {
+        "description": "Feature demo — Missed Upsell (conversation + system prompt + Slack alert)",
+        "screenshotKey": "state-landing-feature-missed-upsell"
+      },
+      {
+        "description": "Feature demo — Feature Gap Risk (Gantt chart request + prompt fix + Slack)",
+        "screenshotKey": "state-landing-feature-gap-risk"
+      },
+      {
+        "description": "Feature demo — Bot Hallucination (API rate limit hallucination + knowledge base + Slack)",
+        "screenshotKey": "state-landing-bot-hallucination"
+      },
+      {
+        "description": "Code example — TypeScript SDK tab",
+        "screenshotKey": "state-landing-tab-typescript"
+      },
+      {
+        "description": "Code example — Python tab",
+        "screenshotKey": "state-landing-tab-python"
+      },
+      {
+        "description": "Code example — REST API curl tab",
+        "screenshotKey": "state-landing-tab-rest"
+      },
+      {
+        "description": "FAQ expanded — setup takes under 5 minutes",
+        "screenshotKey": "state-landing-faq-setup"
+      },
+      {
+        "description": "FAQ expanded — SHA-256 hashed, encrypted, row-level security",
+        "screenshotKey": "state-landing-faq-security"
+      },
+      {
+        "description": "FAQ expanded — both sides analyzed, 6 signals per message",
+        "screenshotKey": "state-landing-faq-analyzed"
+      },
+      {
+        "description": "FAQ expanded — all frameworks, REST API for any language",
+        "screenshotKey": "state-landing-faq-frameworks"
+      },
+      {
+        "description": "FAQ expanded — never cut off, $0.002/message overage",
+        "screenshotKey": "state-landing-faq-limit"
+      }
+    ],
+    "keyboardShortcuts": [],
+    "contextMenus": []
+  },
+  {
+    "pageUrl": "/auth/login",
+    "modals": [],
+    "dropdowns": [],
+    "drawers": [],
+    "tabs": [],
+    "accordions": [],
+    "forms": [
+      {
+        "name": "Email",
+        "type": "textbox",
+        "placeholder": "m@example.com",
+        "required": true,
+        "validationHints": []
+      },
+      {
+        "name": "Password",
+        "type": "textbox",
+        "placeholder": "",
+        "required": true,
+        "validationHints": []
+      }
+    ],
+    "states": [],
+    "keyboardShortcuts": [],
+    "contextMenus": []
+  },
+  {
+    "pageUrl": "/auth/sign-up",
+    "modals": [],
+    "dropdowns": [],
+    "drawers": [],
+    "tabs": [],
+    "accordions": [],
+    "forms": [
+      {
+        "name": "Email",
+        "type": "textbox",
+        "placeholder": "m@example.com",
+        "required": true,
+        "validationHints": []
+      },
+      {
+        "name": "Password",
+        "type": "textbox",
+        "placeholder": "",
+        "required": true,
+        "validationHints": [
+          "Must be at least 8 characters long"
+        ]
+      },
+      {
+        "name": "Confirm Password",
+        "type": "textbox",
+        "placeholder": "",
+        "required": true,
+        "validationHints": []
+      }
+    ],
+    "states": [],
+    "keyboardShortcuts": [],
+    "contextMenus": []
+  },
+  {
+    "pageUrl": "/auth/forgot-password",
+    "modals": [],
+    "dropdowns": [],
+    "drawers": [],
+    "tabs": [],
+    "accordions": [],
+    "forms": [
+      {
+        "name": "Email",
+        "type": "textbox",
+        "placeholder": "m@example.com",
+        "required": true,
+        "validationHints": []
+      }
+    ],
+    "states": [],
+    "keyboardShortcuts": [],
+    "contextMenus": []
+  },
+  {
+    "pageUrl": "/platform",
+    "modals": [
+      "Create a chatbot modal (name field, 0/100 char count, Continue to setup button)"
+    ],
+    "dropdowns": [
+      "Org switcher (Organizations list + Create organization)",
+      "User profile menu (Settings, Log out)"
+    ],
+    "drawers": [],
+    "tabs": [
+      "Active",
+      "Pending",
+      "Archive"
+    ],
+    "accordions": [],
+    "forms": [
+      {
+        "name": "Chatbot name",
+        "type": "textbox",
+        "placeholder": "Customer Support Bot",
+        "required": true,
+        "validationHints": [
+          "0/100 character limit"
+        ]
+      }
+    ],
+    "states": [
+      {
+        "description": "Org switcher dropdown — Test org selected, Create organization option",
+        "screenshotKey": "state-platform-org-switcher"
+      },
+      {
+        "description": "User profile popover — name, email, Settings link, Log out",
+        "screenshotKey": "state-platform-user-menu"
+      },
+      {
+        "description": "Chatbot card context menu — Open chatbot, Archive, Delete (red)",
+        "screenshotKey": "state-platform-chatbot-context-menu"
+      },
+      {
+        "description": "Create chatbot modal — Name field with character counter",
+        "screenshotKey": "state-platform-new-chatbot-modal"
+      },
+      {
+        "description": "Pending tab empty state — No pending chatbots",
+        "screenshotKey": "state-platform-pending-tab"
+      },
+      {
+        "description": "Archive tab empty state — No archived chatbots",
+        "screenshotKey": "state-platform-archive-tab"
+      },
+      {
+        "description": "List view — table with Chatbot, Created by, Activity columns",
+        "screenshotKey": "state-platform-list-view"
+      }
+    ],
+    "keyboardShortcuts": [],
+    "contextMenus": [
+      "Chatbot card ••• menu — Open chatbot, Archive, Delete"
+    ]
+  },
+  {
+    "pageUrl": "/platform/members",
+    "modals": [
+      "Invite member modal (Email field, Role dropdown: Admin/Member, Invite button)"
+    ],
+    "dropdowns": [
+      "Role dropdown (Admin, Member)"
+    ],
+    "drawers": [],
+    "tabs": [],
+    "accordions": [],
+    "forms": [
+      {
+        "name": "Email",
+        "type": "textbox",
+        "placeholder": "colleague@company.com",
+        "required": true,
+        "validationHints": []
+      },
+      {
+        "name": "Role",
+        "type": "combobox",
+        "placeholder": "Member",
+        "required": true,
+        "validationHints": [
+          "Admins can manage chatbots and invite members. Members have read access only."
+        ]
+      }
+    ],
+    "states": [
+      {
+        "description": "Invite member modal with role dropdown open",
+        "screenshotKey": "state-platform-members-invite"
+      },
+      {
+        "description": "Role dropdown showing Admin and Member options",
+        "screenshotKey": "state-platform-members-role-dropdown"
+      }
+    ],
+    "keyboardShortcuts": [],
+    "contextMenus": []
+  },
+  {
+    "pageUrl": "/platform/settings",
+    "modals": [],
+    "dropdowns": [],
+    "drawers": [],
+    "tabs": [],
+    "accordions": [],
+    "forms": [
+      {
+        "name": "Organization name",
+        "type": "textbox",
+        "placeholder": "",
+        "required": true,
+        "validationHints": []
+      }
+    ],
+    "states": [],
+    "keyboardShortcuts": [],
+    "contextMenus": []
+  },
+  {
+    "pageUrl": "/platform/{chatbotId}",
+    "modals": [],
+    "dropdowns": [
+      "Date range picker (Today/Yesterday/This week/Last week/This month/Last month/This year/Last year/All time/Custom + dual calendar)",
+      "Segment by (Plan/Industry/Device/Country)"
+    ],
+    "drawers": [],
+    "tabs": [
+      "User Insights",
+      "Assistant Performance"
+    ],
+    "accordions": [],
+    "forms": [],
+    "states": [
+      {
+        "description": "Date range picker with presets and dual calendar",
+        "screenshotKey": "state-chatbot-dashboard-date-range"
+      },
+      {
+        "description": "Segment by dropdown — Plan, Industry, Device, Country",
+        "screenshotKey": "state-chatbot-dashboard-segment-dropdown"
+      },
+      {
+        "description": "Assistant Performance tab — behavior alerts + resolution donut chart",
+        "screenshotKey": "state-chatbot-dashboard-assistant-tab"
+      }
+    ],
+    "keyboardShortcuts": [],
+    "contextMenus": []
+  },
+  {
+    "pageUrl": "/platform/{chatbotId}/workflows",
+    "modals": [],
+    "dropdowns": [],
+    "drawers": [],
+    "tabs": [
+      "Workflows",
+      "Runs",
+      "Templates"
+    ],
+    "accordions": [],
+    "forms": [
+      {
+        "name": "Workflow name",
+        "type": "textbox",
+        "placeholder": "e.g., Alert on negative sentiment",
+        "required": true,
+        "validationHints": []
+      }
+    ],
+    "states": [
+      {
+        "description": "Workflows tab empty state with inline Create workflow form",
+        "screenshotKey": "state-workflows-create-modal"
+      },
+      {
+        "description": "Runs tab — status filters (All/Pending/Triggered/Skipped/Success/Failed), empty state",
+        "screenshotKey": "state-workflows-runs-tab"
+      },
+      {
+        "description": "Templates tab — 6 templates with source and category filters",
+        "screenshotKey": "state-workflows-templates-tab"
+      }
+    ],
+    "keyboardShortcuts": [],
+    "contextMenus": []
+  },
+  {
+    "pageUrl": "/platform/{chatbotId}/conversations",
+    "modals": [],
+    "dropdowns": [
+      "Filter popover (User Industry, Org Plan, Device, Language, templateName, Messages, Sentiment Avg, User MRR, Org MRR)",
+      "View column toggle (11 toggleable columns)",
+      "Pagination rows per page (10, 20, 50, 100)"
+    ],
+    "drawers": [],
+    "tabs": [],
+    "accordions": [],
+    "forms": [
+      {
+        "name": "Filter conversations",
+        "type": "textbox",
+        "placeholder": "Filter conversations...",
+        "required": false,
+        "validationHints": []
+      }
+    ],
+    "states": [
+      {
+        "description": "Filter popover with 9 filterable field options",
+        "screenshotKey": "state-conversations-filter"
+      },
+      {
+        "description": "View popover showing 11 toggleable columns",
+        "screenshotKey": "state-conversations-view"
+      },
+      {
+        "description": "Pagination dropdown — 10, 20, 50, 100 rows",
+        "screenshotKey": "state-conversations-pagination"
+      }
+    ],
+    "keyboardShortcuts": [],
+    "contextMenus": []
+  },
+  {
+    "pageUrl": "/platform/{chatbotId}/conversations/{conversationId}",
+    "modals": [],
+    "dropdowns": [],
+    "drawers": [],
+    "tabs": [],
+    "accordions": [],
+    "forms": [],
+    "states": [
+      {
+        "description": "Sentiment tag clicked — opens SENTIMENT DETAILS panel with score, reasoning, message preview",
+        "screenshotKey": "state-conversation-detail-annotation"
+      }
+    ],
+    "keyboardShortcuts": [],
+    "contextMenus": []
+  },
+  {
+    "pageUrl": "/platform/{chatbotId}/deep-search",
+    "modals": [],
+    "dropdowns": [],
+    "drawers": [],
+    "tabs": [],
+    "accordions": [],
+    "forms": [
+      {
+        "name": "Search by meaning",
+        "type": "textbox",
+        "placeholder": "Search by meaning — e.g. 'users asking about pricing' or 'billing issues'",
+        "required": false,
+        "validationHints": []
+      }
+    ],
+    "states": [],
+    "keyboardShortcuts": [],
+    "contextMenus": []
+  },
+  {
+    "pageUrl": "/platform/{chatbotId}/organizations",
+    "modals": [],
+    "dropdowns": [
+      "Filter popover (same pattern as conversations)",
+      "View column toggle"
+    ],
+    "drawers": [],
+    "tabs": [],
+    "accordions": [],
+    "forms": [
+      {
+        "name": "Filter organizations",
+        "type": "textbox",
+        "placeholder": "Filter organizations...",
+        "required": false,
+        "validationHints": []
+      }
+    ],
+    "states": [],
+    "keyboardShortcuts": [],
+    "contextMenus": []
+  },
+  {
+    "pageUrl": "/platform/{chatbotId}/users",
+    "modals": [],
+    "dropdowns": [
+      "Filter popover",
+      "View column toggle"
+    ],
+    "drawers": [],
+    "tabs": [],
+    "accordions": [],
+    "forms": [
+      {
+        "name": "Filter users",
+        "type": "textbox",
+        "placeholder": "Filter users...",
+        "required": false,
+        "validationHints": []
+      }
+    ],
+    "states": [],
+    "keyboardShortcuts": [],
+    "contextMenus": []
+  },
+  {
+    "pageUrl": "/platform/{chatbotId}/analysis-config",
+    "modals": [],
+    "dropdowns": [
+      "Primary language selector (English)"
+    ],
+    "drawers": [],
+    "tabs": [
+      "Metadata",
+      "Translation",
+      "User Analysis",
+      "Assistant Analysis",
+      "Prompts"
+    ],
+    "accordions": [],
+    "forms": [],
+    "states": [
+      {
+        "description": "Translation tab — auto-translate toggle, language selector, how it works",
+        "screenshotKey": "state-analysis-config-translation"
+      },
+      {
+        "description": "User Analysis tab — sentiment toggle, flags table with enable toggles + Add custom",
+        "screenshotKey": "state-analysis-config-user-analysis"
+      },
+      {
+        "description": "Assistant Analysis tab — behavior table with 9 behaviors + enable toggles + Add custom",
+        "screenshotKey": "state-analysis-config-assistant"
+      },
+      {
+        "description": "Prompts tab — editable AI prompts for Sentiment, Intent, Topics, Flags",
+        "screenshotKey": "state-analysis-config-prompts"
+      }
+    ],
+    "keyboardShortcuts": [],
+    "contextMenus": []
+  },
+  {
+    "pageUrl": "/platform/{chatbotId}/settings",
+    "modals": [],
+    "dropdowns": [
+      "Export format (JSON)",
+      "Industry dropdown (Developer Tools)"
+    ],
+    "drawers": [],
+    "tabs": [
+      "General",
+      "Company Info",
+      "API Keys",
+      "Members",
+      "Webhooks",
+      "Import/Export Data"
+    ],
+    "accordions": [],
+    "forms": [
+      {
+        "name": "Chatbot name",
+        "type": "textbox",
+        "placeholder": "Chatbot name",
+        "required": true,
+        "validationHints": []
+      },
+      {
+        "name": "Product name",
+        "type": "textbox",
+        "placeholder": "",
+        "required": true,
+        "validationHints": []
+      },
+      {
+        "name": "Website URL",
+        "type": "textbox",
+        "placeholder": "",
+        "required": true,
+        "validationHints": []
+      },
+      {
+        "name": "Documentation URL",
+        "type": "textbox",
+        "placeholder": "",
+        "required": false,
+        "validationHints": []
+      },
+      {
+        "name": "What does your product do?",
+        "type": "textarea",
+        "placeholder": "",
+        "required": true,
+        "validationHints": []
+      }
+    ],
+    "states": [
+      {
+        "description": "Company Info tab — product details form with industry dropdown",
+        "screenshotKey": "state-chatbot-settings-company-info"
+      },
+      {
+        "description": "API Keys tab — masked key with copy and rotate buttons",
+        "screenshotKey": "state-chatbot-settings-api-keys"
+      },
+      {
+        "description": "Members tab — member table with Add member button",
+        "screenshotKey": "state-chatbot-settings-members"
+      },
+      {
+        "description": "Webhooks tab — empty state with Add webhook, About webhooks (Discord/Slack/Custom)",
+        "screenshotKey": "state-chatbot-settings-webhooks"
+      },
+      {
+        "description": "Import/Export tab — JSON export with analysis toggle, CSV/JSON import",
+        "screenshotKey": "state-chatbot-settings-import-export"
+      }
+    ],
+    "keyboardShortcuts": [],
+    "contextMenus": []
+  }
+]

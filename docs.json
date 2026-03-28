@@ -20,63 +20,7 @@
     "dark": "/logo/dark.svg"
   },
   "navigation": {
-    "tabs": [
-      {
-        "tab": "Guides",
-        "groups": [
-          {
-            "group": "Getting started",
-            "pages": ["introduction", "quickstart"]
-          },
-          {
-            "group": "Platform",
-            "pages": [
-              "guides/dashboard",
-              "guides/conversations",
-              "guides/deep-search",
-              "guides/users-and-organizations",
-              "guides/workflows"
-            ]
-          },
-          {
-            "group": "Configuration",
-            "pages": [
-              "guides/analysis-configuration",
-              "guides/settings",
-              "guides/team-management"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "SDK",
-        "groups": [
-          {
-            "group": "Integration",
-            "pages": [
-              "sdk/installation",
-              "sdk/vercel-ai-sdk",
-              "sdk/typescript",
-              "sdk/python",
-              "sdk/rest-api"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "Concepts",
-        "groups": [
-          {
-            "group": "How it works",
-            "pages": [
-              "concepts/sentiment-analysis",
-              "concepts/behavior-detection",
-              "concepts/revenue-signals"
-            ]
-          }
-        ]
-      }
-    ],
+    "tabs": [],
     "global": {
       "anchors": [
         {

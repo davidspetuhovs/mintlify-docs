@@ -1,0 +1,1008 @@
+[
+  {
+    "name": "Navigate to sign up from landing page",
+    "description": "Find and click sign-up link from the landing page to create an account",
+    "persona": "Prospective user who has read about OpenBat and wants to create a free account",
+    "preconditions": [
+      "User is not logged in",
+      "User is on the landing page"
+    ],
+    "startingPage": "/",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "Visit the landing page and verify navigation links are visible",
+        "screenshotKey": "flow-step-navigate-to-sign-up-from-landing-page-1",
+        "pageUrl": "/"
+      },
+      {
+        "stepNumber": 2,
+        "action": "Click 'Sign Up' in the top navigation bar",
+        "screenshotKey": "flow-step-navigate-to-sign-up-from-landing-page-2",
+        "pageUrl": "/auth/sign-up"
+      },
+      {
+        "stepNumber": 3,
+        "action": "Verify the sign-up page loads with the account creation form",
+        "screenshotKey": "flow-step-navigate-to-sign-up-from-landing-page-3",
+        "pageUrl": "/auth/sign-up"
+      }
+    ],
+    "expectedOutcome": "User lands on the sign-up page ready to create an account",
+    "failureModes": [
+      {
+        "trigger": "'Start Free' and 'Get Started' buttons are placeholder links (#link)",
+        "result": "Clicking 'Start Free' or most 'Get Started' buttons does not navigate — only nav 'Sign Up' and Free tier 'Get Started' work",
+        "screenshotKey": "flow-failure-navigate-to-sign-up-from-landing-page-1"
+      }
+    ],
+    "relatedFlows": [
+      "Email sign up",
+      "Social auth login"
+    ],
+    "alternativePaths": [
+      "Click 'Get Started' on Free pricing tier (only one that works)"
+    ]
+  },
+  {
+    "name": "Explore feature demos",
+    "description": "Toggle between demo scenarios on the landing page to understand product value",
+    "persona": "Prospective customer evaluating the product before signing up",
+    "preconditions": [
+      "User is on the landing page"
+    ],
+    "startingPage": "/",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "Scroll to the 'From raw conversation to actionable insight' section",
+        "screenshotKey": "flow-step-explore-feature-demos-1",
+        "pageUrl": "/"
+      },
+      {
+        "stepNumber": 2,
+        "action": "Click 'Missed Upsell', 'Feature Gap Risk', and 'Bot Hallucination' buttons",
+        "screenshotKey": "flow-step-explore-feature-demos-2",
+        "pageUrl": "/"
+      },
+      {
+        "stepNumber": 3,
+        "action": "Verify demo content changes between scenarios showing conversation, prompt fix, and Slack alert",
+        "screenshotKey": "flow-step-explore-feature-demos-3",
+        "pageUrl": "/"
+      }
+    ],
+    "expectedOutcome": "User sees different AI analysis scenarios and understands the product value proposition",
+    "failureModes": [],
+    "relatedFlows": [
+      "Navigate to sign up from landing page"
+    ],
+    "alternativePaths": []
+  },
+  {
+    "name": "Email login",
+    "description": "Authenticate using email and password",
+    "persona": "Returning user who already has an account",
+    "preconditions": [
+      "User has an existing account",
+      "User is not already logged in"
+    ],
+    "startingPage": "/auth/login",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "Navigate to /auth/login and verify the login form is visible",
+        "screenshotKey": "flow-step-email-login-1",
+        "pageUrl": "/auth/login"
+      },
+      {
+        "stepNumber": 2,
+        "action": "Enter email address in the Email field",
+        "screenshotKey": "flow-step-email-login-2",
+        "pageUrl": "/auth/login"
+      },
+      {
+        "stepNumber": 3,
+        "action": "Enter password in the Password field",
+        "screenshotKey": "flow-step-email-login-3",
+        "pageUrl": "/auth/login"
+      },
+      {
+        "stepNumber": 4,
+        "action": "Click 'Login' button",
+        "screenshotKey": "flow-step-email-login-4",
+        "pageUrl": "/platform"
+      },
+      {
+        "stepNumber": 5,
+        "action": "Verify redirect to /platform dashboard with chatbots visible",
+        "screenshotKey": "flow-step-email-login-5",
+        "pageUrl": "/platform"
+      }
+    ],
+    "expectedOutcome": "User is redirected to /platform and sees their dashboard with chatbots",
+    "failureModes": [
+      {
+        "trigger": "Submit form with wrong password",
+        "result": "Alert shown: 'Invalid login credentials' — stays on /auth/login",
+        "screenshotKey": "flow-failure-email-login-1"
+      }
+    ],
+    "relatedFlows": [
+      "Forgot password flow",
+      "Email sign up"
+    ],
+    "alternativePaths": [
+      "Social auth login (Google/Apple/Meta)"
+    ]
+  },
+  {
+    "name": "Social auth login",
+    "description": "Authenticate using a social provider (Apple, Google, or Meta)",
+    "persona": "User who prefers social login",
+    "preconditions": [
+      "User has linked their social account"
+    ],
+    "startingPage": "/auth/login",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "Verify social auth buttons exist (Apple, Google, Meta)",
+        "screenshotKey": "flow-step-social-auth-login-1",
+        "pageUrl": "/auth/login"
+      },
+      {
+        "stepNumber": 2,
+        "action": "Click Google social auth button",
+        "screenshotKey": "flow-step-social-auth-login-2",
+        "pageUrl": "/auth/login"
+      }
+    ],
+    "expectedOutcome": "User is authenticated and redirected to /platform",
+    "failureModes": [
+      {
+        "trigger": "Click social auth button in localhost without OAuth provider configured",
+        "result": "Button click does not navigate — likely requires Supabase OAuth provider configuration",
+        "screenshotKey": "flow-failure-social-auth-login-1"
+      }
+    ],
+    "relatedFlows": [
+      "Email login"
+    ],
+    "alternativePaths": [
+      "Email login"
+    ]
+  },
+  {
+    "name": "Forgot password flow",
+    "description": "Navigate from login to password reset page",
+    "persona": "User who has forgotten their password",
+    "preconditions": [
+      "User has an existing account"
+    ],
+    "startingPage": "/auth/login",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "Navigate to /auth/login",
+        "screenshotKey": "flow-step-forgot-password-flow-1",
+        "pageUrl": "/auth/login"
+      },
+      {
+        "stepNumber": 2,
+        "action": "Click 'Forgot your password?' link",
+        "screenshotKey": "flow-step-forgot-password-flow-2",
+        "pageUrl": "/auth/forgot-password"
+      },
+      {
+        "stepNumber": 3,
+        "action": "Verify landing on password reset page with email field",
+        "screenshotKey": "flow-step-forgot-password-flow-3",
+        "pageUrl": "/auth/forgot-password"
+      }
+    ],
+    "expectedOutcome": "User lands on the password reset page to enter their email",
+    "failureModes": [],
+    "relatedFlows": [
+      "Password reset",
+      "Email login"
+    ],
+    "alternativePaths": []
+  },
+  {
+    "name": "Email sign up",
+    "description": "Create a new account with email and password",
+    "persona": "New user who wants to create an account",
+    "preconditions": [
+      "User does not have an existing account",
+      "User is not logged in"
+    ],
+    "startingPage": "/auth/sign-up",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "Navigate to /auth/sign-up and verify form fields",
+        "screenshotKey": "flow-step-email-sign-up-1",
+        "pageUrl": "/auth/sign-up"
+      },
+      {
+        "stepNumber": 2,
+        "action": "Enter email, password, and confirm password",
+        "screenshotKey": "flow-step-email-sign-up-2",
+        "pageUrl": "/auth/sign-up"
+      },
+      {
+        "stepNumber": 3,
+        "action": "Click 'Create Account'",
+        "screenshotKey": "flow-step-email-sign-up-3",
+        "pageUrl": "/auth/sign-up"
+      }
+    ],
+    "expectedOutcome": "Account is created and user is redirected to the platform",
+    "failureModes": [
+      {
+        "trigger": "Password too short (less than 6 characters)",
+        "result": "Alert: 'Password should be at least 6 characters.' Note: UI says 8 but backend enforces 6",
+        "screenshotKey": "flow-failure-email-sign-up-1"
+      },
+      {
+        "trigger": "Passwords don't match",
+        "result": "Alert: 'Passwords do not match'",
+        "screenshotKey": "flow-failure-email-sign-up-2"
+      },
+      {
+        "trigger": "Email already registered",
+        "result": "Alert: 'User already registered'",
+        "screenshotKey": "flow-failure-email-sign-up-3"
+      }
+    ],
+    "relatedFlows": [
+      "Email login",
+      "Navigate to sign up from landing page"
+    ],
+    "alternativePaths": [
+      "Social auth sign up (Apple/Google/Meta)"
+    ]
+  },
+  {
+    "name": "Password reset",
+    "description": "Request a password reset email",
+    "persona": "User who has forgotten their password",
+    "preconditions": [
+      "User has an existing account with a valid email"
+    ],
+    "startingPage": "/auth/forgot-password",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "Navigate to /auth/forgot-password",
+        "screenshotKey": "flow-step-password-reset-1",
+        "pageUrl": "/auth/forgot-password"
+      },
+      {
+        "stepNumber": 2,
+        "action": "Enter email and click 'Send reset email'",
+        "screenshotKey": "flow-step-password-reset-2",
+        "pageUrl": "/auth/forgot-password"
+      },
+      {
+        "stepNumber": 3,
+        "action": "Verify confirmation message: 'Check Your Email'",
+        "screenshotKey": "flow-step-password-reset-3",
+        "pageUrl": "/auth/forgot-password"
+      }
+    ],
+    "expectedOutcome": "Confirmation page: 'Password reset instructions sent'",
+    "failureModes": [],
+    "relatedFlows": [
+      "Forgot password flow",
+      "Email login"
+    ],
+    "alternativePaths": []
+  },
+  {
+    "name": "Open a chatbot",
+    "description": "Navigate from dashboard to a chatbot's analytics page",
+    "persona": "Analyst reviewing chatbot performance data",
+    "preconditions": [
+      "User is logged in",
+      "At least one chatbot exists"
+    ],
+    "startingPage": "/platform",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "Navigate to /platform and see chatbot cards",
+        "screenshotKey": "flow-step-open-a-chatbot-1",
+        "pageUrl": "/platform"
+      },
+      {
+        "stepNumber": 2,
+        "action": "Click '...' menu on chatbot card",
+        "screenshotKey": "flow-step-open-a-chatbot-2",
+        "pageUrl": "/platform"
+      },
+      {
+        "stepNumber": 3,
+        "action": "Click 'Open chatbot' from context menu",
+        "screenshotKey": "flow-step-open-a-chatbot-3",
+        "pageUrl": "/platform/{chatbotId}"
+      },
+      {
+        "stepNumber": 4,
+        "action": "Verify chatbot dashboard loads with KPIs, sentiment charts, and analysis data",
+        "screenshotKey": "flow-step-open-a-chatbot-4",
+        "pageUrl": "/platform/{chatbotId}"
+      }
+    ],
+    "expectedOutcome": "User sees chatbot dashboard with KPIs (373 conversations, 1292 messages), sentiment chart, frustrations, dissatisfied users, topics, revenue signals, intents, heatmap, languages",
+    "failureModes": [],
+    "relatedFlows": [
+      "Create a new chatbot",
+      "Investigate a dissatisfied user"
+    ],
+    "alternativePaths": []
+  },
+  {
+    "name": "Create a new chatbot",
+    "description": "Create a new chatbot from the dashboard",
+    "persona": "Developer or admin setting up OpenBat for a new project",
+    "preconditions": [
+      "User is logged in",
+      "Organization has available chatbot slots"
+    ],
+    "startingPage": "/platform",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "Navigate to /platform",
+        "screenshotKey": "flow-step-create-a-new-chatbot-1",
+        "pageUrl": "/platform"
+      },
+      {
+        "stepNumber": 2,
+        "action": "Click '+ New chatbot' button, modal opens with name field",
+        "screenshotKey": "flow-step-create-a-new-chatbot-2",
+        "pageUrl": "/platform"
+      },
+      {
+        "stepNumber": 3,
+        "action": "Enter chatbot name and click 'Continue to setup'",
+        "screenshotKey": "flow-step-create-a-new-chatbot-3",
+        "pageUrl": "/platform/{chatbotId}/onboarding"
+      }
+    ],
+    "expectedOutcome": "Chatbot created, redirected to 6-step onboarding wizard (Basics, Product, Brand, Pricing, Context, Connect)",
+    "failureModes": [],
+    "relatedFlows": [
+      "Open a chatbot"
+    ],
+    "alternativePaths": []
+  },
+  {
+    "name": "Switch organization",
+    "description": "Switch between organizations using the sidebar switcher",
+    "persona": "User who manages multiple teams or products",
+    "preconditions": [
+      "User is logged in",
+      "User belongs to multiple organizations"
+    ],
+    "startingPage": "/platform",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "Click organization switcher in sidebar",
+        "screenshotKey": "flow-step-switch-organization-1",
+        "pageUrl": "/platform"
+      },
+      {
+        "stepNumber": 2,
+        "action": "View dropdown with organizations list and 'Create organization' option",
+        "screenshotKey": "flow-step-switch-organization-2",
+        "pageUrl": "/platform"
+      }
+    ],
+    "expectedOutcome": "Dashboard updates to show chatbots for the selected organization",
+    "failureModes": [
+      {
+        "trigger": "User only has one organization",
+        "result": "Dropdown shows only current org and 'Create organization' option — no switching possible",
+        "screenshotKey": "flow-failure-switch-organization-1"
+      }
+    ],
+    "relatedFlows": [
+      "Rename organization"
+    ],
+    "alternativePaths": [
+      "Create a new organization from the switcher"
+    ]
+  },
+  {
+    "name": "Invite a team member",
+    "description": "Invite a new member to the organization",
+    "persona": "Organization admin who wants to give team members access",
+    "preconditions": [
+      "User is logged in",
+      "User has Owner or admin role"
+    ],
+    "startingPage": "/platform/members",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "Navigate to /platform/members and see members table",
+        "screenshotKey": "flow-step-invite-a-team-member-1",
+        "pageUrl": "/platform/members"
+      },
+      {
+        "stepNumber": 2,
+        "action": "Click 'Invite member' button — modal opens with email and role fields",
+        "screenshotKey": "flow-step-invite-a-team-member-2",
+        "pageUrl": "/platform/members"
+      },
+      {
+        "stepNumber": 3,
+        "action": "Verify role dropdown has Admin and Member options",
+        "screenshotKey": "flow-step-invite-a-team-member-3",
+        "pageUrl": "/platform/members"
+      }
+    ],
+    "expectedOutcome": "Invitation sent to email, member appears in table once accepted",
+    "failureModes": [],
+    "relatedFlows": [
+      "Rename organization"
+    ],
+    "alternativePaths": []
+  },
+  {
+    "name": "Rename organization",
+    "description": "Update the organization name in settings",
+    "persona": "Organization owner updating the org name",
+    "preconditions": [
+      "User is logged in",
+      "User has Owner role"
+    ],
+    "startingPage": "/platform/settings",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "Navigate to /platform/settings and see org name field with 'Test' value",
+        "screenshotKey": "flow-step-rename-organization-1",
+        "pageUrl": "/platform/settings"
+      },
+      {
+        "stepNumber": 2,
+        "action": "Edit name field and click Save",
+        "screenshotKey": "flow-step-rename-organization-2",
+        "pageUrl": "/platform/settings"
+      }
+    ],
+    "expectedOutcome": "Organization name is updated across the platform",
+    "failureModes": [],
+    "relatedFlows": [
+      "Delete organization"
+    ],
+    "alternativePaths": []
+  },
+  {
+    "name": "Delete organization",
+    "description": "Permanently delete the organization and all data",
+    "persona": "Organization owner who wants to remove the organization",
+    "preconditions": [
+      "User is logged in",
+      "User has Owner role"
+    ],
+    "startingPage": "/platform/settings",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "Navigate to /platform/settings",
+        "screenshotKey": "flow-step-delete-organization-1",
+        "pageUrl": "/platform/settings"
+      },
+      {
+        "stepNumber": 2,
+        "action": "Click 'Delete organization' in danger zone",
+        "screenshotKey": "flow-step-delete-organization-2",
+        "pageUrl": "/platform/settings"
+      },
+      {
+        "stepNumber": 3,
+        "action": "Confirmation dialog requires typing org name to confirm — Delete button disabled until matched",
+        "screenshotKey": "flow-step-delete-organization-3",
+        "pageUrl": "/platform/settings"
+      }
+    ],
+    "expectedOutcome": "Organization and all data permanently deleted",
+    "failureModes": [],
+    "relatedFlows": [
+      "Rename organization"
+    ],
+    "alternativePaths": []
+  },
+  {
+    "name": "Investigate a dissatisfied user",
+    "description": "Click through from dissatisfied user list to their conversations",
+    "persona": "Customer success manager investigating negative experiences",
+    "preconditions": [
+      "User is logged in",
+      "Chatbot has analyzed conversations",
+      "Dissatisfied users exist"
+    ],
+    "startingPage": "/platform/{chatbotId}",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "Navigate to chatbot dashboard, see 'Most dissatisfied users' section",
+        "screenshotKey": "flow-step-investigate-a-dissatisfied-user-1",
+        "pageUrl": "/platform/{chatbotId}"
+      },
+      {
+        "stepNumber": 2,
+        "action": "Click 'Investigate →' next to Riccardo G (score 4.1)",
+        "screenshotKey": "flow-step-investigate-a-dissatisfied-user-2",
+        "pageUrl": "/platform/{chatbotId}/conversations?user=riccardo.gaboardi@jakala.com"
+      },
+      {
+        "stepNumber": 3,
+        "action": "Conversations page loads but shows ALL conversations (116 rows), not filtered to user",
+        "screenshotKey": "flow-step-investigate-a-dissatisfied-user-3",
+        "pageUrl": "/platform/{chatbotId}/conversations?user=riccardo.gaboardi@jakala.com"
+      }
+    ],
+    "expectedOutcome": "Conversations page opens filtered to show only that user's conversations",
+    "failureModes": [
+      {
+        "trigger": "URL has ?user= query param but table shows all conversations unfiltered",
+        "result": "BUG: The user filter query parameter is not being applied — all 116 conversations shown instead of just Riccardo's",
+        "screenshotKey": "flow-failure-investigate-a-dissatisfied-user-1"
+      }
+    ],
+    "relatedFlows": [
+      "View conversation detail",
+      "Filter conversations"
+    ],
+    "alternativePaths": []
+  },
+  {
+    "name": "Change analysis time period",
+    "description": "Change the dashboard date range to filter analytics data",
+    "persona": "Analyst comparing metrics across different time periods",
+    "preconditions": [
+      "User is logged in",
+      "User is on the chatbot dashboard"
+    ],
+    "startingPage": "/platform/{chatbotId}",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "Click 'This month' date range button to open date picker",
+        "screenshotKey": "flow-step-change-analysis-time-period-1",
+        "pageUrl": "/platform/{chatbotId}"
+      },
+      {
+        "stepNumber": 2,
+        "action": "Date picker opens with presets: Today, Yesterday, This week, Last week, This month, Last month, This year, Last year, All time, Custom. Dual calendar grid.",
+        "screenshotKey": "flow-step-change-analysis-time-period-2",
+        "pageUrl": "/platform/{chatbotId}"
+      },
+      {
+        "stepNumber": 3,
+        "action": "Select 'Last week' and click Apply — dashboard data updates (frustrations: 3 vs 5, users: 1 vs 3, languages: en 100%)",
+        "screenshotKey": "flow-step-change-analysis-time-period-3",
+        "pageUrl": "/platform/{chatbotId}"
+      }
+    ],
+    "expectedOutcome": "All dashboard KPIs, charts, and tables update to reflect the selected date range",
+    "failureModes": [],
+    "relatedFlows": [
+      "Investigate a dissatisfied user"
+    ],
+    "alternativePaths": []
+  },
+  {
+    "name": "Create a workflow from template",
+    "description": "Use a pre-built template to create an automated workflow",
+    "persona": "Customer success lead who wants automated notifications",
+    "preconditions": [
+      "User is logged in",
+      "Organization's plan allows workflows"
+    ],
+    "startingPage": "/platform/{chatbotId}/workflows",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "Navigate to workflows page and see Workflows/Runs/Templates tabs",
+        "screenshotKey": "flow-step-create-a-workflow-from-template-1",
+        "pageUrl": "/platform/{chatbotId}/workflows"
+      },
+      {
+        "stepNumber": 2,
+        "action": "Click Templates tab — see 6 templates with category filters (Alerting, Escalation, Reporting, Moderation, General)",
+        "screenshotKey": "flow-step-create-a-workflow-from-template-2",
+        "pageUrl": "/platform/{chatbotId}/workflows"
+      }
+    ],
+    "expectedOutcome": "Templates available: Negative Sentiment Alert, Escalation on Frustration, Topic Spike Monitor, Chatbot Quality Gate, Hallucination Flag, Positive Feedback Tracker",
+    "failureModes": [],
+    "relatedFlows": [
+      "Create a workflow from scratch"
+    ],
+    "alternativePaths": []
+  },
+  {
+    "name": "Create a workflow from scratch",
+    "description": "Create a custom workflow with name, conditions, and actions",
+    "persona": "Power user who needs custom automation",
+    "preconditions": [
+      "User is logged in",
+      "Organization's plan allows workflows"
+    ],
+    "startingPage": "/platform/{chatbotId}/workflows",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "Click 'Create workflow' button on Workflows tab — inline form appears with name field and Create/Cancel buttons",
+        "screenshotKey": "flow-step-create-a-workflow-from-scratch-1",
+        "pageUrl": "/platform/{chatbotId}/workflows"
+      }
+    ],
+    "expectedOutcome": "Workflow created and available for configuration",
+    "failureModes": [],
+    "relatedFlows": [
+      "Create a workflow from template"
+    ],
+    "alternativePaths": []
+  },
+  {
+    "name": "View conversation detail",
+    "description": "Open a conversation to see the full transcript with analysis annotations",
+    "persona": "Analyst reviewing specific customer interactions",
+    "preconditions": [
+      "User is logged in",
+      "Chatbot has at least one conversation"
+    ],
+    "startingPage": "/platform/{chatbotId}/conversations",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "Navigate to conversations page (116 rows, paginated)",
+        "screenshotKey": "flow-step-view-conversation-detail-1",
+        "pageUrl": "/platform/{chatbotId}/conversations"
+      },
+      {
+        "stepNumber": 2,
+        "action": "Click on Riccardo G's conversation row",
+        "screenshotKey": "flow-step-view-conversation-detail-2",
+        "pageUrl": "/platform/{chatbotId}/conversations/{conversationId}"
+      },
+      {
+        "stepNumber": 3,
+        "action": "Conversation detail loads with full transcript, per-message tags (Very Negative, Complaint, System Support and Feedback, Dodging, Deflected, brand voice violation), sidebar with sentiment score (-0.90), user info, org info, session data",
+        "screenshotKey": "flow-step-view-conversation-detail-3",
+        "pageUrl": "/platform/{chatbotId}/conversations/{conversationId}"
+      }
+    ],
+    "expectedOutcome": "Full conversation with analysis annotations and metadata sidebar",
+    "failureModes": [],
+    "relatedFlows": [
+      "Filter conversations",
+      "Review message-level analysis"
+    ],
+    "alternativePaths": []
+  },
+  {
+    "name": "Filter conversations",
+    "description": "Use search and filters to narrow conversation results",
+    "persona": "Analyst looking for specific types of conversations",
+    "preconditions": [
+      "User is logged in",
+      "Chatbot has conversations"
+    ],
+    "startingPage": "/platform/{chatbotId}/conversations",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "Conversations page has search box, Filter button, sortable columns (User, Email, Organization, Messages, Sentiment, Language, Plan, Last Message, Created)",
+        "screenshotKey": "flow-step-filter-conversations-1",
+        "pageUrl": "/platform/{chatbotId}/conversations"
+      }
+    ],
+    "expectedOutcome": "Table updates to show only conversations matching filter criteria",
+    "failureModes": [],
+    "relatedFlows": [
+      "View conversation detail"
+    ],
+    "alternativePaths": []
+  },
+  {
+    "name": "Review message-level analysis",
+    "description": "View detailed AI analysis tags on individual messages",
+    "persona": "QA analyst investigating AI analysis decisions",
+    "preconditions": [
+      "User is on a conversation detail page",
+      "Messages have been analyzed"
+    ],
+    "startingPage": "/platform/{chatbotId}/conversations/{conversationId}",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "On conversation detail, clickable analysis tags visible on messages: 'Very Negative', 'Complaint', 'System Support and Feedback' (user), 'Dodging', 'Deflected', 'brand voice violation' (assistant)",
+        "screenshotKey": "flow-step-review-message-level-analysis-1",
+        "pageUrl": "/platform/{chatbotId}/conversations/{conversationId}"
+      }
+    ],
+    "expectedOutcome": "Analysis tags are clickable and show reasoning for each annotation",
+    "failureModes": [],
+    "relatedFlows": [
+      "View conversation detail"
+    ],
+    "alternativePaths": []
+  },
+  {
+    "name": "Semantic search conversations",
+    "description": "Search conversations by meaning using semantic similarity",
+    "persona": "Product manager looking for thematic patterns",
+    "preconditions": [
+      "User is logged in",
+      "Chatbot has conversations with embedded semantic data"
+    ],
+    "startingPage": "/platform/{chatbotId}/deep-search",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "Navigate to Deep Search page with semantic search field, date range picker, and 'Deep Search' button",
+        "screenshotKey": "flow-step-semantic-search-conversations-1",
+        "pageUrl": "/platform/{chatbotId}/deep-search"
+      }
+    ],
+    "expectedOutcome": "Conversations ranked by semantic relevance to the query",
+    "failureModes": [],
+    "relatedFlows": [
+      "Filter conversations"
+    ],
+    "alternativePaths": []
+  },
+  {
+    "name": "Browse client organizations",
+    "description": "View and filter customer organizations with sortable metrics",
+    "persona": "Customer success manager monitoring account health",
+    "preconditions": [
+      "User is logged in",
+      "Chatbot has conversations with organization metadata"
+    ],
+    "startingPage": "/platform/{chatbotId}/organizations",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "Navigate to organizations page — 48 rows with columns: Organization, Plan, Industry, MRR, Conversations, Users, Sentiment, Last Activity",
+        "screenshotKey": "flow-step-browse-client-organizations-1",
+        "pageUrl": "/platform/{chatbotId}/organizations"
+      }
+    ],
+    "expectedOutcome": "Sortable, filterable table of customer organizations",
+    "failureModes": [],
+    "relatedFlows": [
+      "Browse chatbot users"
+    ],
+    "alternativePaths": []
+  },
+  {
+    "name": "Browse chatbot users",
+    "description": "View and filter individual chatbot users with sentiment data",
+    "persona": "Customer success manager tracking individual user satisfaction",
+    "preconditions": [
+      "User is logged in",
+      "Chatbot has conversations with user metadata"
+    ],
+    "startingPage": "/platform/{chatbotId}/users",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "Navigate to users page — 26 rows with columns: User, Email, Organization, Plan, MRR, Conversations, Sentiment, Last Activity",
+        "screenshotKey": "flow-step-browse-chatbot-users-1",
+        "pageUrl": "/platform/{chatbotId}/users"
+      }
+    ],
+    "expectedOutcome": "Sortable, filterable table of chatbot users",
+    "failureModes": [],
+    "relatedFlows": [
+      "Browse client organizations",
+      "Investigate a dissatisfied user"
+    ],
+    "alternativePaths": []
+  },
+  {
+    "name": "Configure user analysis flags",
+    "description": "Toggle and customize analysis flags for user messages",
+    "persona": "Product manager customizing signal detection",
+    "preconditions": [
+      "User is logged in",
+      "User has access to analysis config"
+    ],
+    "startingPage": "/platform/{chatbotId}/analysis-config",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "Navigate to analysis config — tabs: Metadata, Translation, User Analysis, Assistant Analysis, Prompts",
+        "screenshotKey": "flow-step-configure-user-analysis-flags-1",
+        "pageUrl": "/platform/{chatbotId}/analysis-config"
+      }
+    ],
+    "expectedOutcome": "User Analysis tab allows toggling flags and creating custom ones",
+    "failureModes": [],
+    "relatedFlows": [
+      "Enable auto-translation",
+      "Edit analysis prompts"
+    ],
+    "alternativePaths": []
+  },
+  {
+    "name": "Enable auto-translation",
+    "description": "Enable automatic translation of non-primary-language messages",
+    "persona": "Product team with international users",
+    "preconditions": [
+      "User is logged in",
+      "Chatbot receives messages in multiple languages"
+    ],
+    "startingPage": "/platform/{chatbotId}/analysis-config",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "Click Translation tab in analysis config",
+        "screenshotKey": "flow-step-enable-auto-translation-1",
+        "pageUrl": "/platform/{chatbotId}/analysis-config"
+      }
+    ],
+    "expectedOutcome": "Translation settings with toggle and language selection",
+    "failureModes": [],
+    "relatedFlows": [
+      "Configure user analysis flags"
+    ],
+    "alternativePaths": []
+  },
+  {
+    "name": "Edit analysis prompts",
+    "description": "Customize the AI prompts used for conversation analysis",
+    "persona": "Power user or ML engineer fine-tuning analysis",
+    "preconditions": [
+      "User is logged in",
+      "User understands prompt engineering"
+    ],
+    "startingPage": "/platform/{chatbotId}/analysis-config",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "Click Prompts tab in analysis config",
+        "screenshotKey": "flow-step-edit-analysis-prompts-1",
+        "pageUrl": "/platform/{chatbotId}/analysis-config"
+      }
+    ],
+    "expectedOutcome": "Prompt editor with Sentiment, Intent, Topics, Flags cards",
+    "failureModes": [],
+    "relatedFlows": [
+      "Configure user analysis flags"
+    ],
+    "alternativePaths": []
+  },
+  {
+    "name": "Track metadata fields",
+    "description": "Accept discovered metadata fields to make them filterable",
+    "persona": "Developer who has set up SDK with custom metadata",
+    "preconditions": [
+      "SDK is sending custom metadata",
+      "Discovered fields appear in table"
+    ],
+    "startingPage": "/platform/{chatbotId}/analysis-config",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "Metadata tab shows Managed fields (custom.templateId, custom.templateName) and 8 Discovered fields (browser, custom.chatbot, device, ip, language, os, referer, userAgent) with Track buttons",
+        "screenshotKey": "flow-step-track-metadata-fields-1",
+        "pageUrl": "/platform/{chatbotId}/analysis-config"
+      }
+    ],
+    "expectedOutcome": "Tracked fields become available as filter columns in conversations table",
+    "failureModes": [],
+    "relatedFlows": [
+      "Filter conversations"
+    ],
+    "alternativePaths": []
+  },
+  {
+    "name": "Configure API keys",
+    "description": "View and rotate API keys for SDK authentication",
+    "persona": "Developer setting up or maintaining SDK integration",
+    "preconditions": [
+      "User is logged in",
+      "User has access to chatbot settings"
+    ],
+    "startingPage": "/platform/{chatbotId}/settings",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "Navigate to settings, click API Keys tab — shows masked key prefix ob_live_8ae071a6 with copy and Rotate key buttons",
+        "screenshotKey": "flow-step-configure-api-keys-1",
+        "pageUrl": "/platform/{chatbotId}/settings"
+      }
+    ],
+    "expectedOutcome": "API key visible (masked) with copy and rotate functionality",
+    "failureModes": [],
+    "relatedFlows": [
+      "Configure webhooks"
+    ],
+    "alternativePaths": []
+  },
+  {
+    "name": "Configure webhooks",
+    "description": "Add webhook destinations for workflow alerts",
+    "persona": "Operations lead setting up Slack/Discord alerts",
+    "preconditions": [
+      "User is logged in",
+      "User has a webhook URL"
+    ],
+    "startingPage": "/platform/{chatbotId}/settings",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "Click Webhooks tab — empty state with 'Add webhook' button and docs for Discord, Slack, and Custom types",
+        "screenshotKey": "flow-step-configure-webhooks-1",
+        "pageUrl": "/platform/{chatbotId}/settings"
+      }
+    ],
+    "expectedOutcome": "Webhook destination saved and available for workflow actions",
+    "failureModes": [],
+    "relatedFlows": [
+      "Create a workflow from template",
+      "Create a workflow from scratch"
+    ],
+    "alternativePaths": []
+  },
+  {
+    "name": "Export conversation data",
+    "description": "Download conversations and analysis results as JSON",
+    "persona": "Data analyst running custom analysis or admin creating backup",
+    "preconditions": [
+      "User is logged in",
+      "Chatbot has conversations"
+    ],
+    "startingPage": "/platform/{chatbotId}/settings",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "Click Import/Export Data tab — Export section with JSON format selector, 'Include analysis results' checkbox, '1,292 messages' count, Export button",
+        "screenshotKey": "flow-step-export-conversation-data-1",
+        "pageUrl": "/platform/{chatbotId}/settings"
+      }
+    ],
+    "expectedOutcome": "JSON file with all conversations and analysis results downloads",
+    "failureModes": [],
+    "relatedFlows": [
+      "Import conversation data"
+    ],
+    "alternativePaths": []
+  },
+  {
+    "name": "Import conversation data",
+    "description": "Upload historical conversations for analysis",
+    "persona": "Developer with historical conversation logs",
+    "preconditions": [
+      "User is logged in",
+      "User has conversation data in JSON or CSV"
+    ],
+    "startingPage": "/platform/{chatbotId}/settings",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "Import section on Import/Export Data tab — 'Download template CSV' button, file chooser, Import button (disabled until file selected)",
+        "screenshotKey": "flow-step-import-conversation-data-1",
+        "pageUrl": "/platform/{chatbotId}/settings"
+      }
+    ],
+    "expectedOutcome": "Conversations imported and available for analysis",
+    "failureModes": [],
+    "relatedFlows": [
+      "Export conversation data"
+    ],
+    "alternativePaths": []
+  }
+]
