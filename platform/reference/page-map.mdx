@@ -1,0 +1,116 @@
+---
+title: "Page map"
+description: "Every page in the product, catalogued."
+icon: "map"
+---
+{/* SOURCES: sitemap.json; sitemap.md */}
+
+This catalog lists all 34 pages in OpenBat, grouped by area. Use it to find the right page by path, see what each page is for, and trace which flows start there. Paths shown with `[chatbotId]` or `[id]` are templated routes — the bracket is replaced with a real ID at runtime.
+
+## Public marketing pages
+
+Public pages accessible to anyone, with no account required. Reached from the top navigation, footer, and CTA buttons.
+
+| Path | Title | Purpose |
+| --- | --- | --- |
+| `/` | Landing Page | Marketing homepage positioning OpenBat as "Google Analytics for AI chatbots," with feature walkthroughs, SDK code samples, FAQ, and "Start listening" CTAs. |
+| `/use-cases` | Use Cases Overview | Hub linking to team-specific use case pages for Customer Success, Engineering, Product Teams, and Support. |
+| `/use-cases/customer-success` | Use Case — Customer Success | How CS teams detect churn risk, surface at-risk accounts, and monitor sentiment before renewals. |
+| `/use-cases/engineering` | Use Case — Engineering | How engineering teams catch hallucinations, monitor chatbot quality, and validate prompt changes. |
+| `/use-cases/product-teams` | Use Case — Product Teams | How product teams see what users ask for, ranked by demand and sentiment. |
+| `/use-cases/support` | Use Case — Support | How support teams triage frustration and resolve issues faster. |
+| `/compare` | Compare Overview | Positions OpenBat (business intelligence) against LLM observability tools and links to six comparison pages. |
+| `/compare/langfuse` | Compare — vs Langfuse | Head-to-head comparison of OpenBat against Langfuse (LLM tracing for engineers). |
+| `/compare/langsmith` | Compare — vs LangSmith | Comparison of OpenBat against LangSmith (tracing vs business intelligence). |
+| `/compare/helicone` | Compare — vs Helicone | Comparison of OpenBat against Helicone (API logs vs conversation insight). |
+| `/compare/braintrust` | Compare — vs Braintrust | Comparison of OpenBat against Braintrust (eval suite vs ongoing monitoring). |
+| `/compare/manual-review` | Compare — vs Manual Review | Comparison of OpenBat against manual spreadsheet-based conversation review. |
+| `/compare/diy` | Compare — vs DIY | Comparison of OpenBat against building your own analytics pipeline. |
+| `/contact` | Contact | Demo booking and contact form with a 24-hour response guarantee. |
+| `/security` | Security | Data protection practices — encryption, access controls, compliance, sub-processors, and downloadable documents. |
+
+## Auth pages
+
+Authentication pages for signing in, registering, and recovering access. Successful sign-in redirects to `/platform`.
+
+| Path | Title | Purpose |
+| --- | --- | --- |
+| `/auth/login` | Sign In | Email and password form for returning users; links to forgot-password and create-account. |
+| `/auth/sign-up` | Create Account | Registration form collecting work email, password, and confirmation; sends a verification email on submit. |
+| `/auth/forgot-password` | Forgot Password | Requests a one-time password reset link by email. |
+
+<Note>The sitemap also references `/auth/sign-up-success` (shown after registration) and `/auth/update-password` (reached from a reset link). These appear in flow descriptions but are not separately catalogued pages.</Note>
+
+## Platform — organization level
+
+Org-scoped pages reached from the organization sidebar (Chatbots, Members, Settings). An organization is auto-created on first visit if you have none.
+
+| Path | Title | Purpose |
+| --- | --- | --- |
+| `/platform` | Chatbot List (Dashboard) | Organization dashboard listing all chatbots with status tabs (Active, Pending, Archive, Demo) and card or list view. |
+| `/platform/members` | Organization Members | Table of organization members with email, role, and join date; supports inviting new members. |
+| `/platform/settings` | Organization Settings | Editable organization name plus a danger zone for permanent organization deletion. |
+
+## Platform — chatbot level
+
+Chatbot-scoped pages reached after selecting a chatbot from `/platform`. The sidebar switches to chatbot-specific navigation. The `[chatbotId]` segment identifies the selected chatbot.
+
+| Path | Title | Purpose |
+| --- | --- | --- |
+| `/platform/[chatbotId]` | Chatbot Overview Dashboard | Primary analytics dashboard with an AI chat interface and summary cards for at-risk orgs, performance, activity, and risks. |
+| `/platform/[chatbotId]/reports` | Reports | AI-native, chat-driven dashboards built from pre-built templates or blank reports. |
+| `/platform/[chatbotId]/workflows` | Workflows | Automation hub for alert workflows, with Workflows, Runs, and Templates tabs. |
+| `/platform/[chatbotId]/system-prompt` | System Prompt | Versioned system prompt editor with Prompt, Experiments, and Suggested tabs, publish mode, kill switch, and rollback. |
+| `/platform/[chatbotId]/users` | Users | Sortable, filterable directory of external chatbot users with health and AI literacy scores. |
+| `/platform/[chatbotId]/conversations` | Conversations | Sortable, filterable list of conversations with outcome, sentiment, issues, and flag counts. |
+| `/platform/[chatbotId]/conversations/[id]` | Conversation Detail | Full transcript view with analysis tags and General, User, and Assistant analysis tabs. |
+| `/platform/[chatbotId]/query-types` | Query Types | Semantic clustering of user messages into canonical question categories with volume and resolution metrics. |
+| `/platform/[chatbotId]/deep-search` | Deep Search | Semantic search that finds conversations by meaning rather than keywords. |
+| `/platform/[chatbotId]/organizations` | External Customer Organizations | Directory of external customer organizations, populated when the SDK sends organization metadata. |
+| `/platform/[chatbotId]/analysis-config` | Analysis Config | Analysis configuration across Integration, Metadata, Translation, User Analysis, Assistant Analysis, Calibration, and Personas tabs. |
+| `/platform/[chatbotId]/settings` | Chatbot Settings | Chatbot configuration across General, Billing, Company Info, API Keys, Members, Webhooks, and Import/Export Data tabs. |
+| `/platform/[chatbotId]/onboarding` | Chatbot Onboarding | SDK setup wizard shown after creating a chatbot; redirects to the dashboard once complete. |
+
+## Flows by starting page
+
+The sitemap identifies 14 named flows. Each begins on the page below.
+
+| Flow | Starts on |
+| --- | --- |
+| Sign up from landing page | `/` |
+| Email login | `/auth/login` |
+| Email sign up | `/auth/sign-up` |
+| Password reset request | `/auth/forgot-password` |
+| Create new chatbot | `/platform` |
+| Explore demo chatbot | `/platform` |
+| Invite team member | `/platform/members` |
+| Ask AI about chatbot data | `/platform/[chatbotId]` |
+| Create report from template | `/platform/[chatbotId]/reports` |
+| Create workflow from template | `/platform/[chatbotId]/workflows` |
+| Create new prompt version | `/platform/[chatbotId]/system-prompt` |
+| Review a specific conversation | `/platform/[chatbotId]/conversations` |
+| Configure analysis definitions | `/platform/[chatbotId]/analysis-config` |
+| Export conversation data | `/platform/[chatbotId]/settings` |
+
+## Where to read more
+
+<Columns cols={2}>
+  <Card title="Managing chatbots" icon="robot" href="/platform/features/managing-chatbots">
+    The chatbot list, status tabs, and creating new chatbots.
+  </Card>
+  <Card title="Overview dashboard" icon="gauge" href="/platform/features/overview-dashboard">
+    The AI chat interface and summary cards on the chatbot dashboard.
+  </Card>
+  <Card title="Conversations" icon="messages" href="/platform/features/conversations">
+    Browsing, filtering, and drilling into individual conversations.
+  </Card>
+  <Card title="Analysis config" icon="sliders" href="/platform/features/analysis-config">
+    Configuring how conversations are analyzed.
+  </Card>
+  <Card title="Chatbot settings" icon="gear" href="/platform/features/chatbot-settings">
+    API keys, billing, webhooks, and data import/export.
+  </Card>
+  <Card title="Architecture" icon="diagram-project" href="/platform/reference/architecture">
+    How the pieces of the platform fit together.
+  </Card>
+</Columns>

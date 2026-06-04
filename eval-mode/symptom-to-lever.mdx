@@ -1,0 +1,128 @@
+---
+title: "Symptom-to-lever reference"
+description: "The answer-available decision table."
+icon: "table"
+---
+{/* SOURCES: _sources/skill-openbat-optimize.md */}
+
+This is the diagnose step of the probe → diagnose → fix loop. Once you have a verdict — from an organic cluster in `openbat review` or a synthetic `openbat probe` — this table tells you which lever to pull: the system prompt, tool logic, retrieval, a new analysis, or the docs. Pull the wrong lever (editing the prompt for a knowledge gap, for example) and the failure stays.
+
+The reasoning happens client-side, in the chatbot's own repo, because only that repo holds the system prompt, tools, and retrieval config. OpenBat's server never sees your code — it gives you the verdict, you map it to a lever.
+
+## The load-bearing fields
+
+Two analysis fields decide the lever before you read a single transcript:
+
+- **`answer_available`** — whether the bot *could* have answered. `answer_available = true` means the bot had the information and still failed, so it's a delivery failure (prompt / retrieval / tool), **not** a knowledge gap. `answer_available = false` means the information wasn't there to begin with.
+- **`verification_source`** — where the answer was (or should have been) grounded: `docs` / `retrieval`, `reasoning` / `chatbot_data`, `hallucination`, or `missing_knowledge`. It narrows which delivery lever is at fault.
+
+Read both off the flagged message, alongside the analysis `reasoning`:
+
+```bash
+openbat conversations show <id> --json | jq '.messages[] | {role, content, analyses: {
+  intents: .user_intents, flags: .user_flags,
+  outcomes: .assistant_outcomes, issues: .assistant_issues }}'
+```
+
+<Note>
+`answer_available` is the load-bearing field. Never edit the prompt for a `missing_knowledge` cluster — there is no instruction that conjures information the chatbot never had. Author the doc instead.
+</Note>
+
+## The decision table
+
+| Cluster signal | `answer_available` | `verification_source` | Lever | Fix |
+|---|---|---|---|---|
+| Wrong/incomplete answer, info exists in docs | true | `docs` / `retrieval` | **Retrieval / docs** | Improve chunking/topK, add the doc, fix the index — *not* the prompt |
+| Bot refused/hedged though it had the data | true | `reasoning` / `chatbot_data` | **System prompt** | Loosen/clarify the instruction that caused the refusal |
+| Bot needed a tool but never called it | n/a | (tool gap) | **Tool logic / prompt** | Add tool-trigger guidance to the prompt, or fix the tool schema/description |
+| Invented facts not in any source | false | `hallucination` | **Prompt + retrieval** | Add a "say you don't know" guardrail; fill the knowledge gap |
+| Genuinely unanswerable (info doesn't exist) | false | `missing_knowledge` | **Docs / product** | Author the missing doc; or route to a human |
+| Recurring spike, no single root cause | n/a | n/a | **New analysis + alert** | `openbat analysis add` to track it, `openbat workflows create` to alert |
+
+## How to read a row
+
+<Steps>
+  <Step title="Pull the verdict">
+    For an organic failure, get the cluster from the digest; for a candidate fix, drive a synthetic query that reproduces it.
+
+    ```bash
+    openbat review --since 24h          # organic clusters with representative pointers
+    openbat probe "the exact question that failed organically"   # synthetic verdict
+    ```
+
+    The synthetic call is captured as `kind=probe` and excluded from organic `review`/analytics, so reproducing a failure never skews your real metrics.
+  </Step>
+  <Step title="Check answer_available first">
+    `true` routes you to the delivery levers (prompt / retrieval / tool). `false` routes you to the knowledge levers (docs / product). This branch happens before you look at anything else.
+  </Step>
+  <Step title="Narrow with verification_source">
+    Within the `true` branch, `docs` / `retrieval` points at retrieval, while `reasoning` / `chatbot_data` points at the prompt. Within the `false` branch, `hallucination` needs a guardrail plus a knowledge fill, while `missing_knowledge` needs a new doc.
+  </Step>
+  <Step title="Locate the source the lever lives in">
+    Find the prompt, tools, or retrieval config in the repo before editing — prefer the repo's own code-intelligence over grepping:
+
+    - **System prompt:** grep `systemPrompt`, `system_prompt`, `role: "system"`, large template literals near `streamText` / `generateText` / `messages: [`; paths like `**/prompts/*.{ts,md}`, `system-prompt.*`, `*.prompt.*`.
+    - **Tools / functions:** `tools: {`, `tool(`, `functionDeclarations`, `zodFunction`; files `tools.*`, `functions.*`.
+    - **Retrieval / RAG:** `embed(`, `similaritySearch`, `vectorStore`, `pgvector`, `retriev`, `topK`; files `retrieval.*`, `rag.*`, `knowledge*`.
+  </Step>
+  <Step title="Apply the fix, then validate by re-probing">
+    Repo edits go through a PR — never commit to the default branch. After applying the fix, re-probe the same question (or re-run the suite and diff it) to confirm the verdict flipped.
+
+    ```bash
+    openbat eval run --suite golden.json --out before.json
+    #   …apply the fix the table pointed you at…
+    openbat eval run --suite golden.json --out after.json
+    openbat eval diff before.json after.json       # exit 1 if anything regressed
+    ```
+  </Step>
+</Steps>
+
+<Warning>
+Probe and eval traffic validates the fix; it does not move production metrics. Synthetic conversations are `kind=probe`, hidden from `review`, the dashboard, and analytics. Never claim a prod metric changed because of a probe run — inspect probes separately with `openbat conversations list --synthetic`.
+</Warning>
+
+## When the lever is a system-prompt change
+
+If the table sends you to the system prompt, stage the change as a draft and test it before it goes live — don't ship on faith:
+
+```bash
+openbat prompts create-draft --file new-prompt.txt        # a version, NOT live
+openbat eval run --suite golden.json --candidate <versionId>   # chatbot runs the draft
+openbat prompts activate <versionId>                       # ship only once the eval is clean
+```
+
+The chatbot fetches the candidate via the SDK's `versionOverride` — forward the `{{candidate}}` adapter field so your route reads it. For a repo-hardcoded prompt, edit it locally and probe instead. See [candidate prompts](/eval-mode/candidate-prompts) for the full staging flow.
+
+## When the lever is "new analysis + alert"
+
+A recurring spike with no single root cause isn't a prompt, retrieval, or tool fix — it's something to *track*. Define the analysis, then wire an alert so the next occurrence surfaces on its own:
+
+```bash
+openbat analysis add --chatbot $CB --type flag --name billing_issue \
+  --display-name "Billing Issue" --description "Customer raises a billing concern"
+openbat workflows create --chatbot $CB --name "billing → slack" \
+  --template flag-to-webhook --trigger-value billing_issue --webhook $WH_ID
+```
+
+<Note>
+OpenBat mutations like `analysis add` and `workflows create` change configuration. Run them list-first, confirm the scope, and keep the change as small as possible.
+</Note>
+
+## MCP equivalents
+
+The same diagnose loop runs over MCP. `openbat_optimize_context` bootstraps the digest, active prompt, and analysis defs in one call; `openbat_review` returns the clusters; and you reproduce a verdict with `openbat_probe` → `openbat_await_analysis` → `openbat_get_conversation`. The mapping in the table above is identical — `answer_available` × `verification_source` decides the lever regardless of surface. Full tool list at [MCP tools](/mcp/tools).
+
+<Columns cols={2}>
+  <Card title="Diagnose and fix" icon="wrench" href="/eval-mode/diagnose-and-fix">
+    The end-to-end flow this table sits inside: digest → drill → fix.
+  </Card>
+  <Card title="Candidate prompts" icon="flask" href="/eval-mode/candidate-prompts">
+    Stage a prompt fix as a draft and eval it before activating.
+  </Card>
+  <Card title="Probe" icon="play" href="/eval-mode/probe">
+    Reproduce a failing question as an isolated synthetic verdict.
+  </Card>
+  <Card title="Conversations" icon="messages" href="/platform/features/conversations">
+    Where the flags, outcomes, and reasoning fields come from.
+  </Card>
+</Columns>

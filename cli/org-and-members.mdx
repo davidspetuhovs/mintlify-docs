@@ -1,0 +1,115 @@
+---
+title: "Organizations & members"
+description: "Manage orgs, members, and invitations with a PAT."
+icon: "building-2"
+---
+{/* SOURCES: _sources/cli-readme.md; _sources/skill-using-openbat.md */}
+
+The `openbat org` command group manages organizations, their members, and pending invitations. Every subcommand requires a PAT (`ob_pat_*`) — these are the only operations that reach across multiple chatbots and orgs. Chatbot-scoped `ob_read_*` and `ob_admin_*` keys cannot run `org` commands. See [Authentication](/cli/authentication) for how to mint and store a PAT.
+
+<Note>
+PATs also carry a sub-scope (`read` or `admin`). A read-scope PAT can list across all your chatbots but mutate nothing. Mutating subcommands here (`rename`, `members invite`, `members set-role`, `members remove`) need an admin-scope PAT, and a 403 means the key is valid but lacks permission — for example a read-scope PAT trying to write, or a member attempting an owner-only action.
+</Note>
+
+## Subcommands
+
+| Command | Scope | What it does |
+|---|---|---|
+| `org list` | pat | List the user's orgs |
+| `org show` | pat | Active org + members |
+| `org rename --id ORG --name "..."` | pat (owner only) | Rename an org |
+| `org members list --id ORG` | pat | List members of an org |
+| `org members invite --id ORG --email --role member\|admin` | pat | Invite a member |
+| `org members set-role --id ORG --member M --role admin\|member` | pat | Change a member's role |
+| `org members remove --id ORG --member M` | pat | Remove a member |
+| `org invitations list --id ORG` | pat | List pending invitations |
+
+Every command supports `--json` for raw output (the default for non-TTY stdout, so piping into `jq` always works).
+
+## Inspect your orgs
+
+`org list` returns the orgs your PAT can reach, and `org show` prints the active org together with its members. To confirm a PAT actually carries org scope before you start, run `openbat auth whoami` — it shows the key kind, the chatbots in scope, and the orgs (PAT only).
+
+```bash
+openbat auth whoami        # confirm kind=pat and org scope
+openbat org list           # every org your PAT reaches
+openbat org show           # active org + its members
+```
+
+## Rename an org
+
+Renaming is owner-only. Pass the org id and the new name.
+
+```bash
+openbat org rename --id ORG --name "Acme Inc"
+```
+
+<ParamField path="--id" type="string" required>
+The organization id to rename.
+</ParamField>
+
+<ParamField path="--name" type="string" required>
+The new organization name.
+</ParamField>
+
+## Manage members
+
+List the members of an org, invite a new one, change a role, or remove someone. Inviting and role changes take a `--role` of `member` or `admin`.
+
+```bash
+# List members of an org
+openbat org members list --id ORG
+
+# Invite a member (role: member | admin)
+openbat org members invite --id ORG --email teammate@acme.com --role member
+
+# Change a member's role (role: admin | member)
+openbat org members set-role --id ORG --member M --role admin
+
+# Remove a member
+openbat org members remove --id ORG --member M
+```
+
+<ParamField path="--id" type="string" required>
+The organization id the action targets.
+</ParamField>
+
+<ParamField path="--email" type="string">
+The email address to invite. Used with `members invite`.
+</ParamField>
+
+<ParamField path="--member" type="string">
+The member id to act on. Used with `members set-role` and `members remove`.
+</ParamField>
+
+<ParamField path="--role" type="string">
+`member` or `admin`. Used with `members invite` and `members set-role`.
+</ParamField>
+
+<Warning>
+`org members remove` is a destructive action. Confirm the member id with `org members list --id ORG` before running it.
+</Warning>
+
+## List pending invitations
+
+After inviting members, check which invitations are still outstanding.
+
+```bash
+openbat org invitations list --id ORG
+```
+
+## Rate limits
+
+The invite operation has its own per-PAT bucket. A 429 response includes a `Retry-After` header (in seconds), which the CLI surfaces in the error message.
+
+| Operation | Limit |
+|---|---|
+| Invite org member | 20 per hour per PAT |
+| Generic write | 60 per minute per credential |
+| Generic read | 600 per minute per credential |
+
+See [Security & rate limits](/cli/security-rate-limits) for the full table.
+
+<Tip>
+Every authenticated `org` call lands server-side in `api_audit_log` (success and failure both) — operators can answer "who did what when" by querying that table in Supabase Studio. There is no CLI subcommand for audit history yet.
+</Tip>

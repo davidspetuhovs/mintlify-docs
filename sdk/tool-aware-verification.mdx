@@ -1,0 +1,68 @@
+---
+title: "Tool-aware verification"
+description: "Verify claims against real tool output."
+icon: "wrench"
+---
+{/* SOURCES: _sources/sdk-readme.md */}
+
+If your chatbot calls tools (database queries, API lookups, etc.) before answering, attach the tool calls to the assistant message. OpenBat's knowledge verifier uses them as ground truth when checking for hallucination. Without tool context, a response like `"NeN holds the #1 position with a visibility score of 76.9"` looks suspicious — your docs don't contain that number, so the verifier has to decide whether to flag it. With tool context, the verifier compares the quoted value against the actual tool output: if it matches, the claim is trusted; if it doesn't, it's flagged as hallucination with the tool output quoted as evidence. No more false positives on runtime data.
+
+## Attaching tool calls
+
+Pass tool calls through the `tools` field on the assistant message.
+
+```typescript
+client.recordMessages({
+  conversationId: "session-abc-123",
+  messages: [
+    { role: "user", content: "Who has the highest visibility score?" },
+    {
+      role: "assistant",
+      content: "NeN holds the #1 visibility position with a score of 76.9.",
+      tools: [
+        {
+          name: "getBrandMetrics",
+          input: {},
+          output: {
+            currentWeek: [
+              { brand_name: "NeN", visibility_score: 76.9, brand_ranking: 1 },
+              { brand_name: "Sorgenia", visibility_score: 75.1, brand_ranking: 2 },
+            ],
+          },
+        },
+      ],
+      // Optional: the model's thinking before it answered.
+      // Supported by reasoning-capable models (Claude with thinking, OpenAI o-series, etc.).
+      reasoning: "I need to call getBrandMetrics to find the top brand by visibility score.",
+    },
+  ],
+});
+```
+
+## Tool call shape
+
+Each entry in `tools` is an `OpenBatToolCall`.
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `name` | `string` | Yes | Tool name, e.g. `"getBrandMetrics"` |
+| `input` | `unknown` | No | Arguments passed to the tool |
+| `output` | `unknown` | No | Result returned by the tool |
+
+## The reasoning field
+
+The optional `reasoning` field on an assistant message carries the model's internal reasoning or thinking. It's supported by reasoning-capable models (Claude with thinking, OpenAI o-series, etc.).
+
+## Limits
+
+<Warning>
+Up to 20 tools per message; the serialized `{tools, reasoning}` blob must be under 32 KB. Anything larger is rejected with `400 Bad Request`.
+</Warning>
+
+<Note>
+Tools and reasoning are stored only for the verification step — they're not surfaced to end users.
+</Note>
+
+## Capture only
+
+Only assistant messages use `tools` / `reasoning`. Fields on user or system messages are ignored.

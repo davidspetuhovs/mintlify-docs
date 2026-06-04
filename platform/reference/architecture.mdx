@@ -1,0 +1,178 @@
+---
+title: "Architecture"
+description: "Tech stack, auth model, and data flow."
+icon: "network"
+---
+{/* SOURCES: knowledgebase/architecture.md */}
+
+<Note>
+  Everything on this page is inferred from black-box observation of the OpenBat platform — URL structure, page behavior, and UI patterns. No internal source code was inspected. Implementation claims are phrased as "appears to" or "likely" and may not reflect how the system is actually built.
+</Note>
+
+## Tech stack
+
+The platform appears to be a single-page web application served from `openbat.dev`, with a dark-themed UI that is consistent across every page (no light-mode toggle was observed).
+
+| Layer | Observation | Likely technology |
+| --- | --- | --- |
+| Frontend framework | Dynamic URL segments such as `/platform/[chatbotId]/...` and server-rendered page transitions | Next.js (App Router) |
+| UI components | Consistent dark cards, tables, tabs, modals, and dialogs | Tailwind CSS with a component library (likely shadcn/ui) |
+| Charts | Sparkline charts on the overview dashboard; sortable, filterable data tables | A React charting library (Recharts or similar) |
+| Workflow editor | Visual builder on the Workflows page | A node-based editor (likely XYFlow/ReactFlow) |
+| Backend API | Endpoints under `/api/v1/*` and `/api/*` | A RESTful API |
+| AI features | Streaming responses in the dashboard AI chat and AI-generated reports | Server-side LLM integration |
+| Database | Relational entity model, faceted filtering, and deep pagination | A relational database (likely PostgreSQL) |
+
+## Authentication model
+
+Two distinct authentication contexts appear to coexist: a session-based context for the dashboard, and an API-key context for SDK data ingestion.
+
+| Context | Used for | Credential | Entry point |
+| --- | --- | --- | --- |
+| Dashboard auth | All `/platform/*` routes | Session cookie after email/password login | `/auth/login` |
+| SDK / API auth | Sending conversation data from your app | Chatbot ingest API key | `/api/v1/capture` |
+
+Dashboard sign-in happens at `/auth/login` with an **Email** and **Password** field. A successful login redirects to `/platform`, which shows your organization's chatbot list. Account creation at `/auth/sign-up` collects a **Work Email** and password and sends a verification email before the account is active. Forgotten passwords are reset from `/auth/forgot-password`, which emails a one-time link to `/auth/update-password`.
+
+Several auth edge cases were observed:
+
+- Banned users are redirected to `/auth/login?error=banned`.
+- Email verification appears to be required before a first login.
+- Unauthenticated requests to platform routes redirect back to sign-in.
+
+### Role-based access
+
+Access appears to be scoped at two levels: the organization and the individual chatbot.
+
+| Scope | Role | Observed capability |
+| --- | --- | --- |
+| Organization | Owner | Full control, including deleting the organization |
+| Organization | Admin | Member management and inviting new members |
+| Organization | Member | Read and use access |
+| Chatbot | Editor | Modify chatbot settings and configuration |
+| Chatbot | Viewer | Read-only access |
+
+New members are added from `/platform/members` by entering an email and selecting a role; the invitee receives an email invitation to accept.
+
+<Card title="Team and access" icon="users" href="/platform/features/team-and-access">
+  How organization members, roles, and invitations work in the dashboard.
+</Card>
+
+## URL and data model
+
+The URL hierarchy mirrors what appears to be the underlying data hierarchy: an organization owns many chatbots, each chatbot owns many conversations, and each conversation owns many messages with analysis attached.
+
+```text URL hierarchy
+/platform                                    → Organization scope (from session)
+/platform/[chatbotId]                        → Chatbot scope
+/platform/[chatbotId]/conversations          → Conversation list
+/platform/[chatbotId]/conversations/[id]     → Single conversation
+```
+
+```text Inferred data hierarchy
+Organization (1)
+  └── Chatbot (many)
+        └── Conversation (many)
+              └── Message (many)
+                    └── Analysis (many, per message)
+```
+
+### Entity model
+
+These entities are inferred from the dashboard pages and the data they display. Each chatbot appears to act as an independent analytics silo with its own conversations, configuration, and results.
+
+| Entity | Where it surfaces | Scope |
+| --- | --- | --- |
+| Organization | `/platform`, org switcher in the sidebar | Top-level tenant |
+| Member | `/platform/members` | Per organization |
+| Chatbot | `/platform`, chatbot cards | Per organization |
+| Conversation | `/platform/[chatbotId]/conversations` | Per chatbot |
+| Message | `/platform/[chatbotId]/conversations/[id]` | Per conversation |
+| Analysis | Conversation detail (General / User / Assistant tabs) | Per message, multiple types |
+| User | `/platform/[chatbotId]/users` | External end-users per chatbot |
+| External organization | `/platform/[chatbotId]/organizations` | Customer orgs from SDK metadata |
+| Query type | `/platform/[chatbotId]/query-types` | Clustered question categories per chatbot |
+| Report | `/platform/[chatbotId]/reports` | AI-built dashboards per chatbot |
+| Workflow | `/platform/[chatbotId]/workflows` | Automation rules per chatbot |
+| System prompt version | `/platform/[chatbotId]/system-prompt` | Versioned prompts per chatbot |
+| API key | Chatbot **Settings → API Keys** | Ingest keys per chatbot |
+
+### API patterns
+
+The endpoints below are inferred from observed page behavior. Ingestion endpoints appear to authenticate with a chatbot API key, while dashboard endpoints appear to use the session cookie.
+
+| Endpoint | Likely purpose | Auth |
+| --- | --- | --- |
+| `/api/v1/capture` | SDK ingestion of conversation data | API key |
+| `/api/v1/chatbots/*` | Chatbot management | Session |
+| `/api/v1/conversations/*` | Conversation data | Session |
+| `/api/v1/analytics/*` | Analytics aggregation | Session |
+| `/api/v1/export/[chatbotId]` | Data export | Session |
+| `/api/auth/[...all]` | Auth handler (login, verification, reset) | — |
+| `/api/chat` | Dashboard AI chat (streaming) | Session |
+| `/api/ai-reports/[reportId]/*` | AI report chat and tool execution | Session |
+
+<Card title="SDK API reference" icon="code" href="/sdk/api-reference">
+  The published surface for sending conversation data into OpenBat.
+</Card>
+
+## Analysis pipeline
+
+The analysis pipeline appears to be the core of the platform: conversation data flows in from the SDK, gets analyzed by configurable LLM-driven steps, and the results surface across the dashboard. The stages below are inferred from how data enters the system and where it later appears.
+
+<Steps>
+  <Step title="Ingestion">
+    Your application sends messages to `POST /api/v1/capture` authenticated with a chatbot API key.
+  </Step>
+  <Step title="Storage">
+    Messages appear to be persisted to the database and grouped into conversations.
+  </Step>
+  <Step title="Analysis dispatch">
+    Analysis steps appear to run against new messages based on the definitions you configure per chatbot.
+  </Step>
+  <Step title="LLM processing">
+    Each step appears to apply configurable analysis types — for example sentiment, flags, outcomes, issues, AI literacy, and personas.
+  </Step>
+  <Step title="Results storage">
+    Results appear to be stored per message, with multiple analysis types possible on a single message.
+  </Step>
+  <Step title="Surfacing">
+    Results show up in the conversation detail view and aggregate into dashboards, query-type clusters, reports, and search.
+  </Step>
+</Steps>
+
+What gets analyzed is configurable rather than hardcoded. On the **Analysis Config** page you can add custom flags, outcome types, and issue types, set a primary language for auto-translation, and add calibration examples to tune detection. Changes to definitions appear to require re-analysis to apply to existing conversations.
+
+<Columns cols={2}>
+  <Card title="Analysis config" icon="sliders" href="/platform/features/analysis-config">
+    Define sentiment, flags, outcomes, issues, personas, and calibration per chatbot.
+  </Card>
+  <Card title="System prompt" icon="file-pen" href="/platform/features/system-prompt">
+    Versioned prompt management with timeline, rollback, diff, and experiments.
+  </Card>
+</Columns>
+
+## Search and real-time behavior
+
+Two search modes were observed: keyword search and filtering on the conversations table, and a separate **Deep Search** page that finds conversations by meaning rather than keywords — which implies a semantic search layer using embeddings or similar infrastructure.
+
+Several surfaces appear to update beyond a single page load:
+
+- The dashboard AI chat and AI reports stream their responses.
+- Workflow runs move through statuses — Pending, Triggered, Skipped, Success, and Failed — which suggests a durable workflow engine with persisted run history rather than fire-and-forget jobs.
+- Overview sparkline charts visualize metrics over time.
+
+## Multi-tenancy and SDK surface
+
+All data appears to be scoped to an organization, and the org switcher in the sidebar implies a user can belong to more than one organization. Within an organization, each chatbot is an isolated analytics unit with its own conversations, analysis configuration, workflows, reports, prompts, API keys, and settings.
+
+The marketing landing page shows SDK code samples across tabs for the Vercel AI SDK, TypeScript, Python, and a REST API, indicating data can be sent from multiple runtimes into the same `/api/v1/capture` endpoint.
+
+<Columns cols={2}>
+  <Card title="Workflows" icon="bell" href="/platform/features/workflows">
+    Connect analysis conditions to Slack, Discord, and webhook destinations.
+  </Card>
+  <Card title="Page map" icon="map" href="/platform/reference/page-map">
+    Every dashboard route and what it does, in one list.
+  </Card>
+</Columns>

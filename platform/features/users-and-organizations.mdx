@@ -1,0 +1,54 @@
+---
+title: "Users & organizations"
+description: "External user and customer-org directories."
+icon: "contact"
+---
+{/* SOURCES: knowledgebase/feature-inventory.md; pages/users.md; pages/external-customer-organizations.md */}
+
+Two directories under **Clients** in the chatbot sidebar that profile the end-users and customer organizations interacting with your chatbot — distinct from your team members. The **Users** directory lists individual end-users; the **External Customer Organizations** directory groups them by customer account.
+
+## Users
+
+The **Users** directory is a sortable, filterable table of the end-users who have conversations with your chatbot. It lives at `/platform/[chatbotId]/users`.
+
+Columns:
+
+- **User** (ID)
+- **Organization**
+- **Health score**
+- **Persona**
+- **AI Literacy** score
+- **Conversations** count
+- **Last Activity**
+
+What you can do here:
+
+- Search users by name or ID with the **Filter users** search box
+- Apply faceted filters with the **Filter** button
+- Sort by any column
+- Change the date range with the date range picker
+- Customize visible columns with the **View** button
+- Page through results with the rows-per-page selector
+- Click a user row to see that user's conversations
+
+<Frame caption="The Users directory under Clients, showing health, persona, and AI literacy per end-user.">
+  <img src="/images/platform/users.png" alt="Users directory" />
+</Frame>
+
+<Note>
+  Users populate once the chatbot has captured conversations with user identifiers. Persona values come from the [analysis pipeline](/platform/features/analysis-config), and rows link through to the [conversations](/platform/features/conversations) for that user.
+</Note>
+
+## External customer organizations
+
+The **External Customer Organizations** directory groups your end-users by the customer organization they belong to, so you can monitor interaction health per account. It lives at `/platform/[chatbotId]/organizations`.
+
+This directory is populated automatically when the SDK sends organization metadata. When populated, it shows faceted filters and a date range picker, letting you browse, sort, and filter organizations and see per-organization health scores to spot at-risk accounts.
+
+<Frame caption="The External Customer Organizations directory, showing its empty state before SDK organization metadata is captured.">
+  <img src="/images/platform/organizations.png" alt="Organizations directory" />
+</Frame>
+
+<Note>
+  This directory shows a **No organizations yet** empty state until the chatbot has conversations carrying organization metadata, and the sidebar entry is disabled while no org data exists. Send organization metadata through the SDK to populate it.
+</Note>

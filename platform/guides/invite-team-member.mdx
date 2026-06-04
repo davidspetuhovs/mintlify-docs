@@ -1,0 +1,61 @@
+---
+title: "Invite a team member"
+description: "Send an invite with org and chatbot roles."
+icon: "users"
+---
+{/* SOURCES: flows/invite-team-member.md; pages/organization-members.md */}
+
+Invite a colleague to join your organization by sending an email invitation, setting their organization role and chatbot access. This is for an organization owner or admin who wants to give a colleague access to chatbot analytics.
+
+<Note title="Before you begin">
+  - You have the owner or admin role in the organization.
+  - The invitee has an email address.
+</Note>
+
+<Steps>
+  <Step title="Open the Members page">
+    Navigate to `/platform/members` from the organization-level sidebar, which sits alongside Chatbots and Settings. The member table shows current members with their Email, Role (Owner/Admin/Member), and Joined date.
+
+    <Frame caption="The Members table listing current organization members and their roles.">
+      <img src="/images/guides/invite-team-member/step-01.png" alt="invite-team-member step 1" />
+    </Frame>
+  </Step>
+  <Step title="Open the invite modal and configure the invitation">
+    Click `+ Invite member`. A modal opens with an Email field, an Organization role dropdown (defaults to Member), Chatbot access checkboxes (Sophie, E-Commerce Demo, SaaS Demo) with a `Select all` option, and a chatbot role dropdown (defaults to Viewer).
+
+    Enter the invitee's email address, select the organization role, choose which chatbots they can access, and set the chatbot role. Click `Send invitation` to send the invite, or `Cancel` to discard it.
+
+    <Frame caption="The Invite member modal with email, organization role, chatbot access, and chatbot role.">
+      <img src="/images/guides/invite-team-member/step-02.png" alt="invite-team-member step 2" />
+    </Frame>
+  </Step>
+</Steps>
+
+<Check>
+  The invitation email is sent. The invitee clicks the link in the email to accept and join the organization.
+</Check>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Email already belongs to an existing member">
+    If the email address you entered is already associated with a member of the organization, the invitation cannot be sent. Check the member table on the Members page to confirm whether the person already has access.
+  </Accordion>
+  <Accordion title="Invitation email goes to spam">
+    The invitation email may land in the invitee's spam or junk folder. Ask the invitee to check those folders for the invite link.
+  </Accordion>
+  <Accordion title="Role permissions insufficient">
+    Sending invitations requires the owner or admin role. If you cannot invite members, confirm your role in the organization with an owner or admin.
+  </Accordion>
+</AccordionGroup>
+
+## Next steps
+
+<Columns cols={2}>
+  <Card title="Team and access" icon="users" href="/platform/features/team-and-access">
+    Review how organization and chatbot roles control access.
+  </Card>
+  <Card title="Users and organizations" icon="building" href="/platform/features/users-and-organizations">
+    Understand how organizations and members are structured.
+  </Card>
+</Columns>

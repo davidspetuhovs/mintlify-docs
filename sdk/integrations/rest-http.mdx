@@ -1,0 +1,208 @@
+---
+title: "REST & other languages"
+description: "Call the capture endpoint directly."
+icon: "webhook"
+---
+{/* SOURCES: _sources/sdk-readme.md */}
+
+If you're not using TypeScript, you don't need the SDK at all. Every capture the SDK performs is a single `POST` to the capture endpoint, so any language that can make an HTTP request can record conversations. The request body matches the `recordMessages()` input shape one-to-one.
+
+## Endpoint
+
+<ParamField path="POST /api/v1/capture" type="HTTP">
+  Base URL `https://openbat.dev`. Authenticate with the `x-openbat-key` header carrying your API key.
+</ParamField>
+
+| Header | Value |
+|--------|-------|
+| `Content-Type` | `application/json` |
+| `x-openbat-key` | `ob_live_your_api_key_here` |
+
+## Capture a turn
+
+The minimal request sends a `conversationId` and a `messages` array. `user` and the other context blocks are optional.
+
+<CodeGroup>
+
+```bash curl
+curl -X POST https://openbat.dev/api/v1/capture \
+  -H "Content-Type: application/json" \
+  -H "x-openbat-key: ob_live_your_api_key_here" \
+  -d '{
+    "conversationId": "session-abc-123",
+    "messages": [
+      { "role": "user", "content": "How do I reset my password?" },
+      { "role": "assistant", "content": "Go to Settings > Security > Reset Password." }
+    ],
+    "user": { "id": "user-42", "email": "jane@acme.com" }
+  }'
+```
+
+```python Python
+import requests
+
+requests.post(
+    "https://openbat.dev/api/v1/capture",
+    headers={
+        "Content-Type": "application/json",
+        "x-openbat-key": "ob_live_your_api_key_here",
+    },
+    json={
+        "conversationId": "session-abc-123",
+        "messages": [
+            {"role": "user", "content": "How do I reset my password?"},
+            {"role": "assistant", "content": "Go to Settings > Security > Reset Password."},
+        ],
+        "user": {"id": "user-42"},
+    },
+)
+```
+
+</CodeGroup>
+
+## Response
+
+A successful capture returns the conversation id, how many messages were stored, and how many were queued for analysis.
+
+```json
+{
+  "ok": true,
+  "conversationId": "uuid-...",
+  "messagesStored": 2,
+  "analysisQueued": 2
+}
+```
+
+<ResponseField name="ok" type="boolean">
+  `true` when the capture succeeded.
+</ResponseField>
+
+<ResponseField name="conversationId" type="string">
+  The conversation id the messages were stored under.
+</ResponseField>
+
+<ResponseField name="messagesStored" type="number">
+  Count of messages persisted on this call (duplicates by `id` are skipped).
+</ResponseField>
+
+<ResponseField name="analysisQueued" type="number">
+  Count of messages queued for AI analysis.
+</ResponseField>
+
+When you also send `systemPromptTemplate` in the request, the response includes a `prompt` field carrying the dashboard's current prompt state.
+
+```json
+{
+  "ok": true,
+  "conversationId": "uuid-...",
+  "messagesStored": 2,
+  "analysisQueued": 2,
+  "prompt": {
+    "currentVersionId": "9f3c...",
+    "killSwitchOn": false,
+    "isNew": true,
+    "template": "You are a helpful assistant. ...",
+    "publishedAt": "2026-05-05T12:00:00Z",
+    "publishedBy": { "id": "uuid", "email": "alex@acme.com" }
+  }
+}
+```
+
+<Note>
+  The full `prompt` field contract — including when it is omitted and how the steady-state vs. update shapes differ — is documented in [DB-Backed System Prompts](/sdk/db-backed-prompts).
+</Note>
+
+## Request body
+
+The body fields below mirror the SDK's `recordMessages()` input. All context blocks are optional; send what you have.
+
+<ParamField body="conversationId" type="string" required>
+  Stable id grouping a conversation's messages.
+</ParamField>
+
+<ParamField body="messages" type="array" required>
+  Array of message objects. Each has `role` (`"user"`, `"assistant"`, or `"system"`) and `content` (string). Optional per-message fields: `id` (external id for deduplication), `sentAt`, `tools`, and `reasoning`.
+</ParamField>
+
+<ParamField body="user" type="object">
+  Who is chatting — `id`, `name`, `email`, `plan`, `createdAt`, `industry`, `mrr`.
+</ParamField>
+
+<ParamField body="organization" type="object">
+  The user's organization — `id`, `name`, `plan`, `mrr`, `industry`.
+</ParamField>
+
+<ParamField body="session" type="object">
+  Session context — `id`, `pageUrl`, `referrer`, `device`, `country`.
+</ParamField>
+
+<ParamField body="custom" type="object">
+  Arbitrary key-value pairs. Values must be `string`, `number`, or `boolean`.
+</ParamField>
+
+<ParamField body="systemPromptTemplate" type="string">
+  The unrendered system prompt your chatbot is running under. Enables prompt versioning and triggers the `prompt` field in the response.
+</ParamField>
+
+<ParamField body="systemPromptVariables" type="object">
+  The resolved variable values for this call, stored verbatim alongside each message.
+</ParamField>
+
+<ParamField body="headers" type="object">
+  Forwarded client headers (such as `x-original-user-agent`, `x-original-referer`, `x-forwarded-for`) so the endpoint can extract real client metadata.
+</ParamField>
+
+<ParamField body="framework" type="string">
+  Optional integration hint, surfaced as the `x-openbat-framework` header (for example `"vercel-ai-sdk"`).
+</ParamField>
+
+For the full typed field reference, see the [API reference](/sdk/api-reference). For richer context payloads, see [Enriching context](/sdk/enriching-context); for forwarding the real client's IP and User-Agent from a server route, see [Header forwarding](/sdk/header-forwarding).
+
+## Attaching tool calls
+
+To capture tool calls and reasoning over raw HTTP, attach them to the assistant message rather than at the request root. OpenBat's knowledge verifier uses tool output as ground truth when checking for hallucination.
+
+```jsonc
+{
+  "conversationId": "session-abc-123",
+  "messages": [
+    { "role": "user", "content": "Who has the highest visibility score?" },
+    {
+      "role": "assistant",
+      "content": "NeN holds the #1 visibility position with a score of 76.9.",
+      "tools": [
+        {
+          "name": "getBrandMetrics",
+          "input": {},
+          "output": {
+            "currentWeek": [
+              { "brand_name": "NeN", "visibility_score": 76.9, "brand_ranking": 1 }
+            ]
+          }
+        }
+      ],
+      "reasoning": "I need to call getBrandMetrics to find the top brand by visibility score."
+    }
+  ]
+}
+```
+
+<Note>
+  Only assistant messages use `tools` / `reasoning` — the fields are ignored on user and system messages. Up to 20 tools per message, and the serialized `{tools, reasoning}` blob must stay under 32 KB. See [Tool-aware verification](/sdk/tool-aware-verification) for details.
+</Note>
+
+## Limits and errors
+
+Requests that exceed the documented limits receive a `400 Bad Request` response.
+
+| Constraint | Limit |
+|------------|-------|
+| Request body size | 4 MB |
+| Messages per request | 1–100 |
+| Message content length | 1–32,000 characters |
+| `conversationId` length | 1–256 characters |
+| `systemPromptTemplate` length | 1–64,000 characters |
+
+<Warning>
+  Over raw HTTP, you handle errors yourself — unlike the TypeScript SDK, there is no fire-and-forget wrapper that swallows failures. Check the response status: an invalid API key returns `401`, and any request exceeding the limits above returns `400`. See [Limits & errors](/sdk/limits-and-errors) for the complete table.
+</Warning>

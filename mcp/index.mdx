@@ -1,0 +1,94 @@
+---
+title: "OpenBat MCP server"
+description: "Drive OpenBat from any MCP client."
+icon: "plug"
+---
+{/* SOURCES: _sources/mcp-readme.md */}
+
+`@openbat/mcp` is a [Model Context Protocol](https://modelcontextprotocol.io) server for OpenBat. It lets Claude Desktop, Cursor, or any MCP-aware client manage a chatbot end-to-end — read conversations and analytics, manage settings, webhooks, workflows, and reports, and (with a PAT) create new chatbots and run org-level operations. The server speaks stdio JSON-RPC, so any client that follows the [MCP spec](https://spec.modelcontextprotocol.io) can launch it.
+
+## Zero-install setup
+
+You don't need to globally install anything. Configure your MCP client to launch the server on demand via `npx`, passing your key in `OPENBAT_API_KEY`:
+
+```jsonc
+{
+  "mcpServers": {
+    "openbat": {
+      "command": "npx",
+      "args": ["-y", "@openbat/mcp"],
+      "env": {
+        "OPENBAT_API_KEY": "ob_pat_..."
+      }
+    }
+  }
+}
+```
+
+See [Install](/mcp/install) for the exact config files for Claude Desktop, Cursor, and other clients.
+
+## Tools scale with credential strength
+
+The exposed tool surface scales with credential strength. The server inspects the prefix of `OPENBAT_API_KEY` at startup and filters the `tools/list` response by an authority ranking of `pat > admin > read` — each tool declares a `minKind`, and only tools whose `minKind` is at or below the resolved kind appear.
+
+| Key kind | What you get |
+|---|---|
+| `ob_read_*` | Read-only surface — conversations, analytics, `review`, prompt-version listing |
+| `ob_admin_*` | Adds per-chatbot write tools — webhooks, workflows, reports, settings |
+| `ob_pat_*` | Adds chatbot-creation and org-level tools |
+
+<Note>
+Ingest keys (`ob_live_*`) are SDK-only. The server refuses them at startup and exits — use an `ob_read_*`, `ob_admin_*`, or `ob_pat_*` key instead.
+</Note>
+
+See [Credentials](/mcp/credentials) for the full credential ladder and [Tools](/mcp/tools) for every tool by `minKind`.
+
+## Explore the docs
+
+<Columns cols={2}>
+  <Card title="Install" icon="download" href="/mcp/install">
+    Wire up the server in Claude Desktop, Cursor, or any MCP client via npx.
+  </Card>
+  <Card title="Credentials" icon="key" href="/mcp/credentials">
+    How the server detects key kind, the authority ranking, and which key to pick.
+  </Card>
+  <Card title="Pin to one chatbot" icon="lock" href="/mcp/pinning">
+    Lock the server to a single chatbot with `OPENBAT_CHATBOT_ID`.
+  </Card>
+  <Card title="Tools" icon="wrench" href="/mcp/tools">
+    The full tool surface by `minKind` — read, admin, and pat tools.
+  </Card>
+  <Card title="Config examples" icon="file-code" href="/mcp/configs">
+    Read-only, admin, and full-control config examples for different agents.
+  </Card>
+  <Card title="Security" icon="shield" href="/mcp/security">
+    Key handling, Zod validation, rate limits, the audit log, and 401 vs 403.
+  </Card>
+  <Card title="Troubleshooting" icon="circle-question" href="/mcp/troubleshooting">
+    Common symptoms — missing tools, 401/403/404/429 — and their fixes.
+  </Card>
+</Columns>
+
+## Get an API key
+
+Generate the appropriate key in the OpenBat dashboard:
+
+- `ob_read_*` → `Settings → API Keys → Generate Read key`
+- `ob_admin_*` → `Settings → API Keys → Generate Admin key`
+- `ob_pat_*` → `Settings → Personal Access Tokens`
+
+The plaintext is shown exactly once. Each page also has a **"Copy MCP config (with key)"** button that pre-fills the JSON above so you can paste it straight into Claude or Cursor.
+
+## Pre-loaded context for AI assistants
+
+If you're driving an AI agent through this MCP server, install the OpenBat agent skill bundle so the agent loads the right procedural knowledge — auth ladder, safe-mutation patterns, and plaintext-only-once conventions — into its context:
+
+```bash
+npx skills add openbat-dev/agent-skills
+```
+
+This drops the `SKILL.md` bundle into the target project. The `using-openbat` skill is the comprehensive reference; the rest cover per-flow specifics. The skills tell the agent how to choose between tools and when to confirm destructive ones.
+
+<Note>
+There are deliberately no mutation tools for ingest keys — those remain SDK-only via `OpenBat.recordMessages`.
+</Note>

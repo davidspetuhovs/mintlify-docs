@@ -1,0 +1,86 @@
+---
+title: "Configuration"
+description: "Constructor options and environment variables."
+icon: "settings-2"
+---
+{/* SOURCES: _sources/sdk-readme.md */}
+
+You configure the SDK by passing an `OpenBatConfig` object to the `OpenBat` constructor, or by setting environment variables. Constructor values take precedence over environment variables, so you can set a default in the environment and override it per client.
+
+## Constructor options
+
+```typescript
+const client = new OpenBat({
+  apiKey: "ob_live_...",       // Required (or set OPENBAT_API_KEY env var)
+  baseUrl: "https://...",      // Optional, defaults to https://openbat.dev
+  enabled: true,               // Optional, defaults to true
+
+  // Optional. Wire this up to receive prompt updates pushed back from OpenBat
+  // through the existing capture response — no polling, no extra fetches.
+  // See "DB-Backed System Prompts" below.
+  onPromptStateChange: async (state) => { /* write `state` to your DB */ },
+});
+```
+
+<ParamField path="apiKey" type="string">
+  Your OpenBat API key (for example `ob_live_...`). Required unless you set the `OPENBAT_API_KEY` environment variable. The constructor **throws** if `enabled` is `true` and no API key is provided.
+</ParamField>
+
+<ParamField path="baseUrl" type="string" default="https://openbat.dev">
+  Override the capture endpoint base URL.
+</ParamField>
+
+<ParamField path="enabled" type="boolean" default="true">
+  When `false`, `recordMessages()` returns immediately without making any HTTP requests. See [Disabling the SDK](#disabling-the-sdk).
+</ParamField>
+
+<ParamField path="onPromptStateChange" type="(state: PromptState) => void | Promise<void>">
+  Fired whenever OpenBat tells the SDK something it doesn't already know about your prompt state — a new version, a kill-switch transition, or a fresh active version id. Errors thrown inside the callback are caught and logged, never propagated. See [DB-Backed System Prompts](/sdk/db-backed-prompts).
+</ParamField>
+
+<Note>
+  The `OpenBatConfig` type is `{ apiKey?: string; baseUrl?: string; enabled?: boolean; onPromptStateChange?: (state: PromptState) => void | Promise<void> }`. The full type definitions live in the [API reference](/sdk/api-reference).
+</Note>
+
+## Environment variables
+
+| Variable | Purpose | Default |
+|----------|---------|---------|
+| `OPENBAT_API_KEY` | API key (used if not passed in constructor) | — |
+| `OPENBAT_BASE_URL` | Override the capture endpoint base URL | `https://openbat.dev` |
+| `OPENBAT_ENABLED` | Set to `"false"` or `"0"` to disable | `"true"` |
+
+<Warning>
+  Constructor values take precedence over environment variables. A value passed to the constructor overrides the matching environment variable for that client.
+</Warning>
+
+A client that reads everything from the environment needs no arguments:
+
+```typescript
+import { OpenBat } from "@openbat/sdk";
+
+const client = new OpenBat(); // reads OPENBAT_API_KEY from env
+```
+
+## Disabling the SDK
+
+Disable the SDK in test or development environments. When disabled, `recordMessages()` returns immediately without making any HTTP requests.
+
+<CodeGroup>
+
+```bash Environment variable
+OPENBAT_ENABLED=false
+```
+
+```typescript In code
+const client = new OpenBat({
+  apiKey: "ob_live_...",
+  enabled: process.env.NODE_ENV === "production",
+});
+```
+
+</CodeGroup>
+
+<Tip>
+  Because the constructor throws when `enabled` is `true` and no API key is provided, setting `enabled` to `false` (or `OPENBAT_ENABLED=false`) also lets you construct a client without an API key in environments where you don't have one.
+</Tip>

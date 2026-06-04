@@ -1,0 +1,188 @@
+---
+title: "Vercel AI SDK"
+description: "withOpenBat wrapper and onFinish pattern."
+icon: "zap"
+---
+{/* SOURCES: _sources/sdk-readme.md */}
+
+The SDK offers two ways to capture conversations from a Vercel AI SDK route: the `withOpenBat` wrapper for the simplest setup, and the `onFinish` callback when you need to capture tool calls or reasoning. Both run asynchronously and never interfere with streaming.
+
+## `withOpenBat` wrapper
+
+Wrap your `streamText` response and you're done. `withOpenBat` returns the original `Response` unchanged — zero interference with streaming. It fires `recordMessages()` in the background, filters out `system` messages automatically, and generates a UUID for `conversationId` if you don't provide one.
+
+```typescript app/api/chat/route.ts
+import { streamText } from "ai";
+import { openai } from "@ai-sdk/openai";
+import { withOpenBat } from "@openbat/sdk";
+
+export async function POST(req: Request) {
+  const { messages } = await req.json();
+
+  const result = streamText({
+    model: openai("gpt-4o"),
+    messages,
+  });
+
+  return withOpenBat(result.toDataStreamResponse(), {
+    messages,
+    conversationId: "session-abc-123", // optional, auto-generated UUID if omitted
+    apiKey: process.env.OPENBAT_API_KEY,
+    user: { id: "user-42", email: "jane@acme.com" },
+  });
+}
+```
+
+### Signature
+
+```typescript
+import { withOpenBat } from "@openbat/sdk";
+
+const response = withOpenBat(response: Response, options: WrapperOptions): Response;
+```
+
+<ParamField path="response" type="Response" required>
+  The streaming `Response` to capture and return unchanged.
+</ParamField>
+
+<ParamField path="options.messages" type="Array<{ role: string; content: unknown }>" required>
+  The conversation messages to record. `system` messages are filtered out automatically.
+</ParamField>
+
+<ParamField path="options.conversationId" type="string">
+  Conversation identifier. A UUID is generated if omitted.
+</ParamField>
+
+<ParamField path="options.apiKey" type="string">
+  API key. Falls back to the `OPENBAT_API_KEY` environment variable.
+</ParamField>
+
+<ParamField path="options.baseUrl" type="string">
+  Override the capture endpoint base URL.
+</ParamField>
+
+<ParamField path="options.user" type="OpenBatUser">
+  Who is chatting — `id`, `name`, `email`, `plan`, `industry`, `mrr`, and more.
+</ParamField>
+
+<ParamField path="options.organization" type="OpenBatOrganization">
+  The user's organization context.
+</ParamField>
+
+<ParamField path="options.session" type="OpenBatSession">
+  Session context such as `pageUrl`, `referrer`, `device`, and `country`.
+</ParamField>
+
+<ParamField path="options.custom" type="Record<string, string | number | boolean>">
+  Arbitrary key-value pairs attached to the conversation.
+</ParamField>
+
+<Warning>
+  The wrapper receives the final `Response` and cannot see tool calls. If your chatbot uses tools, use the `onFinish` pattern below instead.
+</Warning>
+
+## `onFinish` pattern
+
+For more control, record messages in the `onFinish` callback. This lets you capture the assistant's final response text and send only new messages, avoiding re-ingesting history on every turn.
+
+This pattern is also the only way to capture tool calls and reasoning. If your chatbot uses tools, pass them via the `tools` field so OpenBat can verify data-bearing claims against real tool output instead of flagging them as hallucinations.
+
+```typescript app/api/chat/route.ts
+import { streamText, UIMessage, convertToModelMessages } from "ai";
+import { openai } from "@ai-sdk/openai";
+import { OpenBat } from "@openbat/sdk";
+
+const client = new OpenBat(); // reads OPENBAT_API_KEY from env
+
+export async function POST(req: Request) {
+  const { messages }: { messages: UIMessage[] } = await req.json();
+
+  // Forward client headers so OpenBat captures real IP/User-Agent
+  const headers = Object.fromEntries(req.headers.entries());
+
+  const result = streamText({
+    model: openai("gpt-4o"),
+    messages: await convertToModelMessages(messages),
+    tools: {
+      // your tools here
+    },
+    onFinish: async ({ text, toolCalls, toolResults, reasoningText }) => {
+      // Extract last user message from UIMessage parts
+      const lastUserMessage = [...messages]
+        .reverse()
+        .find((m) => m.role === "user");
+
+      const lastUserContent =
+        lastUserMessage?.parts
+          ?.filter((p): p is { type: "text"; text: string } => p.type === "text")
+          .map((p) => p.text)
+          .join("") ?? "";
+
+      // Map AI SDK tool calls to OpenBat's shape.
+      // Pairing by array index works for `streamText` — toolResults[i] corresponds to toolCalls[i].
+      const tools = toolCalls?.map((call, i) => ({
+        name: call.toolName,
+        input: call.input,
+        output: toolResults?.[i]?.output,
+      }));
+
+      // Only send new messages — not the full history
+      client.recordMessages({
+        conversationId: "session-abc-123",
+        user: { id: "user-42", email: "jane@acme.com" },
+        headers: {
+          "x-original-user-agent": headers["user-agent"] ?? "",
+          "x-original-referer": headers["referer"] ?? "",
+          "x-forwarded-for": headers["x-forwarded-for"] ?? headers["x-real-ip"] ?? "",
+        },
+        messages: [
+          ...(lastUserContent
+            ? [{ role: "user" as const, content: lastUserContent }]
+            : []),
+          {
+            role: "assistant" as const,
+            content: text,
+            // Tool calls the model made before producing `text` (optional).
+            // OpenBat's knowledge verifier uses these as ground truth for any
+            // numbers, rankings, or entity data quoted in the response.
+            ...(tools && tools.length > 0 ? { tools } : {}),
+            // The model's internal reasoning/thinking, if available (optional).
+            ...(reasoningText ? { reasoning: reasoningText } : {}),
+          },
+        ],
+      });
+    },
+  });
+
+  return result.toUIMessageStreamResponse();
+}
+```
+
+<Note>
+  Pairing tool results by array index works for `streamText` — `toolResults[i]` corresponds to `toolCalls[i]`.
+</Note>
+
+### Mapping AI SDK tool calls
+
+The AI SDK exposes tool calls and results in `onFinish`. Map them to OpenBat's `OpenBatToolCall` shape:
+
+| OpenBat field | Type | Source in `onFinish` |
+|---|---|---|
+| `name` | `string` | `call.toolName` |
+| `input` | `unknown` (optional) | `call.input` |
+| `output` | `unknown` (optional) | `toolResults?.[i]?.output` |
+
+Attach `reasoning` from `reasoningText` on the same assistant message. Both `tools` and `reasoning` apply to assistant messages only.
+
+## When to use which
+
+<Columns cols={2}>
+  <Card title="withOpenBat" icon="bolt">
+    Simplest setup. Wrap the response and return it. No tool-call or reasoning capture.
+  </Card>
+  <Card title="onFinish" icon="code">
+    More control. Sends only new messages each turn and captures tool calls and reasoning.
+  </Card>
+</Columns>
+
+For tool-call ground truth and the 32 KB / 20-tool limits, see [Tool-aware verification](/sdk/tool-aware-verification). To attach business context to either pattern, see [Enriching context](/sdk/enriching-context). To forward the real client IP and User-Agent, see [Header forwarding](/sdk/header-forwarding).

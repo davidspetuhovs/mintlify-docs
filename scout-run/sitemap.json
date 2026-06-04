@@ -1,0 +1,1199 @@
+{
+  "baseUrl": "http://openbat.dev/auth/login",
+  "timestamp": "2026-06-04T08:23:49.143Z",
+  "pages": [
+    {
+      "url": "/",
+      "title": "Landing Page",
+      "description": "Marketing homepage for OpenBat — positions the product as 'Google Analytics for AI chatbots.' Features hero section, problem/solution narrative, feature walkthroughs (ingest & analyze, prompt suggestions, stakeholder notifications, analytics), SDK integration code samples, FAQ, and CTA sections.",
+      "elements": [
+        "button: Start listening (CTA, appears 3x)",
+        "button: Sign in",
+        "dropdown: Use cases menu",
+        "dropdown: Compare menu",
+        "link: Security",
+        "link: Contact",
+        "tabs: SDK code examples",
+        "accordion: FAQ items",
+        "logo carousel: Works with (OpenAI, Claude, Gemini, etc.)"
+      ],
+      "flows": [
+        {
+          "name": "Sign up from landing page",
+          "description": "New visitor reads the landing page value prop and clicks the CTA to create an account, beginning their journey toward setting up chatbot analytics.",
+          "persona": "Product manager at a company running an AI chatbot who wants visibility into conversation quality and customer sentiment.",
+          "preconditions": [
+            "Visitor does not have an existing OpenBat account"
+          ],
+          "steps": [
+            "Land on the homepage at openbat.dev",
+            "Read hero section and scroll through feature sections",
+            "Click 'Start listening' button (appears in hero, mid-page, and bottom)",
+            "Get redirected to /auth/sign-up registration page"
+          ],
+          "expectedOutcome": "User lands on the sign-up page and can create an account.",
+          "failureModes": [
+            "If already logged in, CTA may redirect to /platform instead"
+          ],
+          "relatedFlows": [
+            "Email sign up",
+            "Email login"
+          ]
+        }
+      ],
+      "audience": "Prospective customers — product managers, engineering leads, and CS managers evaluating chatbot analytics tools.",
+      "preconditions": [
+        "None — public page accessible to anyone"
+      ],
+      "pageContext": "Entry point for organic and paid traffic. Links to use cases, compare pages, security, contact, sign-in, and sign-up. Footer contains full sitemap of marketing pages.",
+      "keyActions": [
+        "Read value proposition and feature explanations",
+        "Click 'Start listening' CTA to sign up",
+        "Navigate to Use Cases or Compare pages for deeper evaluation",
+        "View SDK code examples (Vercel AI SDK, TypeScript, Python, REST API)",
+        "Expand FAQ accordion items",
+        "Click 'Sign in' to access existing account"
+      ],
+      "expectedOutcome": "Visitor understands what OpenBat does and either signs up or explores deeper marketing pages."
+    },
+    {
+      "url": "/auth/login",
+      "title": "Sign In",
+      "description": "Email/password authentication page for returning users. Minimal dark-themed form with OpenBat branding, email field, password field, forgot password link, and sign-up link.",
+      "elements": [
+        "textbox: Email",
+        "textbox: Password",
+        "button: Sign in",
+        "link: Forgot?",
+        "link: Create an account"
+      ],
+      "flows": [
+        {
+          "name": "Email login",
+          "description": "Authenticate using email and password credentials to access the main dashboard. Primary authentication method for existing users.",
+          "persona": "Returning user who already has an account and wants to access their chatbot analytics dashboard.",
+          "preconditions": [
+            "User has an existing account",
+            "User is not already logged in",
+            "User knows their email and password"
+          ],
+          "steps": [
+            "Navigate to /auth/login",
+            "Enter email address in the Email text field",
+            "Enter password in the Password text field",
+            "Click the 'Sign in' button",
+            "Wait for authentication to complete and redirect to /platform"
+          ],
+          "expectedOutcome": "User is redirected to /platform showing their organization's chatbot list.",
+          "failureModes": [
+            "Invalid credentials show an error",
+            "Unverified email may block login",
+            "Banned users redirected to /auth/login?error=banned"
+          ],
+          "relatedFlows": [
+            "Forgot password flow",
+            "Email sign up"
+          ]
+        }
+      ],
+      "audience": "Returning users who already have an OpenBat account and want to access their dashboard.",
+      "preconditions": [
+        "User has an existing OpenBat account",
+        "User is not already logged in"
+      ],
+      "pageContext": "Accessed from the landing page 'Sign in' button, or by direct navigation. Redirects to /platform on successful login. Part of the auth flow alongside sign-up and forgot-password.",
+      "keyActions": [
+        "Enter email address",
+        "Enter password",
+        "Click Sign in",
+        "Navigate to forgot password",
+        "Navigate to create account"
+      ],
+      "expectedOutcome": "User authenticates and is redirected to the platform dashboard."
+    },
+    {
+      "url": "/auth/sign-up",
+      "title": "Create Account",
+      "description": "Registration page for new users. Collects work email, password, and password confirmation. Sends a verification email on submit. Includes terms and privacy policy links.",
+      "elements": [
+        "textbox: Work Email",
+        "textbox: Password",
+        "textbox: Confirm Password",
+        "button: Create account",
+        "link: Terms",
+        "link: Privacy Policy"
+      ],
+      "flows": [
+        {
+          "name": "Email sign up",
+          "description": "Create a new OpenBat account with email and password. A verification email is sent to confirm the address before the account becomes fully active.",
+          "persona": "New user who wants to set up chatbot analytics for the first time.",
+          "preconditions": [
+            "User does not already have an account",
+            "User has access to their work email"
+          ],
+          "steps": [
+            "Navigate to /auth/sign-up",
+            "Enter work email address",
+            "Enter password (minimum 8 characters)",
+            "Confirm password",
+            "Click 'Create account'",
+            "Check email for verification link",
+            "Click verification link to confirm account"
+          ],
+          "expectedOutcome": "Account is created and verified. User can now log in and is redirected to /platform where an organization is auto-created.",
+          "failureModes": [
+            "Duplicate email shows error",
+            "Password too short shows validation error",
+            "Passwords don't match shows error",
+            "Verification email may go to spam"
+          ],
+          "relatedFlows": [
+            "Email login",
+            "Email verification"
+          ]
+        }
+      ],
+      "audience": "New users who want to start using OpenBat for their chatbot analytics.",
+      "preconditions": [
+        "User does not have an existing account"
+      ],
+      "pageContext": "Reached from the landing page CTA or the login page 'Create an account' link. After submission, redirects to /auth/sign-up-success.",
+      "keyActions": [
+        "Enter work email",
+        "Enter password (min 8 chars)",
+        "Confirm password",
+        "Click Create account",
+        "Read terms and privacy policy"
+      ],
+      "expectedOutcome": "Account is created, verification email is sent, user sees confirmation page."
+    },
+    {
+      "url": "/auth/forgot-password",
+      "title": "Forgot Password",
+      "description": "Password reset request page. User enters their email to receive a one-time reset link. Links back to sign-in.",
+      "elements": [
+        "textbox: Email",
+        "button: Send reset link",
+        "link: Back to sign in"
+      ],
+      "flows": [
+        {
+          "name": "Password reset request",
+          "description": "Request a password reset email when the user has forgotten their credentials.",
+          "persona": "Existing user who cannot remember their password.",
+          "preconditions": [
+            "User has an existing account with a verified email"
+          ],
+          "steps": [
+            "Navigate to /auth/forgot-password (or click 'Forgot?' from login page)",
+            "Enter the email address associated with the account",
+            "Click 'Send reset link'",
+            "Check email for the reset link",
+            "Click the reset link to navigate to /auth/update-password",
+            "Enter new password and confirm"
+          ],
+          "expectedOutcome": "User's password is updated and they can log in with the new password.",
+          "failureModes": [
+            "Email not found may show generic success (security)",
+            "Reset link expires",
+            "Email goes to spam"
+          ],
+          "relatedFlows": [
+            "Email login"
+          ]
+        }
+      ],
+      "audience": "Existing user who has forgotten their password.",
+      "preconditions": [
+        "User has an existing account"
+      ],
+      "pageContext": "Accessed from the login page 'Forgot?' link. After submission, a reset email is sent.",
+      "keyActions": [
+        "Enter email address",
+        "Click Send reset link",
+        "Navigate back to sign in"
+      ],
+      "expectedOutcome": "Password reset email is sent with a one-time link to /auth/update-password."
+    },
+    {
+      "url": "/platform",
+      "title": "Chatbot List (Dashboard)",
+      "description": "Organization-scoped dashboard showing all chatbots. Displays chatbot cards with name, plan badge (Pro/Demo), API key prefix, creator email, last activity, conversation and message counts. Tabs filter by status: Active, Pending, Archive, Demo. Supports card and list view toggles.",
+      "elements": [
+        "button: New chatbot",
+        "tabs: Active/Pending/Archive/Demo",
+        "button: Card view",
+        "button: List view",
+        "link: chatbot cards",
+        "sidebar: Chatbots/Members/Settings",
+        "button: org switcher"
+      ],
+      "flows": [
+        {
+          "name": "Create new chatbot",
+          "description": "Start the process of adding a new chatbot to the organization for analytics tracking.",
+          "persona": "Team admin or owner who wants to set up analytics for a new chatbot.",
+          "preconditions": [
+            "User is authenticated",
+            "User has owner or admin role in the organization"
+          ],
+          "steps": [
+            "Navigate to /platform",
+            "Click '+ New chatbot' button in the top right",
+            "Fill in chatbot configuration (name, etc.)",
+            "Copy the generated API key",
+            "Follow onboarding steps to integrate the SDK"
+          ],
+          "expectedOutcome": "New chatbot is created with an API key, and user is guided through SDK setup on the onboarding page.",
+          "failureModes": [
+            "Insufficient permissions for non-owner/admin roles",
+            "Name validation errors"
+          ],
+          "relatedFlows": [
+            "Chatbot onboarding",
+            "SDK integration setup"
+          ]
+        },
+        {
+          "name": "Explore demo chatbot",
+          "description": "Open a read-only demo chatbot to explore the full OpenBat dashboard without needing real data. Useful for evaluation and onboarding.",
+          "persona": "New user evaluating OpenBat, or existing user wanting to see what a fully populated dashboard looks like.",
+          "preconditions": [
+            "User is authenticated"
+          ],
+          "steps": [
+            "Navigate to /platform",
+            "Click the 'Demo' tab to see demo chatbots",
+            "Click on a demo chatbot card (E-Commerce or SaaS)",
+            "Browse the read-only dashboard with sample data"
+          ],
+          "expectedOutcome": "User sees a fully populated dashboard with sample conversations, analyses, and reports — all read-only.",
+          "failureModes": [
+            "Demo chatbot data may not be real-time"
+          ],
+          "relatedFlows": [
+            "View chatbot dashboard"
+          ]
+        }
+      ],
+      "audience": "Authenticated team members who want to select a chatbot to analyze or create a new one.",
+      "preconditions": [
+        "User is authenticated",
+        "User belongs to at least one organization"
+      ],
+      "pageContext": "Primary entry point after login. Organization is auto-created on first visit if the user has none. Sidebar provides org-level navigation: Chatbots, Members, Settings. User can switch organizations via the org switcher in the sidebar.",
+      "keyActions": [
+        "View chatbot list with status tabs",
+        "Switch between card and list view",
+        "Click a chatbot card to open its dashboard",
+        "Click '+ New chatbot' to create a new chatbot",
+        "Access Demo chatbots for exploration",
+        "Navigate to Members or Settings via sidebar",
+        "Switch organization via sidebar org switcher"
+      ],
+      "expectedOutcome": "User selects a chatbot and navigates to its detailed dashboard, or creates a new chatbot."
+    },
+    {
+      "url": "/platform/members",
+      "title": "Organization Members",
+      "description": "Team member management page showing a table of all organization members with email, role (Owner/Admin/Member), and join date. Supports inviting new members.",
+      "elements": [
+        "table: Email/Role/Joined columns",
+        "button: Invite member"
+      ],
+      "flows": [
+        {
+          "name": "Invite team member",
+          "description": "Send an email invitation to add a new team member to the organization.",
+          "persona": "Organization owner who wants to give a colleague access to chatbot analytics.",
+          "preconditions": [
+            "User has owner or admin role",
+            "Invitee has an email address"
+          ],
+          "steps": [
+            "Navigate to /platform/members",
+            "Click '+ Invite member'",
+            "Enter the invitee's email address",
+            "Select the role (admin or member)",
+            "Submit the invitation"
+          ],
+          "expectedOutcome": "Invitation email is sent. Invitee clicks the link to accept and join the organization.",
+          "failureModes": [
+            "Email already belongs to an existing member",
+            "Invitation email goes to spam",
+            "Role permissions insufficient"
+          ],
+          "relatedFlows": [
+            "Accept invitation"
+          ]
+        }
+      ],
+      "audience": "Organization owners or admins managing team access.",
+      "preconditions": [
+        "User is authenticated",
+        "User has owner or admin role"
+      ],
+      "pageContext": "Accessed from the organization-level sidebar. Sits alongside Chatbots and Settings in the org navigation.",
+      "keyActions": [
+        "View member list with roles",
+        "Invite new member via email",
+        "Manage member roles"
+      ],
+      "expectedOutcome": "Team members are managed and new members can be invited to the organization."
+    },
+    {
+      "url": "/platform/settings",
+      "title": "Organization Settings",
+      "description": "Organization-level settings with editable organization name and a danger zone for permanent organization deletion.",
+      "elements": [
+        "textbox: Organization name",
+        "button: Save",
+        "button: Delete organization (danger zone)"
+      ],
+      "flows": [],
+      "audience": "Organization owner managing the org configuration.",
+      "preconditions": [
+        "User is authenticated",
+        "User is the organization owner"
+      ],
+      "pageContext": "Accessed from the organization-level sidebar. Top-level settings for the organization (not chatbot-specific).",
+      "keyActions": [
+        "Edit organization display name",
+        "Delete organization (destructive, requires confirmation)"
+      ],
+      "expectedOutcome": "Organization settings are updated, or the organization is permanently deleted."
+    },
+    {
+      "url": "/platform/[chatbotId]",
+      "title": "Chatbot Overview Dashboard",
+      "description": "Primary chatbot analytics dashboard with an AI chat interface ('What can I help you discover?'), quick-access command hints (tag entity, scope by plan, user/assistant analysis, scope by prompt), and summary cards: At-Risk Orgs, Performance (Resolution %, Quality Issues, AI Literacy), Activity (conversation count), and Risks (churn risks, yes-man, hallucinations). Each metric is clickable with sparkline charts.",
+      "elements": [
+        "textbox: Message input (AI chat)",
+        "button: Submit",
+        "button: History dropdown",
+        "cards: At-Risk Orgs/Performance/Activity/Risks with sparklines",
+        "link: View all (organizations)"
+      ],
+      "flows": [
+        {
+          "name": "Ask AI about chatbot data",
+          "description": "Use the built-in AI assistant to ask natural-language questions about conversation data, sentiment trends, user behavior, and more.",
+          "persona": "Product manager who wants quick answers like 'What are users complaining about this week?' without writing queries.",
+          "preconditions": [
+            "Chatbot has captured conversations",
+            "User is on the chatbot dashboard"
+          ],
+          "steps": [
+            "Click the message input field",
+            "Type a natural-language question (e.g., 'What's driving negative sentiment?')",
+            "Optionally use command hints: @ tag entity, $ scope by plan, # user analysis, ! assistant analysis, ^ scope by prompt",
+            "Press Enter or click Submit",
+            "View the AI-generated response with charts and insights"
+          ],
+          "expectedOutcome": "AI responds with relevant data, charts, and insights based on the chatbot's conversation data.",
+          "failureModes": [
+            "No conversations captured yet returns empty results",
+            "Complex queries may need rephrasing"
+          ],
+          "relatedFlows": [
+            "View reports",
+            "Deep search"
+          ]
+        }
+      ],
+      "audience": "Product managers, CS leads, or engineering leads who want an at-a-glance view of chatbot health and want to ask questions about their data.",
+      "preconditions": [
+        "User is authenticated",
+        "Chatbot exists and has been onboarded",
+        "Chatbot belongs to user's organization"
+      ],
+      "pageContext": "Accessed by clicking a chatbot card from /platform. The primary workspace after selecting a chatbot. Sidebar switches to chatbot-specific navigation: Dashboard, Reports, Workflows, Prompt, Users, Conversations, Query Types, Deep Search, Analysis Config, Chatbot Settings.",
+      "keyActions": [
+        "Ask the AI chat any question about chatbot data",
+        "View at-risk organizations",
+        "Check performance metrics (resolution, quality, AI literacy)",
+        "Monitor activity trends",
+        "Review risk signals (churn, yes-man, hallucinations)",
+        "Click any metric to drill down",
+        "Access conversation history via History dropdown"
+      ],
+      "expectedOutcome": "User gets a quick health check of their chatbot and can drill into any area of concern or ask AI-powered questions."
+    },
+    {
+      "url": "/platform/[chatbotId]/reports",
+      "title": "Reports",
+      "description": "AI-native reports page where users can create chat-driven dashboards. Offers pre-built templates (Customer Pulse, Sentiment Distribution, Risk Flags Leaderboard, Topics & Intents Overview) and the ability to create blank reports. Reports are built by chatting with AI which generates OpenUI widgets.",
+      "elements": [
+        "button: New report",
+        "cards: template cards (Customer Pulse, Sentiment Distribution, etc.)",
+        "button: Create a blank report",
+        "link: Browse all templates"
+      ],
+      "flows": [
+        {
+          "name": "Create report from template",
+          "description": "Start a new report from a pre-built template to quickly get a populated dashboard with relevant widgets.",
+          "persona": "CS manager who wants a weekly sentiment overview without building from scratch.",
+          "preconditions": [
+            "Chatbot has conversation data"
+          ],
+          "steps": [
+            "Navigate to /platform/[chatbotId]/reports",
+            "Browse the template section",
+            "Click a template card (e.g., 'Customer Pulse')",
+            "Report is created with pre-configured widgets",
+            "Optionally customize by chatting with the copilot sidebar"
+          ],
+          "expectedOutcome": "A new report is created with pre-populated widgets showing relevant chatbot analytics.",
+          "failureModes": [
+            "Template may show empty widgets if chatbot has no data for that analysis type"
+          ],
+          "relatedFlows": [
+            "Create blank report",
+            "Ask AI about chatbot data"
+          ]
+        }
+      ],
+      "audience": "Team leads who want reusable dashboards and periodic reports on chatbot performance.",
+      "preconditions": [
+        "User is authenticated",
+        "Chatbot belongs to user's organization"
+      ],
+      "pageContext": "Accessed from the chatbot sidebar. Reports are distinct from the AI chat on the dashboard — they persist as reusable dashboards.",
+      "keyActions": [
+        "Browse report templates",
+        "Create a blank report",
+        "Open an existing report",
+        "Create a new report with '+ New report'"
+      ],
+      "expectedOutcome": "User creates or opens a report that visualizes chatbot data through interactive widgets."
+    },
+    {
+      "url": "/platform/[chatbotId]/workflows",
+      "title": "Workflows",
+      "description": "Automation hub for creating alert workflows triggered by analysis conditions. Three tabs: Workflows (list), Runs (execution history with status filters: All/Pending/Triggered/Skipped/Success/Failed), and Templates (pre-built workflow templates categorized by Alerting/Escalation/Reporting/Moderation/General).",
+      "elements": [
+        "button: Create workflow",
+        "tabs: Workflows/Runs/Templates",
+        "filters: All/Pending/Triggered/Skipped/Success/Failed",
+        "template cards with categories"
+      ],
+      "flows": [
+        {
+          "name": "Create workflow from template",
+          "description": "Set up an automated alert workflow using a pre-built template, such as notifying Slack when an organization becomes at-risk.",
+          "persona": "CS manager who wants Slack notifications when churn risk is detected.",
+          "preconditions": [
+            "Chatbot has analysis running",
+            "Webhook destination configured in settings"
+          ],
+          "steps": [
+            "Navigate to /platform/[chatbotId]/workflows",
+            "Click 'Templates' tab",
+            "Browse templates by category (Alerting, Escalation, etc.)",
+            "Click a template to preview it",
+            "Configure the workflow (conditions, destinations)",
+            "Save and activate the workflow"
+          ],
+          "expectedOutcome": "Workflow is created and will trigger automatically when conditions are met during conversation analysis.",
+          "failureModes": [
+            "No webhook destinations configured",
+            "Analysis conditions don't match any data"
+          ],
+          "relatedFlows": [
+            "Configure webhooks",
+            "View workflow runs"
+          ]
+        }
+      ],
+      "audience": "Team members who want to automate alerts and actions based on conversation analysis patterns.",
+      "preconditions": [
+        "User is authenticated",
+        "Chatbot belongs to user's organization"
+      ],
+      "pageContext": "Accessed from the chatbot sidebar. Workflows connect analysis results to external actions (Slack, Discord, webhooks).",
+      "keyActions": [
+        "Create a new workflow",
+        "Browse workflow templates",
+        "Filter workflow runs by status",
+        "View workflow execution history",
+        "Switch between Workflows/Runs/Templates tabs"
+      ],
+      "expectedOutcome": "User sets up automated workflows that fire when specific analysis conditions are met."
+    },
+    {
+      "url": "/platform/[chatbotId]/system-prompt",
+      "title": "System Prompt",
+      "description": "Comprehensive system prompt management page with three tabs: Prompt (versioned prompt editor with timeline, publish mode toggle, kill switch, rollback, diff view), Experiments (A/B testing prompt changes against analysis tags), and Suggested (AI-suggested prompt improvements, coming soon). Shows prompt maturity level progression: Manual → Half-automated → Fully automated.",
+      "elements": [
+        "tabs: Prompt/Experiments/Suggested",
+        "timeline: version history (v1-v6)",
+        "radio: Live/Draft publish mode",
+        "switch: Kill switch",
+        "button: Roll back",
+        "radio: Full/Diff view",
+        "button: New version",
+        "button: Edit prompt",
+        "button: New experiment"
+      ],
+      "flows": [
+        {
+          "name": "Create new prompt version",
+          "description": "Write or AI-generate a new system prompt version, preview it, and publish it live to affect future chatbot conversations.",
+          "persona": "Engineer who wants to fix a hallucination pattern identified in analysis by editing the system prompt.",
+          "preconditions": [
+            "Chatbot has an existing prompt",
+            "User has edit permissions"
+          ],
+          "steps": [
+            "Navigate to /platform/[chatbotId]/system-prompt",
+            "Click '+ New version' to open the prompt wizard",
+            "Edit the prompt text (or use AI to generate changes)",
+            "Review the diff against the current version",
+            "Save as draft or publish live",
+            "Monitor analysis results to see the impact"
+          ],
+          "expectedOutcome": "New prompt version is published and the chatbot uses it for future conversations. Analysis will track the impact.",
+          "failureModes": [
+            "Publishing errors",
+            "Kill switch may need to be used if new version causes issues"
+          ],
+          "relatedFlows": [
+            "Run prompt experiment",
+            "Roll back prompt version"
+          ]
+        }
+      ],
+      "audience": "Engineering and product team members managing the chatbot's system prompt and running prompt experiments.",
+      "preconditions": [
+        "User is authenticated",
+        "Chatbot belongs to user's organization"
+      ],
+      "pageContext": "Accessed from the chatbot sidebar. Central place for prompt versioning, experiments, and AI-suggested improvements. The prompt can be in different maturity layers (manual, half-automated, fully automated).",
+      "keyActions": [
+        "View current live prompt version",
+        "Create a new version (manual or AI)",
+        "Toggle publish mode (Live/Draft)",
+        "Toggle kill switch (emergency disable)",
+        "Roll back to a previous version",
+        "Switch between Full and Diff view",
+        "Create a new experiment",
+        "View prompt version timeline"
+      ],
+      "expectedOutcome": "User manages prompt versions, runs experiments, and improves chatbot behavior based on analysis data."
+    },
+    {
+      "url": "/platform/[chatbotId]/users",
+      "title": "Users",
+      "description": "External chatbot user directory with a sortable, filterable data table. Columns: User (ID), Organization, Health score, Persona, AI Literacy score, Conversations count, Last Activity. Supports text search, faceted filters, date range picker, view customization, and pagination.",
+      "elements": [
+        "textbox: Filter users search",
+        "button: Filter",
+        "button: View",
+        "button: date range picker",
+        "table: sortable columns",
+        "pagination: rows per page selector"
+      ],
+      "flows": [],
+      "audience": "CS and product team members who want to understand individual chatbot user behavior and health.",
+      "preconditions": [
+        "User is authenticated",
+        "Chatbot has captured conversations with user identifiers"
+      ],
+      "pageContext": "Accessed from the chatbot sidebar under 'Clients'. Shows the end-users who interact with the chatbot (not team members).",
+      "keyActions": [
+        "Search users by name/ID",
+        "Apply faceted filters",
+        "Sort by any column",
+        "Change date range",
+        "Customize visible columns",
+        "Click a user row to see their conversations"
+      ],
+      "expectedOutcome": "User finds specific chatbot users and understands their engagement patterns and health scores."
+    },
+    {
+      "url": "/platform/[chatbotId]/conversations",
+      "title": "Conversations",
+      "description": "Conversation list page with a sortable, filterable data table. Columns: User, Messages count, Outcome (Resolved/Partially Resolved/Failed), Issues count, Sentiment, Flags count, Last Message timestamp. Supports text search, faceted filters, date range, column sorting, view customization, and pagination (604 rows, 31 pages).",
+      "elements": [
+        "textbox: Filter conversations search",
+        "button: Filter",
+        "button: View",
+        "button: date range picker",
+        "table: sortable columns with 7 fields",
+        "pagination"
+      ],
+      "flows": [
+        {
+          "name": "Review a specific conversation",
+          "description": "Find and open a conversation to read the full message thread, see analysis results, and understand what happened.",
+          "persona": "CS manager investigating a flagged interaction to understand why a customer expressed frustration.",
+          "preconditions": [
+            "Conversations exist in the chatbot"
+          ],
+          "steps": [
+            "Navigate to /platform/[chatbotId]/conversations",
+            "Optionally use search or filters to narrow results",
+            "Click a conversation row to open the detail page",
+            "Read the full message thread with user and assistant messages",
+            "Review analysis results in the right panel (flags, outcome, persona)"
+          ],
+          "expectedOutcome": "User understands the full context of the conversation including analysis tags, flags, and outcomes.",
+          "failureModes": [
+            "No conversations match the filter criteria"
+          ],
+          "relatedFlows": [
+            "Deep search for semantic lookup"
+          ]
+        }
+      ],
+      "audience": "Any team member who wants to browse, filter, and drill into individual chatbot conversations.",
+      "preconditions": [
+        "User is authenticated",
+        "Chatbot has captured conversations"
+      ],
+      "pageContext": "Accessed from the chatbot sidebar under 'Clients'. Primary way to find and review specific conversations.",
+      "keyActions": [
+        "Search conversations by keyword",
+        "Apply faceted filters (outcome, sentiment, flags)",
+        "Sort by any column",
+        "Change date range",
+        "Click a row to open conversation detail",
+        "Customize visible columns",
+        "Navigate between pages"
+      ],
+      "expectedOutcome": "User finds relevant conversations and drills into them for detailed analysis."
+    },
+    {
+      "url": "/platform/[chatbotId]/conversations/[id]",
+      "title": "Conversation Detail",
+      "description": "Full conversation transcript view with chat bubbles for user (pink) and assistant (green) messages. Shows translation indicators, analysis tags (e.g., 'data visibility query'), expandable reasoning and tool call sections. Right panel has three tabs: General (Analysis Overview with flags, outcomes), User (user-specific analysis), Assistant (assistant-specific analysis). Also shows Persona matching and a 'Sharpen this analysis' CTA for deeper integration.",
+      "elements": [
+        "chat bubbles: user/assistant messages",
+        "badges: analysis tags",
+        "expandable: Reasoning/Tool sections",
+        "tabs: General/User/Assistant",
+        "cards: Flag count, Outcome, Persona",
+        "button: View in (original context)",
+        "button: View (layout toggle)",
+        "breadcrumb: Conversations > Conversation"
+      ],
+      "flows": [],
+      "audience": "Any team member reviewing a specific conversation's content and analysis results.",
+      "preconditions": [
+        "User is authenticated",
+        "Conversation exists"
+      ],
+      "pageContext": "Accessed by clicking a row in the conversations list. Breadcrumb navigation back to Conversations list.",
+      "keyActions": [
+        "Read full conversation thread",
+        "Expand reasoning and tool call details",
+        "Switch between General/User/Assistant analysis tabs",
+        "View flags and outcomes",
+        "View persona match",
+        "Click 'View in' to see original context"
+      ],
+      "expectedOutcome": "User fully understands what happened in the conversation and what analysis was performed."
+    },
+    {
+      "url": "/platform/[chatbotId]/query-types",
+      "title": "Query Types",
+      "description": "Semantic query type clustering page that automatically groups user messages into canonical question categories. Table columns: Query type (name + description), Volume (period), All-time count, Top intent, Sentiment, Resolved %, Last seen. Supports search, date range, view customization, and sorting.",
+      "elements": [
+        "textbox: Filter query types search",
+        "button: View",
+        "button: date range picker",
+        "table: sortable columns"
+      ],
+      "flows": [],
+      "audience": "Product team members who want to understand what users are asking the chatbot most frequently.",
+      "preconditions": [
+        "User is authenticated",
+        "Chatbot has analyzed conversations"
+      ],
+      "pageContext": "Accessed from the chatbot sidebar under 'Clients'. Shows AI-clustered question patterns rather than raw messages.",
+      "keyActions": [
+        "Browse query types sorted by volume",
+        "Search for specific query types",
+        "Filter by date range",
+        "Sort by any column",
+        "Click a query type to drill into its conversations"
+      ],
+      "expectedOutcome": "User understands the most common question patterns and their resolution rates."
+    },
+    {
+      "url": "/platform/[chatbotId]/deep-search",
+      "title": "Deep Search",
+      "description": "Semantic search interface that finds conversations by meaning rather than keywords. Single search input with a 'Deep Search' button and date range filter.",
+      "elements": [
+        "textbox: semantic search input",
+        "button: Deep Search",
+        "button: date range picker"
+      ],
+      "flows": [],
+      "audience": "Any team member who needs to find specific conversations using natural-language queries rather than exact keyword matches.",
+      "preconditions": [
+        "User is authenticated",
+        "Chatbot has conversation embeddings"
+      ],
+      "pageContext": "Accessed from the chatbot sidebar under 'Clients'. Complements the keyword search in the conversations table.",
+      "keyActions": [
+        "Enter a semantic search query",
+        "Click Deep Search",
+        "Filter by date range",
+        "Click search results to open conversation details"
+      ],
+      "expectedOutcome": "User finds relevant conversations based on meaning/intent rather than exact keywords."
+    },
+    {
+      "url": "/platform/[chatbotId]/organizations",
+      "title": "External Customer Organizations",
+      "description": "Directory of external customer organizations whose users interact with the chatbot. Populated automatically when the SDK sends organization metadata. Shows empty state when no organization data has been captured.",
+      "elements": [
+        "button: date range picker",
+        "empty state: No organizations yet"
+      ],
+      "flows": [],
+      "audience": "CS managers who want to monitor chatbot interaction health per customer organization.",
+      "preconditions": [
+        "User is authenticated",
+        "Chatbot has conversations with organization metadata"
+      ],
+      "pageContext": "Accessed from the chatbot sidebar under 'Clients'. Currently disabled in sidebar when no org data exists. Shows faceted filters and date range when populated.",
+      "keyActions": [
+        "Browse customer organizations",
+        "Filter by date range",
+        "Sort and filter organizations"
+      ],
+      "expectedOutcome": "User sees per-organization health scores and can identify at-risk accounts."
+    },
+    {
+      "url": "/platform/[chatbotId]/analysis-config",
+      "title": "Analysis Config",
+      "description": "Comprehensive analysis configuration page with 7 tabs: Integration (5-layer integration maturity from baseline to DB-backed prompt with code recipes), Metadata (managed and discovered custom fields from SDK), Translation (auto-translate toggle with primary language selection), User Analysis (sentiment scoring, AI literacy, flags with custom definitions), Assistant Analysis (outcome types, issue types with custom definitions), Calibration (training examples for sentiment/intent/flags/outcomes/issues/faithfulness), Personas (AI-generated user persona cards with auto-discovery).",
+      "elements": [
+        "tabs: Integration/Metadata/Translation/User Analysis/Assistant Analysis/Calibration/Personas",
+        "integration layer cards with code recipes",
+        "metadata table with Track buttons",
+        "translation toggle and language picker",
+        "analysis definition tables with toggles",
+        "calibration example lists",
+        "persona cards with AI generation"
+      ],
+      "flows": [
+        {
+          "name": "Configure analysis definitions",
+          "description": "Customize what the AI analysis pipeline looks for — add custom flags, outcomes, or issues specific to your business domain.",
+          "persona": "Product lead who wants to add a custom flag for 'pricing_complaint' specific to their product.",
+          "preconditions": [
+            "User has admin or owner role"
+          ],
+          "steps": [
+            "Navigate to /platform/[chatbotId]/analysis-config",
+            "Click the 'User Analysis' or 'Assistant Analysis' tab",
+            "Find the relevant section (e.g., Flags)",
+            "Click '+ Add custom' to define a new analysis type",
+            "Configure the name, description, color, and priority",
+            "Toggle the definition on",
+            "Optionally add calibration examples in the Calibration tab"
+          ],
+          "expectedOutcome": "New analysis definition is active and will be detected in future conversations.",
+          "failureModes": [
+            "Changes require re-analysis to apply to existing conversations"
+          ],
+          "relatedFlows": [
+            "Manage calibration examples",
+            "Re-analyze conversations"
+          ]
+        }
+      ],
+      "audience": "Engineering and product leads configuring how the chatbot's conversations are analyzed.",
+      "preconditions": [
+        "User is authenticated",
+        "User has owner or admin role"
+      ],
+      "pageContext": "Accessed from the bottom of the chatbot sidebar. The most configuration-heavy page in the app.",
+      "keyActions": [
+        "View integration maturity level and follow setup recipes",
+        "Track or deny discovered metadata fields",
+        "Toggle auto-translation and set primary language",
+        "Configure sentiment scoring levels and priorities",
+        "Configure outcome and issue definitions",
+        "Manage calibration training examples",
+        "Create and manage user personas",
+        "Add custom flag and issue definitions"
+      ],
+      "expectedOutcome": "Analysis pipeline is configured to match the chatbot's specific domain, language, and business needs."
+    },
+    {
+      "url": "/platform/[chatbotId]/settings",
+      "title": "Chatbot Settings",
+      "description": "Chatbot-level settings with 7 tabs: General (name, ID, creation date, analysis toggles, re-analyze, delete), Billing (Pro plan at $39/mo with credit usage and top-up), Company Info (product name, URL, description, industry for hallucination detection context), API Keys (ingest key management with prefix, status, last used), Members (chatbot-level access), Webhooks (Discord/Slack/custom webhook destinations), Import/Export Data (JSON/CSV export with analysis results, CSV/JSON import).",
+      "elements": [
+        "tabs: General/Billing/Company Info/API Keys/Members/Webhooks/Import-Export Data",
+        "forms and buttons for each section"
+      ],
+      "flows": [
+        {
+          "name": "Export conversation data",
+          "description": "Download all conversation data including messages and analysis results for external processing or backup.",
+          "persona": "Data analyst who needs chatbot conversation data for custom analysis in their own tools.",
+          "preconditions": [
+            "Chatbot has conversations"
+          ],
+          "steps": [
+            "Navigate to /platform/[chatbotId]/settings",
+            "Click 'Import/Export Data' tab",
+            "Select format (JSON or CSV, not visible but implied)",
+            "Check 'Include analysis results' if needed",
+            "Click 'Export' button",
+            "Download the generated file"
+          ],
+          "expectedOutcome": "Complete conversation data file is downloaded with all messages and optionally analysis results.",
+          "failureModes": [
+            "Large datasets may take time to generate",
+            "File size may be significant for high-volume chatbots"
+          ],
+          "relatedFlows": [
+            "Import conversation data"
+          ]
+        }
+      ],
+      "audience": "Team admin or owner managing chatbot configuration, API keys, billing, and integrations.",
+      "preconditions": [
+        "User is authenticated",
+        "User has owner or admin role"
+      ],
+      "pageContext": "Accessed from the bottom of the chatbot sidebar. Contains all chatbot-level configuration that doesn't relate to analysis definitions.",
+      "keyActions": [
+        "Edit chatbot display name",
+        "Copy chatbot ID",
+        "Toggle user/assistant message analysis",
+        "Re-analyze all conversations",
+        "View and manage billing plan",
+        "Purchase credit top-ups",
+        "Edit company/product information",
+        "View and rotate API keys",
+        "Configure webhook destinations",
+        "Export conversation data as JSON/CSV",
+        "Import conversation data from file",
+        "Delete chatbot (danger zone)"
+      ],
+      "expectedOutcome": "Chatbot is fully configured with API keys, billing, webhooks, and company context."
+    },
+    {
+      "url": "/platform/[chatbotId]/onboarding",
+      "title": "Chatbot Onboarding",
+      "description": "SDK setup wizard for newly created chatbots. Guides users through copying the API key and integrating the OpenBat SDK. Redirects to the dashboard once onboarding is marked complete.",
+      "elements": [
+        "code snippets: SDK setup",
+        "button: copy API key",
+        "progress steps"
+      ],
+      "flows": [],
+      "audience": "Developer who just created a new chatbot and needs to set up the SDK integration.",
+      "preconditions": [
+        "Chatbot exists but has not been onboarded yet (settings.onboarded !== true)"
+      ],
+      "pageContext": "Automatically shown after creating a new chatbot. Redirects to dashboard if already onboarded.",
+      "keyActions": [
+        "Copy API key",
+        "Follow SDK installation steps",
+        "Complete onboarding to reach dashboard"
+      ],
+      "expectedOutcome": "SDK is integrated and the chatbot starts receiving and analyzing conversations."
+    },
+    {
+      "url": "/use-cases",
+      "title": "Use Cases Overview",
+      "description": "Marketing page showcasing how different teams use OpenBat. Links to dedicated pages for Customer Success, Engineering, Product Teams, and Support use cases.",
+      "elements": [
+        "hero section",
+        "use case cards/links"
+      ],
+      "flows": [],
+      "audience": "Prospective customers evaluating OpenBat for their specific team's needs.",
+      "preconditions": [
+        "None — public page"
+      ],
+      "pageContext": "Accessed from the top navigation 'Use cases' dropdown or footer links.",
+      "keyActions": [
+        "Browse use case summaries",
+        "Navigate to specific use case pages"
+      ],
+      "expectedOutcome": "Visitor understands how OpenBat applies to their team's specific needs."
+    },
+    {
+      "url": "/use-cases/customer-success",
+      "title": "Use Case — Customer Success",
+      "description": "Marketing page focused on how CS teams use OpenBat to detect churn risk, surface at-risk accounts, and monitor sentiment before renewal reviews.",
+      "elements": [
+        "hero section",
+        "feature descriptions",
+        "CTA buttons"
+      ],
+      "flows": [],
+      "audience": "Customer success managers evaluating chatbot analytics tools.",
+      "preconditions": [
+        "None — public page"
+      ],
+      "pageContext": "Accessed from Use Cases overview or nav dropdown. One of 4 team-specific use case pages.",
+      "keyActions": [
+        "Read CS-specific value propositions",
+        "Click CTA to start listening"
+      ],
+      "expectedOutcome": "CS manager understands the specific value OpenBat provides for churn risk and account health monitoring."
+    },
+    {
+      "url": "/use-cases/engineering",
+      "title": "Use Case — Engineering",
+      "description": "Marketing page focused on how engineering teams use OpenBat to catch hallucinations, monitor chatbot quality, and validate prompt changes.",
+      "elements": [
+        "hero section",
+        "feature descriptions"
+      ],
+      "flows": [],
+      "audience": "Engineering leads evaluating chatbot quality monitoring tools.",
+      "preconditions": [
+        "None — public page"
+      ],
+      "pageContext": "One of 4 team-specific use case pages.",
+      "keyActions": [
+        "Read engineering-specific value propositions"
+      ],
+      "expectedOutcome": "Engineer understands how OpenBat helps detect hallucinations and quality issues."
+    },
+    {
+      "url": "/use-cases/product-teams",
+      "title": "Use Case — Product Teams",
+      "description": "Marketing page focused on how product teams use OpenBat to understand what users ask for, ranked by demand and sentiment.",
+      "elements": [
+        "hero section",
+        "feature descriptions"
+      ],
+      "flows": [],
+      "audience": "Product managers evaluating tools for understanding chatbot user needs.",
+      "preconditions": [
+        "None — public page"
+      ],
+      "pageContext": "One of 4 team-specific use case pages.",
+      "keyActions": [
+        "Read product-specific value propositions"
+      ],
+      "expectedOutcome": "PM understands how OpenBat surfaces feature requests and user intent patterns."
+    },
+    {
+      "url": "/use-cases/support",
+      "title": "Use Case — Support",
+      "description": "Marketing page focused on how support teams use OpenBat to triage frustration and resolve issues faster.",
+      "elements": [
+        "hero section",
+        "feature descriptions"
+      ],
+      "flows": [],
+      "audience": "Support team leads evaluating chatbot triage tools.",
+      "preconditions": [
+        "None — public page"
+      ],
+      "pageContext": "One of 4 team-specific use case pages.",
+      "keyActions": [
+        "Read support-specific value propositions"
+      ],
+      "expectedOutcome": "Support lead understands how OpenBat helps prioritize frustrated users."
+    },
+    {
+      "url": "/compare",
+      "title": "Compare Overview",
+      "description": "Marketing page positioning OpenBat against LLM observability tools. Highlights that competitors count tokens while OpenBat surfaces business intelligence (churn, sentiment, feature requests).",
+      "elements": [
+        "hero section",
+        "comparison content"
+      ],
+      "flows": [],
+      "audience": "Prospective customers comparing OpenBat to alternatives like Langfuse, LangSmith, Helicone, and Braintrust.",
+      "preconditions": [
+        "None — public page"
+      ],
+      "pageContext": "Accessed from the top navigation 'Compare' dropdown or footer links. Links to 6 specific comparison pages.",
+      "keyActions": [
+        "Read competitive positioning",
+        "Navigate to specific comparison pages"
+      ],
+      "expectedOutcome": "Visitor understands how OpenBat differs from the alternatives."
+    },
+    {
+      "url": "/compare/langfuse",
+      "title": "Compare — vs Langfuse",
+      "description": "Head-to-head comparison page positioning OpenBat (business intelligence for product/CS teams) against Langfuse (LLM tracing for engineers).",
+      "elements": [
+        "comparison content",
+        "CTA"
+      ],
+      "flows": [],
+      "audience": "Teams evaluating Langfuse who want to understand the difference.",
+      "preconditions": [
+        "None — public page"
+      ],
+      "pageContext": "One of 6 competitor comparison pages. Same template as other /compare/* pages.",
+      "keyActions": [
+        "Read comparison points",
+        "Click CTA to try OpenBat"
+      ],
+      "expectedOutcome": "Visitor understands the key differences and decides which tool fits their needs."
+    },
+    {
+      "url": "/compare/langsmith",
+      "title": "Compare — vs LangSmith",
+      "description": "Comparison page: OpenBat vs LangSmith (tracing tool vs business intelligence).",
+      "elements": [
+        "comparison content"
+      ],
+      "flows": [],
+      "audience": "Teams evaluating LangSmith.",
+      "preconditions": [
+        "None — public page"
+      ],
+      "pageContext": "One of 6 competitor comparison pages.",
+      "keyActions": [
+        "Read comparison points"
+      ],
+      "expectedOutcome": "Visitor understands the positioning difference."
+    },
+    {
+      "url": "/compare/helicone",
+      "title": "Compare — vs Helicone",
+      "description": "Comparison page: OpenBat vs Helicone (API logs vs conversation insight).",
+      "elements": [
+        "comparison content"
+      ],
+      "flows": [],
+      "audience": "Teams evaluating Helicone.",
+      "preconditions": [
+        "None — public page"
+      ],
+      "pageContext": "One of 6 competitor comparison pages.",
+      "keyActions": [
+        "Read comparison points"
+      ],
+      "expectedOutcome": "Visitor understands the positioning difference."
+    },
+    {
+      "url": "/compare/braintrust",
+      "title": "Compare — vs Braintrust",
+      "description": "Comparison page: OpenBat vs Braintrust (eval suite vs ongoing monitoring).",
+      "elements": [
+        "comparison content"
+      ],
+      "flows": [],
+      "audience": "Teams evaluating Braintrust.",
+      "preconditions": [
+        "None — public page"
+      ],
+      "pageContext": "One of 6 competitor comparison pages.",
+      "keyActions": [
+        "Read comparison points"
+      ],
+      "expectedOutcome": "Visitor understands the positioning difference."
+    },
+    {
+      "url": "/compare/manual-review",
+      "title": "Compare — vs Manual Review",
+      "description": "Comparison page: OpenBat vs manual spreadsheet-based conversation review.",
+      "elements": [
+        "comparison content"
+      ],
+      "flows": [],
+      "audience": "Teams currently reviewing conversations manually.",
+      "preconditions": [
+        "None — public page"
+      ],
+      "pageContext": "One of 6 competitor comparison pages.",
+      "keyActions": [
+        "Read comparison points"
+      ],
+      "expectedOutcome": "Visitor understands the efficiency gains of automated analysis."
+    },
+    {
+      "url": "/compare/diy",
+      "title": "Compare — vs DIY",
+      "description": "Comparison page: OpenBat vs building your own analytics pipeline.",
+      "elements": [
+        "comparison content"
+      ],
+      "flows": [],
+      "audience": "Engineering teams considering building in-house.",
+      "preconditions": [
+        "None — public page"
+      ],
+      "pageContext": "One of 6 competitor comparison pages.",
+      "keyActions": [
+        "Read build-vs-buy comparison"
+      ],
+      "expectedOutcome": "Visitor understands the time/cost tradeoff of building vs using OpenBat."
+    },
+    {
+      "url": "/contact",
+      "title": "Contact",
+      "description": "Demo booking and contact page. Features a live thread illustration showing conversation analysis in action (churn risk detection). Includes a contact form for booking a demo, with a 24-hour response guarantee.",
+      "elements": [
+        "contact form",
+        "live thread illustration"
+      ],
+      "flows": [],
+      "audience": "Prospective customers who want a personalized demo of OpenBat.",
+      "preconditions": [
+        "None — public page"
+      ],
+      "pageContext": "Accessed from the top navigation or footer. Terminal marketing page for high-intent visitors.",
+      "keyActions": [
+        "Read the value proposition",
+        "Fill out the contact/demo form",
+        "Submit the form"
+      ],
+      "expectedOutcome": "Demo request is submitted and the team responds within 24 hours."
+    },
+    {
+      "url": "/security",
+      "title": "Security",
+      "description": "Security information page detailing OpenBat's data protection practices. Covers encryption (TLS 1.2+, AES-256-GCM), data handling, access controls, compliance, sub-processors, incident response, and privacy. Links to downloadable documents: DPA, Sub-processors list, Privacy policy, Security FAQ.",
+      "elements": [
+        "section navigation: Encryption/Data handling/Access controls/Compliance/Sub-processors/Incident response/Privacy",
+        "document links: DPA/Sub-processors/Privacy policy/Security FAQ/Contact security"
+      ],
+      "flows": [],
+      "audience": "Security-conscious prospects and compliance teams evaluating OpenBat.",
+      "preconditions": [
+        "None — public page"
+      ],
+      "pageContext": "Accessed from the top navigation or footer. Important for enterprise evaluation.",
+      "keyActions": [
+        "Read security practices by section",
+        "Download DPA",
+        "View sub-processors list",
+        "Read privacy policy",
+        "Review security FAQ",
+        "Contact security team"
+      ],
+      "expectedOutcome": "Security team is satisfied with OpenBat's data protection practices."
+    }
+  ],
+  "flows": [
+    "Sign up from landing page",
+    "Email login",
+    "Email sign up",
+    "Password reset request",
+    "Create new chatbot",
+    "Explore demo chatbot",
+    "Invite team member",
+    "Ask AI about chatbot data",
+    "Create report from template",
+    "Create workflow from template",
+    "Create new prompt version",
+    "Review a specific conversation",
+    "Configure analysis definitions",
+    "Export conversation data"
+  ],
+  "totalPages": 34,
+  "totalFlows": 14
+}

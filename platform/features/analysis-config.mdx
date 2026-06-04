@@ -1,0 +1,82 @@
+---
+title: "Analysis configuration"
+description: "Control what the analysis pipeline detects."
+icon: "sliders-horizontal"
+---
+{/* SOURCES: knowledgebase/feature-inventory.md; pages/analysis-config.md */}
+
+Analysis config is the configuration center for your chatbot's analysis pipeline. You use it to tune what the AI looks for in conversations — language handling, sentiment and flag definitions, outcome and issue types, calibration examples, and user personas.
+
+<Frame caption="The Analysis Config page with its seven configuration tabs">
+  <img src="/images/platform/analysis-config.png" alt="Analysis config page showing the tabbed configuration interface" />
+</Frame>
+
+## Where it lives
+
+Open a chatbot, then select **Analysis Config** from the bottom of the chatbot sidebar:
+
+```text
+/platform/[chatbotId]/analysis-config
+```
+
+You need an **owner** or **admin** role to access it.
+
+## What you can configure
+
+The page is split into seven tabs:
+
+<Columns cols={2}>
+  <Card title="Integration" icon="plug">
+    A five-layer integration maturity model, from a baseline setup to a DB-backed prompt, each with its own code recipe.
+  </Card>
+  <Card title="Metadata" icon="table">
+    A table of managed and SDK-discovered custom fields. Use the **Track** buttons to track or deny discovered fields.
+  </Card>
+  <Card title="Translation" icon="language">
+    An auto-translate toggle and a primary language picker.
+  </Card>
+  <Card title="User Analysis" icon="user">
+    Sentiment scoring levels, AI literacy, and flag definitions — including your own custom flags.
+  </Card>
+  <Card title="Assistant Analysis" icon="robot">
+    Outcome types and issue types, including custom definitions.
+  </Card>
+  <Card title="Calibration" icon="crosshairs">
+    Training examples for sentiment, intent, flags, outcomes, issues, and faithfulness.
+  </Card>
+  <Card title="Personas" icon="users">
+    AI-generated user persona cards with auto-discovery.
+  </Card>
+</Columns>
+
+## What you can do here
+
+- View your integration maturity level and follow the setup recipe for each layer.
+- Track or deny custom metadata fields discovered from SDK payloads.
+- Toggle auto-translation and set the primary language for analysis.
+- Configure sentiment scoring levels and their priorities.
+- Define outcome types and issue types for assistant analysis.
+- Add custom flag and issue definitions with name, description, color, and priority.
+- Manage calibration training examples to improve analysis accuracy.
+- Create and manage AI-generated user personas.
+
+<Note>
+  New or changed analysis definitions apply to future conversations. To apply them to conversations that were already captured, re-analyze them from the chatbot settings.
+</Note>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Configure analysis definitions" icon="list-checks" href="/platform/guides/configure-analysis-definitions">
+    Step-by-step walkthrough for adding a custom flag, outcome, or issue.
+  </Card>
+  <Card title="Chatbot settings" icon="gear" href="/platform/features/chatbot-settings">
+    Re-analyze conversations and manage company context, API keys, and webhooks.
+  </Card>
+  <Card title="Conversations" icon="messages-square" href="/platform/features/conversations">
+    See how analysis tags, outcomes, and flags surface on individual conversations.
+  </Card>
+  <Card title="System prompt" icon="file-pen" href="/platform/features/system-prompt">
+    Act on analysis findings by editing and versioning the chatbot's prompt.
+  </Card>
+</Columns>

@@ -1,0 +1,50 @@
+---
+title: "System prompt management"
+description: "Versioned prompt editor with experiments."
+icon: "file-pen"
+---
+{/* SOURCES: knowledgebase/feature-inventory.md; pages/system-prompt.md */}
+
+The system prompt page is where you manage your chatbot's prompt across its full lifecycle: versioning, publishing, rolling back, and running experiments. It lives at `/platform/[chatbotId]/system-prompt`, reached from the chatbot sidebar.
+
+<Frame caption="The system prompt page with version timeline, publish controls, and the Prompt, Experiments, and Suggested tabs.">
+  <img src="/images/platform/system-prompt.png" alt="System prompt page" />
+</Frame>
+
+## What you can do
+
+- View the current live prompt version.
+- Create a new version manually or with AI.
+- Toggle publish mode between **Live** and **Draft**.
+- Toggle the **Kill switch** to disable the prompt in an emergency.
+- Roll back to a previous version.
+- Switch between **Full** and **Diff** view to compare versions.
+- View the prompt version timeline (v1–v6).
+- Create a new experiment.
+
+## Tabs
+
+The page is organized into three tabs:
+
+- **Prompt** — the versioned prompt editor with the timeline, publish mode toggle, kill switch, rollback, and diff view.
+- **Experiments** — A/B testing of prompt changes against analysis tags.
+- **Suggested** — AI-suggested prompt improvements.
+
+<Note>
+The **Suggested** tab is marked as coming soon. AI-suggested prompt improvements are not yet available.
+</Note>
+
+## Prompt maturity
+
+The prompt can sit in different maturity layers, and the page shows the progression: **Manual → Half-automated → Fully automated**.
+
+## Next steps
+
+<Columns cols={2}>
+  <Card title="Create a new prompt version" icon="file-pen" href="/platform/guides/create-new-prompt-version">
+    Write or AI-generate a new version, review the diff, and publish it live.
+  </Card>
+  <Card title="Analysis config" icon="sliders" href="/platform/features/analysis-config">
+    Configure how conversations are analyzed to inform prompt changes.
+  </Card>
+</Columns>

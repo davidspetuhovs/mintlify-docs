@@ -1,0 +1,647 @@
+[
+  {
+    "pageUrl": "/",
+    "modals": [],
+    "dropdowns": [
+      "Use cases dropdown (5 items: Overview, Customer success, Engineering, Product teams, Support)",
+      "Compare dropdown (7 items: Overview, vs Langfuse, vs LangSmith, vs Helicone, vs Braintrust, vs Manual review, vs DIY)"
+    ],
+    "drawers": [],
+    "tabs": [
+      "Vercel AI SDK",
+      "TypeScript",
+      "Python",
+      "REST API"
+    ],
+    "accordions": [
+      "Flying blind at scale",
+      "Brand voice slips, silently",
+      "Hallucinations are guaranteed",
+      "What is OpenBat?",
+      "How long does it take to set up OpenBat?",
+      "What languages does OpenBat support?",
+      "How does OpenBat detect churn risk?"
+    ],
+    "forms": [],
+    "states": [
+      {
+        "description": "Use cases dropdown open — 5 menu items with descriptions",
+        "screenshotKey": "state-landing-dropdown-usecases"
+      },
+      {
+        "description": "Compare dropdown open — 7 competitor comparison items",
+        "screenshotKey": "state-landing-dropdown-compare"
+      },
+      {
+        "description": "Problem accordions — 'Brand voice slips, silently' expanded",
+        "screenshotKey": "state-landing-accordion-problem"
+      },
+      {
+        "description": "Problem accordions — 'Hallucinations are guaranteed' expanded",
+        "screenshotKey": "state-landing-accordion-hallucinations"
+      },
+      {
+        "description": "SDK code tabs — TypeScript, Python, REST API selected",
+        "screenshotKey": "state-landing-tabs-sdk"
+      },
+      {
+        "description": "FAQ — all 4 items expanded with answers",
+        "screenshotKey": "state-landing-faq"
+      }
+    ],
+    "keyboardShortcuts": [],
+    "contextMenus": []
+  },
+  {
+    "pageUrl": "/auth/login",
+    "modals": [],
+    "dropdowns": [],
+    "drawers": [],
+    "tabs": [],
+    "accordions": [],
+    "forms": [
+      {
+        "name": "Email",
+        "type": "textbox",
+        "placeholder": "",
+        "required": true,
+        "validationHints": []
+      },
+      {
+        "name": "Password",
+        "type": "textbox (password)",
+        "placeholder": "",
+        "required": true,
+        "validationHints": []
+      }
+    ],
+    "states": [],
+    "keyboardShortcuts": [],
+    "contextMenus": []
+  },
+  {
+    "pageUrl": "/auth/sign-up",
+    "modals": [],
+    "dropdowns": [],
+    "drawers": [],
+    "tabs": [],
+    "accordions": [],
+    "forms": [
+      {
+        "name": "Work email",
+        "type": "textbox",
+        "placeholder": "",
+        "required": true,
+        "validationHints": [
+          "We'll send a verification link here. Never shared."
+        ]
+      },
+      {
+        "name": "Password",
+        "type": "textbox (password)",
+        "placeholder": "",
+        "required": true,
+        "validationHints": [
+          "Minimum 8 characters."
+        ]
+      },
+      {
+        "name": "Confirm password",
+        "type": "textbox (password)",
+        "placeholder": "",
+        "required": true,
+        "validationHints": []
+      }
+    ],
+    "states": [],
+    "keyboardShortcuts": [],
+    "contextMenus": []
+  },
+  {
+    "pageUrl": "/auth/forgot-password",
+    "modals": [],
+    "dropdowns": [],
+    "drawers": [],
+    "tabs": [],
+    "accordions": [],
+    "forms": [
+      {
+        "name": "Email",
+        "type": "textbox",
+        "placeholder": "",
+        "required": true,
+        "validationHints": []
+      }
+    ],
+    "states": [],
+    "keyboardShortcuts": [],
+    "contextMenus": []
+  },
+  {
+    "pageUrl": "/platform",
+    "modals": [],
+    "dropdowns": [
+      "Org switcher (Organizations list + Create organization)",
+      "Chatbot card three-dot menu (Open chatbot, Archive, Delete)",
+      "User menu (User Settings, Log out)"
+    ],
+    "drawers": [],
+    "tabs": [
+      "Active",
+      "Pending",
+      "Archive",
+      "Demo"
+    ],
+    "accordions": [],
+    "forms": [],
+    "states": [
+      {
+        "description": "Demo tab — 2 demo chatbots (E-Commerce, SaaS) with DEMO badges",
+        "screenshotKey": "state-platform-tab-demo"
+      },
+      {
+        "description": "List view — table with Chatbot/Created by/Activity columns",
+        "screenshotKey": "state-platform-list-view"
+      },
+      {
+        "description": "Card three-dot menu — Open/Archive/Delete options",
+        "screenshotKey": "state-platform-card-menu"
+      },
+      {
+        "description": "Org switcher — Sophie Finance active, + Create organization",
+        "screenshotKey": "state-platform-org-switcher"
+      },
+      {
+        "description": "User menu — avatar, name, email, User Settings, Log out",
+        "screenshotKey": "state-platform-user-menu"
+      },
+      {
+        "description": "Pending tab empty state — 'No pending chatbots'",
+        "screenshotKey": "state-platform-tab-pending"
+      },
+      {
+        "description": "Archive tab empty state — 'No archived chatbots'",
+        "screenshotKey": "state-platform-tab-archive"
+      }
+    ],
+    "keyboardShortcuts": [],
+    "contextMenus": []
+  },
+  {
+    "pageUrl": "/platform/members",
+    "modals": [
+      "Invite member modal (Email, Organization role dropdown [Admin/Member], Chatbot access checkboxes with Select all, Chatbot role dropdown [Editor/Viewer], Cancel, Send invitation)"
+    ],
+    "dropdowns": [
+      "Organization role (Admin, Member)",
+      "Chatbot role (Editor, Viewer)"
+    ],
+    "drawers": [],
+    "tabs": [],
+    "accordions": [],
+    "forms": [
+      {
+        "name": "Email",
+        "type": "textbox",
+        "placeholder": "colleague@company.com",
+        "required": true,
+        "validationHints": []
+      }
+    ],
+    "states": [
+      {
+        "description": "Invite member modal with role dropdowns open",
+        "screenshotKey": "state-platform-members-invite-modal"
+      }
+    ],
+    "keyboardShortcuts": [],
+    "contextMenus": []
+  },
+  {
+    "pageUrl": "/platform/settings",
+    "modals": [],
+    "dropdowns": [],
+    "drawers": [],
+    "tabs": [],
+    "accordions": [],
+    "forms": [
+      {
+        "name": "Organization name",
+        "type": "textbox",
+        "placeholder": "",
+        "required": true,
+        "validationHints": []
+      }
+    ],
+    "states": [],
+    "keyboardShortcuts": [],
+    "contextMenus": []
+  },
+  {
+    "pageUrl": "/platform/[chatbotId]",
+    "modals": [],
+    "dropdowns": [
+      "Chatbot switcher (chatbot list + New chatbot)",
+      "History dropdown (conversations list + New)"
+    ],
+    "drawers": [],
+    "tabs": [],
+    "accordions": [],
+    "forms": [
+      {
+        "name": "Message",
+        "type": "textbox",
+        "placeholder": "Message Sophie...",
+        "required": false,
+        "validationHints": []
+      }
+    ],
+    "states": [
+      {
+        "description": "History dropdown — empty 'No conversations yet'",
+        "screenshotKey": "state-chatbot-overview-history"
+      },
+      {
+        "description": "Chatbot switcher — Sophie active, + New chatbot",
+        "screenshotKey": "state-chatbot-overview-switcher"
+      },
+      {
+        "description": "Credits tooltip navigates to Billing tab",
+        "screenshotKey": "state-chatbot-overview-credits"
+      }
+    ],
+    "keyboardShortcuts": [
+      "@ — tag entity",
+      "$ — scope by plan",
+      "# — user analysis",
+      "! — assistant analysis",
+      "^ — scope by prompt"
+    ],
+    "contextMenus": []
+  },
+  {
+    "pageUrl": "/platform/[chatbotId]/reports",
+    "modals": [],
+    "dropdowns": [],
+    "drawers": [],
+    "tabs": [],
+    "accordions": [],
+    "forms": [],
+    "states": [
+      {
+        "description": "Empty state — 'No reports yet' with Create a blank report button",
+        "screenshotKey": "state-chatbot-reports-empty"
+      }
+    ],
+    "keyboardShortcuts": [],
+    "contextMenus": []
+  },
+  {
+    "pageUrl": "/platform/[chatbotId]/workflows",
+    "modals": [],
+    "dropdowns": [],
+    "drawers": [],
+    "tabs": [
+      "Workflows",
+      "Runs",
+      "Templates"
+    ],
+    "accordions": [],
+    "forms": [],
+    "states": [
+      {
+        "description": "Workflows tab empty state — 'No workflows yet'",
+        "screenshotKey": "state-chatbot-workflows-empty"
+      },
+      {
+        "description": "Runs tab — 6 status filters (All/Pending/Triggered/Skipped/Success/Failed), empty",
+        "screenshotKey": "state-chatbot-workflows-runs"
+      },
+      {
+        "description": "Templates tab — source filters (All/Public/Your Org) + category filters (All/Alerting/Escalation/Reporting/Moderation/General), 1 template",
+        "screenshotKey": "state-chatbot-workflows-templates"
+      }
+    ],
+    "keyboardShortcuts": [],
+    "contextMenus": []
+  },
+  {
+    "pageUrl": "/platform/[chatbotId]/system-prompt",
+    "modals": [],
+    "dropdowns": [],
+    "drawers": [],
+    "tabs": [
+      "Prompt",
+      "Experiments",
+      "Suggested"
+    ],
+    "accordions": [
+      "Prompt maturity details (Manual/Half-automated/Fully automated — collapsible via Hide button)"
+    ],
+    "forms": [],
+    "states": [
+      {
+        "description": "Prompt tab — v6.0 LIVE, version timeline (v1-v6), Live/Draft radio, Kill switch toggle, Roll back button, Full/Diff view, code editor",
+        "screenshotKey": "state-chatbot-prompt-tab"
+      },
+      {
+        "description": "Experiments tab — empty state 'No experiments yet', + New experiment",
+        "screenshotKey": "state-chatbot-experiments-empty"
+      },
+      {
+        "description": "Suggested tab — 'Coming soon' placeholder",
+        "screenshotKey": "state-chatbot-suggested-coming-soon"
+      }
+    ],
+    "keyboardShortcuts": [],
+    "contextMenus": []
+  },
+  {
+    "pageUrl": "/platform/[chatbotId]/users",
+    "modals": [],
+    "dropdowns": [
+      "Filter popover (System Prompt, Conversations, Sentiment Avg, MRR, Health)",
+      "View popover (toggle 10+ columns)",
+      "Rows per page combobox (20)"
+    ],
+    "drawers": [],
+    "tabs": [],
+    "accordions": [],
+    "forms": [
+      {
+        "name": "Filter users...",
+        "type": "textbox (search)",
+        "placeholder": "Filter users...",
+        "required": false,
+        "validationHints": []
+      }
+    ],
+    "states": [
+      {
+        "description": "Filter popover open — faceted filters with search",
+        "screenshotKey": "state-chatbot-users-filter"
+      },
+      {
+        "description": "View popover open — toggle 10+ column visibility",
+        "screenshotKey": "state-chatbot-users-view"
+      }
+    ],
+    "keyboardShortcuts": [],
+    "contextMenus": []
+  },
+  {
+    "pageUrl": "/platform/[chatbotId]/conversations",
+    "modals": [],
+    "dropdowns": [
+      "Filter button",
+      "View button",
+      "Date range picker"
+    ],
+    "drawers": [],
+    "tabs": [],
+    "accordions": [],
+    "forms": [
+      {
+        "name": "Filter conversations...",
+        "type": "textbox (search)",
+        "placeholder": "Filter conversations...",
+        "required": false,
+        "validationHints": []
+      }
+    ],
+    "states": [],
+    "keyboardShortcuts": [],
+    "contextMenus": []
+  },
+  {
+    "pageUrl": "/platform/[chatbotId]/conversations/[id]",
+    "modals": [],
+    "dropdowns": [],
+    "drawers": [],
+    "tabs": [
+      "General",
+      "User",
+      "Assistant"
+    ],
+    "accordions": [
+      "Reasoning (expandable)",
+      "Tool: search_transactions (expandable)",
+      "Tool: summarize_spending (expandable)",
+      "Tool: aggregate_transactions (expandable)"
+    ],
+    "forms": [],
+    "states": [
+      {
+        "description": "General tab — Analysis Overview with Flags, Outcomes, Persona, Details metadata",
+        "screenshotKey": "state-conversation-general"
+      },
+      {
+        "description": "User tab — 'No message selected' placeholder",
+        "screenshotKey": "state-conversation-user"
+      },
+      {
+        "description": "Assistant tab — 'No message selected' placeholder",
+        "screenshotKey": "state-conversation-assistant"
+      }
+    ],
+    "keyboardShortcuts": [],
+    "contextMenus": []
+  },
+  {
+    "pageUrl": "/platform/[chatbotId]/query-types",
+    "modals": [],
+    "dropdowns": [
+      "View button",
+      "Date range picker"
+    ],
+    "drawers": [],
+    "tabs": [],
+    "accordions": [],
+    "forms": [
+      {
+        "name": "Filter query types...",
+        "type": "textbox (search)",
+        "placeholder": "Filter query types...",
+        "required": false,
+        "validationHints": []
+      }
+    ],
+    "states": [],
+    "keyboardShortcuts": [],
+    "contextMenus": []
+  },
+  {
+    "pageUrl": "/platform/[chatbotId]/deep-search",
+    "modals": [],
+    "dropdowns": [
+      "Date range picker (This week)"
+    ],
+    "drawers": [],
+    "tabs": [],
+    "accordions": [],
+    "forms": [
+      {
+        "name": "Semantic search",
+        "type": "textbox (search)",
+        "placeholder": "Search by meaning — e.g. 'users asking about pricing' or 'billing issues'",
+        "required": false,
+        "validationHints": []
+      }
+    ],
+    "states": [
+      {
+        "description": "Empty state — 'Enter a query to start searching'",
+        "screenshotKey": "state-deep-search-empty"
+      }
+    ],
+    "keyboardShortcuts": [],
+    "contextMenus": []
+  },
+  {
+    "pageUrl": "/platform/[chatbotId]/organizations",
+    "modals": [],
+    "dropdowns": [
+      "Date range picker (Last 30 days)"
+    ],
+    "drawers": [],
+    "tabs": [],
+    "accordions": [],
+    "forms": [],
+    "states": [
+      {
+        "description": "Empty state — 'No organizations yet'",
+        "screenshotKey": "state-organizations-empty"
+      }
+    ],
+    "keyboardShortcuts": [],
+    "contextMenus": []
+  },
+  {
+    "pageUrl": "/platform/[chatbotId]/analysis-config",
+    "modals": [],
+    "dropdowns": [],
+    "drawers": [],
+    "tabs": [
+      "Integration",
+      "Metadata",
+      "Translation",
+      "User Analysis",
+      "Assistant Analysis",
+      "Calibration",
+      "Personas"
+    ],
+    "accordions": [
+      "Baseline integration (expandable with code recipe)",
+      "Reasoning & tools (expandable with code recipe)",
+      "Knowledge base MCP (expandable)",
+      "Static system prompt (expandable with code recipe)",
+      "Dynamic system prompt (expandable)",
+      "DB-backed prompt (expandable with code recipe)"
+    ],
+    "forms": [],
+    "states": [
+      {
+        "description": "Integration tab — 5-layer maturity progress (4/5 active), expandable layer cards with status badges and SDK recipes",
+        "screenshotKey": "state-analysis-config-integration"
+      },
+      {
+        "description": "User Analysis tab — Sentiment (4 levels with color/priority/enabled toggles), AI Literacy, Flags with + Add custom",
+        "screenshotKey": "state-analysis-config-user-analysis"
+      }
+    ],
+    "keyboardShortcuts": [],
+    "contextMenus": []
+  },
+  {
+    "pageUrl": "/platform/[chatbotId]/settings",
+    "modals": [],
+    "dropdowns": [],
+    "drawers": [],
+    "tabs": [
+      "General",
+      "Billing",
+      "Company Info",
+      "API Keys",
+      "Members",
+      "Webhooks",
+      "Import/Export Data"
+    ],
+    "accordions": [],
+    "forms": [
+      {
+        "name": "Chatbot name",
+        "type": "textbox",
+        "placeholder": "Chatbot name",
+        "required": true,
+        "validationHints": []
+      }
+    ],
+    "states": [
+      {
+        "description": "General tab — name, ID (copy), creation date, user/assistant analysis toggles, re-analyze all, delete chatbot",
+        "screenshotKey": "state-settings-general"
+      },
+      {
+        "description": "Billing tab — Pro Plan $39/mo, 92/25K credits, top-up reserve, $15 top-up button",
+        "screenshotKey": "state-settings-billing"
+      }
+    ],
+    "keyboardShortcuts": [],
+    "contextMenus": []
+  },
+  {
+    "pageUrl": "/contact",
+    "modals": [],
+    "dropdowns": [
+      "What's this about? (General inquiry default)"
+    ],
+    "drawers": [],
+    "tabs": [],
+    "accordions": [],
+    "forms": [
+      {
+        "name": "Name",
+        "type": "textbox",
+        "placeholder": "Your name",
+        "required": true,
+        "validationHints": []
+      },
+      {
+        "name": "Email",
+        "type": "textbox",
+        "placeholder": "you@company.com",
+        "required": true,
+        "validationHints": []
+      },
+      {
+        "name": "Company",
+        "type": "textbox",
+        "placeholder": "Company name",
+        "required": false,
+        "validationHints": []
+      },
+      {
+        "name": "Message",
+        "type": "textarea",
+        "placeholder": "What are you hoping to learn from your chatbot data?",
+        "required": true,
+        "validationHints": []
+      }
+    ],
+    "states": [],
+    "keyboardShortcuts": [],
+    "contextMenus": []
+  },
+  {
+    "pageUrl": "/security",
+    "modals": [],
+    "dropdowns": [],
+    "drawers": [],
+    "tabs": [],
+    "accordions": [],
+    "forms": [],
+    "states": [],
+    "keyboardShortcuts": [],
+    "contextMenus": []
+  }
+]

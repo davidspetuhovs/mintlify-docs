@@ -1,0 +1,126 @@
+---
+title: "Tool reference"
+description: "Every tool by minimum key kind."
+icon: "list-tree"
+---
+{/* SOURCES: _sources/mcp-readme.md */}
+
+The `@openbat/mcp` server filters the tool list it exposes by the strength of the key you start it with. Each tool declares a `minKind`, and the server's `tools/list` response only includes tools whose `minKind` is at or below the resolved kind of `OPENBAT_API_KEY`. Authority ranks `pat > admin > read` — a higher kind can call every tool a lower kind can, so the tables below are cumulative.
+
+All inputs are Zod-validated with `.strict()`, bounded ranges, and explicit enums. Response size is capped at ~1MB on every tool.
+
+<Note>
+  If a tool is missing from `tools/list`, your key kind is below the tool's `minKind` — start the server with a higher-kind key. See [Credentials](/mcp/credentials) for how the server resolves the kind.
+</Note>
+
+## `read` minKind
+
+Visible to `read`, `admin`, and `pat` keys. These tools read conversations, analytics, prompt versions, and other chatbot data — none of them mutate anything.
+
+| Tool | Description |
+|---|---|
+| `openbat_list_chatbots` | List every chatbot the key authorises (returns only the pinned one when pinned). Call this FIRST. |
+| `openbat_get_chatbot` | DEPRECATED — use `openbat_list_chatbots`. Returns the full chatbot list. |
+| `openbat_list_conversations` | Paginate recent conversations (`page`, `limit` ≤ 100, `from`/`to`, `kind`: organic-default / probe / all). |
+| `openbat_get_conversation` | Fetch one conversation by UUID — messages + ALL analyses (issues/outcomes/flags/intents + reasoning + verification fields). |
+| `openbat_await_analysis` | Poll a conversation's analysis progress; `allComplete`/`anyFailed` + per-message statuses. Accepts an internal UUID OR a probe's `obprobe_` id (resolves external→internal; `found:false` while capture is in flight). |
+| `openbat_probe` | Start a synthetic eval turn — returns a reserved `obprobe_` conversationId + next steps. YOU send `message` to your chatbot with that id; then `openbat_await_analysis`; then `openbat_get_conversation` for the verdict. (OpenBat never calls your chatbot.) |
+| `openbat_optimize_context` | One call: organic `review` (probe-excluded) + active prompt + analysis definitions together — bootstrap the eval loop without 3+ round trips. |
+| `openbat_review` | Daily eval digest: outcome/sentiment deltas + top issues/flags/intents with representative pointers (`windowMinutes`, default 1440). |
+| `openbat_analytics_overview` | Totals + sentiment distribution. |
+| `openbat_analytics_sentiment` | Sentiment over time (`days` 1–90). |
+| `openbat_export_data` | Bulk export (`json` or `csv`) — capped at ~1MB. |
+| `openbat_list_webhooks` | List webhooks for a chatbot. |
+| `openbat_list_workflows` | List workflows for a chatbot. |
+| `openbat_list_reports` | List AI reports for a chatbot. |
+| `openbat_list_prompt_versions` | System-prompt versions + live controls (active version, kill switch). |
+| `openbat_get_prompt_version` | Fetch one version's full template text by id. |
+| `openbat_get_active_prompt` | What the server resolves to right now (active version id, kill switch). |
+| `openbat_get_backtest_status` | Poll a backtest's progress + verdict tally (keyed by `backtestId`). |
+| `openbat_list_external_users` | External users + health metrics (defaults to last 7d). |
+
+<Tip>
+  Call `openbat_list_chatbots` first to discover the chatbot ids your key can reach. The eval loop is fastest through `openbat_optimize_context`, which returns the organic review, the active prompt, and the analysis definitions in a single call.
+</Tip>
+
+### The probe flow
+
+`openbat_probe` does not call your chatbot — it reserves a conversation id that you then drive yourself. The README describes the sequence as:
+
+<Steps>
+  <Step title="Start the probe">
+    Call `openbat_probe`. It returns a reserved `obprobe_` conversationId plus the next steps.
+  </Step>
+  <Step title="Send the message to your chatbot">
+    YOU send `message` to your chatbot using that `obprobe_` id. OpenBat never calls your chatbot.
+  </Step>
+  <Step title="Wait for analysis">
+    Call `openbat_await_analysis` with the `obprobe_` id. It resolves the external id to the internal one; expect `found:false` while capture is still in flight.
+  </Step>
+  <Step title="Read the verdict">
+    Call `openbat_get_conversation` to read the messages and all analyses for the verdict.
+  </Step>
+</Steps>
+
+## `admin` minKind
+
+Visible to `admin` and `pat` keys. These are the per-chatbot write tools — they create webhooks, workflows, and reports, patch settings, and publish or roll back the system prompt.
+
+| Tool | Description |
+|---|---|
+| `openbat_create_webhook` | Create a webhook (SSRF-validated; signing secret in response). |
+| `openbat_delete_webhook` | Delete a webhook. |
+| `openbat_create_workflow_from_template` | Compile DSL template → workflow. |
+| `openbat_create_ai_report` | New AI report + org-private dashboard URL. |
+| `openbat_update_chatbot_settings` | Patch settings (allowlisted keys). |
+| `openbat_publish_prompt` | Publish `templateText` as the LIVE system prompt (live in ~60s for fetch-endpoint chatbots). |
+| `openbat_create_draft_prompt` | Create a prompt version WITHOUT activating it (a draft) — probe/eval it against a candidate, then activate. Returns the `versionId`. |
+| `openbat_activate_prompt_version` | Point the live prompt at an existing version id (roll back/forward). |
+| `openbat_set_prompt_kill_switch` | Toggle the remote prompt kill switch (fallback to hardcoded prompt). |
+
+<Warning>
+  `openbat_publish_prompt` makes `templateText` the LIVE system prompt — live in ~60s for fetch-endpoint chatbots. To stage a change instead, use `openbat_create_draft_prompt` (which does not activate) and `openbat_activate_prompt_version` once you've evaluated it.
+</Warning>
+
+## `pat` minKind
+
+Visible to `pat` keys only. These create new chatbots, mint admin keys, and run org-level operations.
+
+| Tool | Description |
+|---|---|
+| `openbat_create_chatbot` | Mint a new chatbot in your primary org. |
+| `openbat_create_backtest` | Replay flagged conversations against a candidate prompt (attributed to the PAT's user). |
+| `openbat_generate_admin_key` | Mint a fresh admin key for a chatbot. |
+| `openbat_list_orgs` | Orgs the PAT's user belongs to. |
+| `openbat_rename_org` | Rename an org (owner only). |
+| `openbat_list_org_members` | Members of an org. |
+| `openbat_invite_org_member` | Invite a new member (note: email send is a follow-up). |
+
+<Note>
+  There are deliberately no mutation tools for ingest keys — those remain SDK-only via `OpenBat.recordMessages`. The server refuses `ob_live_*` ingest keys at startup.
+</Note>
+
+<Warning>
+  Mint tools such as `openbat_generate_admin_key` return the plaintext key exactly once in the tool response. The LLM sees it — surface it to the user immediately, because it cannot be retrieved again.
+</Warning>
+
+## Tools hidden when pinned
+
+When the server is pinned to a single chatbot (via `OPENBAT_CHATBOT_ID`, or `openbat use <id>`), it injects the pinned `chatbotId` into every per-chatbot tool and rejects a call that passes a different one. While pinned, the server also:
+
+- returns only the pinned chatbot from `openbat_list_chatbots`;
+- hides the cross-chatbot and org tools — `openbat_create_chatbot`, `openbat_list_orgs`, and org members.
+
+See [Pinning](/mcp/pinning) for the full hard-lock behaviour.
+
+## Rate-limit buckets
+
+Tools run against per-tool, server-side rate-limit buckets. A `429` response includes `Retry-After`, which the MCP tool error surfaces. The stricter buckets called out in the README are:
+
+| Operation | Limit |
+|---|---|
+| `create_chatbot` | 5/hr per PAT |
+| Mint operations (e.g. admin keys) | 10/hr per credential |
+| `chat_ai_report` | 30/min per credential |
+
+For the wider set of security properties — input validation, key redaction, the audit log, and the meaning of `401` vs `403` — see [Security](/mcp/security). For symptom-based fixes, see [Troubleshooting](/mcp/troubleshooting).

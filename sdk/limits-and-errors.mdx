@@ -1,0 +1,87 @@
+---
+title: "Limits & error handling"
+description: "Payload limits and the no-throw model."
+icon: "shield-alert"
+---
+{/* SOURCES: _sources/sdk-readme.md */}
+
+The SDK is designed to be invisible: `recordMessages()` never throws and never blocks your application. Payloads that exceed the capture limits are rejected with `400 Bad Request`, but even that response is logged rather than thrown. This page documents the hard limits the capture endpoint enforces and how the SDK handles every error class.
+
+## API limits
+
+The capture endpoint enforces these constraints on every request:
+
+| Constraint | Limit |
+|------------|-------|
+| Request body size | 4 MB |
+| Messages per request | 1–100 |
+| Message content length | 1–32,000 characters |
+| `conversationId` length | 1–256 characters |
+| `message.id` length | max 256 characters |
+| `user.email` | Must be a valid email, max 256 characters |
+| `user.plan` / `organization.plan` | max 64 characters |
+| `user.name` / `organization.name` | max 256 characters |
+| `session.pageUrl` / `session.referrer` | max 2,048 characters |
+| `custom` field values | `string`, `number`, or `boolean` only |
+| `systemPromptTemplate` length | 1–64,000 characters |
+| `systemPromptVariables` keys | max 100, key 1–256 characters |
+| `systemPromptVariables` values | `string`, `number`, or `boolean` only |
+
+Requests exceeding these limits receive a `400 Bad Request` response, logged to console and never thrown.
+
+### Tool and reasoning limits
+
+When you attach tool calls or reasoning to an assistant message for [tool-aware verification](/sdk/tool-aware-verification), separate limits apply to that payload:
+
+- Up to 20 tools per message.
+- The serialized `{tools, reasoning}` blob must be under 32 KB.
+
+Anything larger is rejected with `400 Bad Request`. Tools and reasoning are stored only for the verification step — they are not surfaced to end users, and fields on `user` or `system` messages are ignored.
+
+## Error handling
+
+The SDK never throws errors or blocks your application.
+
+- `recordMessages()` catches all errors internally.
+- HTTP errors are logged: `OpenBat Error: HTTP 400 — ...`
+- Network failures are logged: `OpenBat Error: Failed to record messages.`
+- All errors go to `console.error` — they never propagate to your code.
+
+To verify the SDK is working, check your browser or server console for error messages, or visit the OpenBat dashboard to confirm messages are arriving.
+
+<Note>
+`getSystemPrompt` also never throws — on any error it returns your `fallback` with a `source` indicating where the prompt came from. The `onPromptStateChange` callback is wrapped too: errors thrown inside it are caught and logged to `console.error`, never propagated to your `recordMessages()` call.
+</Note>
+
+### Where the SDK does throw
+
+The one exception is construction. The `OpenBat` constructor throws if `enabled` is `true` and no API key is provided (passed in the constructor or set via `OPENBAT_API_KEY`).
+
+```typescript
+const client = new OpenBat(); // throws if enabled and no API key resolved
+```
+
+<Warning>
+Resolve your API key before construction. Once a client is constructed, no method call ever throws — but a missing key at construction time will throw synchronously.
+</Warning>
+
+## Disabling the SDK
+
+Disable the SDK in test or development environments. When disabled, `recordMessages()` returns immediately without making any HTTP requests.
+
+<CodeGroup>
+
+```bash Environment variable
+OPENBAT_ENABLED=false
+```
+
+```typescript In code
+const client = new OpenBat({
+  apiKey: "ob_live_...",
+  enabled: process.env.NODE_ENV === "production",
+});
+```
+
+</CodeGroup>
+
+Set `OPENBAT_ENABLED` to `"false"` or `"0"` to disable via environment variable. Constructor values take precedence over environment variables.

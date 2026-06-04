@@ -1,0 +1,61 @@
+---
+title: "Conversations"
+description: "Filterable transcripts with analysis tags."
+icon: "messages-square"
+---
+{/* SOURCES: knowledgebase/feature-inventory.md; pages/conversations.md; pages/conversation-detail.md */}
+
+Conversations is a sortable, filterable table of every conversation your chatbot has captured, with each row linking to a full transcript and its analysis results. You use it to find specific interactions, then drill into the message thread, flags, outcome, and persona match for any one of them.
+
+It lives at `/platform/[chatbotId]/conversations`, reached from the chatbot sidebar under **Clients**.
+
+<Frame caption="The conversation list with outcome, sentiment, flags, and message counts per row.">
+  <img src="/images/platform/conversations.png" alt="Conversation list" />
+</Frame>
+
+## What you can do
+
+In the conversation list:
+
+- Search conversations by keyword in the **Filter conversations** field.
+- Apply faceted **Filter**s by outcome, sentiment, and flags.
+- Sort by any column.
+- Set a date range with the date range picker.
+- Customize which columns are visible with **View**.
+- Page through results.
+- Click a row to open the conversation detail.
+
+The table shows these columns: User, Messages count, Outcome (Resolved / Partially Resolved / Failed), Issues count, Sentiment, Flags count, and Last Message timestamp.
+
+## Conversation detail
+
+Clicking a row opens the transcript at `/platform/[chatbotId]/conversations/[id]`. Messages appear as color-coded chat bubbles (user in pink, assistant in green) with translation indicators and analysis tags. A breadcrumb takes you back to the Conversations list.
+
+<Frame caption="A conversation transcript with color-coded bubbles and the analysis panel.">
+  <img src="/images/platform/conversation-detail.png" alt="Conversation detail" />
+</Frame>
+
+On the detail page you can:
+
+- Read the full message thread.
+- Expand the **Reasoning** and tool call sections.
+- Switch the right panel between three analysis tabs: **General** (flags and outcomes), **User** (user-specific analysis), and **Assistant** (assistant-specific analysis).
+- View flag count, outcome, and persona match cards.
+- Click **View in** to see the original context.
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Review a specific conversation" href="/platform/guides/review-a-specific-conversation" icon="magnifying-glass">
+    Step-by-step walkthrough of finding and reading a conversation.
+  </Card>
+  <Card title="Deep Search" href="/platform/features/deep-search" icon="brain">
+    Find conversations by meaning instead of exact keywords.
+  </Card>
+  <Card title="Query Types" href="/platform/features/query-types" icon="layer-group">
+    See user messages clustered into canonical question categories.
+  </Card>
+  <Card title="Export conversation data" href="/platform/guides/export-conversation-data" icon="download">
+    Download conversations and analysis results as JSON or CSV.
+  </Card>
+</Columns>

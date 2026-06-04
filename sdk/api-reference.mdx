@@ -1,0 +1,276 @@
+---
+title: "API reference"
+description: "Classes, functions, types, and runtime behavior."
+icon: "braces"
+---
+{/* SOURCES: _sources/sdk-readme.md */}
+
+The `@openbat/sdk` package exports one class, `OpenBat`, and one helper function, `withOpenBat`. Both record chatbot messages to OpenBat's capture endpoint in the background. This page documents their signatures, the configuration and input types they accept, and the runtime behavior you can rely on.
+
+## `OpenBat` class
+
+```typescript
+import { OpenBat } from "@openbat/sdk";
+
+const client = new OpenBat(config?: OpenBatConfig);
+await client.recordMessages(input: RecordMessagesInput): Promise<void>;
+```
+
+The constructor **throws** if `enabled` is `true` and no API key is provided (neither in `config.apiKey` nor in the `OPENBAT_API_KEY` environment variable).
+
+### Methods
+
+| Method | Signature | Returns |
+|---|---|---|
+| `recordMessages` | `recordMessages(input: RecordMessagesInput)` | `Promise<void>` |
+| `getSystemPrompt` | `getSystemPrompt(options)` | `Promise<{ template, source }>` |
+
+`recordMessages()` sends messages asynchronously and **never throws** — all errors are caught internally and logged to `console.error`. See [Limits and errors](/sdk/limits-and-errors). `getSystemPrompt()` fetches a dashboard-published prompt at runtime and also never throws; see [Remote-controlled system prompts](/sdk/remote-prompts).
+
+## `withOpenBat` function
+
+```typescript
+import { withOpenBat } from "@openbat/sdk";
+
+const response = withOpenBat(response: Response, options: WrapperOptions): Response;
+```
+
+Wraps a `Response` object, fires `recordMessages()` in the background, and returns the original response unchanged — zero interference with streaming. It filters out `system` messages automatically and generates a UUID for `conversationId` if one is not provided.
+
+<Note>
+`withOpenBat` receives the final `Response` and cannot see tool calls or reasoning. If your chatbot uses tools, use the `onFinish` pattern with `recordMessages()` instead. See [Vercel AI SDK](/sdk/integrations/vercel-ai-sdk).
+</Note>
+
+## Types
+
+### `OpenBatConfig`
+
+Passed to the `OpenBat` constructor. Every field is optional; constructor values take precedence over environment variables.
+
+```typescript
+interface OpenBatConfig {
+  apiKey?: string;
+  baseUrl?: string;
+  enabled?: boolean;
+  onPromptStateChange?: (state: PromptState) => void | Promise<void>;
+}
+```
+
+<ParamField path="apiKey" type="string">
+Your ingest API key. Falls back to the `OPENBAT_API_KEY` environment variable if omitted.
+</ParamField>
+
+<ParamField path="baseUrl" type="string" default="https://openbat.dev">
+Override the capture endpoint base URL.
+</ParamField>
+
+<ParamField path="enabled" type="boolean" default="true">
+Set to `false` to disable the SDK — `recordMessages()` then returns immediately without making HTTP requests.
+</ParamField>
+
+<ParamField path="onPromptStateChange" type="(state: PromptState) => void | Promise<void>">
+Fired whenever OpenBat tells the SDK something it doesn't already know about your prompt state — a new version, a kill-switch transition, or a fresh active version id. Errors thrown inside the callback are caught and logged, never propagated. See [DB-backed system prompts](/sdk/db-backed-prompts).
+</ParamField>
+
+### `RecordMessagesInput`
+
+The single argument to `recordMessages()`. Only `conversationId` and `messages` are required.
+
+```typescript
+interface RecordMessagesInput {
+  conversationId: string;
+  kind?: "organic" | "probe";
+  user?: OpenBatUser;
+  organization?: OpenBatOrganization;
+  session?: OpenBatSession;
+  custom?: Record<string, string | number | boolean>;
+  systemPromptTemplate?: string;
+  systemPromptVariables?: Record<string, string | number | boolean>;
+  headers?: Record<string, string>;
+  framework?: string;
+  messages: Array<{
+    role: "user" | "assistant" | "system";
+    content: string;
+    id?: string;
+    sentAt?: Date;
+    tools?: OpenBatToolCall[];
+    reasoning?: string;
+  }>;
+}
+```
+
+<ParamField path="conversationId" type="string" required>
+Identifier for the conversation thread. Required.
+</ParamField>
+
+<ParamField path="kind" type='"organic" | "probe"' default="organic">
+`"probe"` marks synthetic eval traffic, excluded from organic analytics and review. The server also infers `"probe"` from a reserved `obprobe_` conversationId prefix.
+</ParamField>
+
+<ParamField path="user" type="OpenBatUser">
+Who is chatting. See [Enriching context](/sdk/enriching-context).
+</ParamField>
+
+<ParamField path="organization" type="OpenBatOrganization">
+The user's organization.
+</ParamField>
+
+<ParamField path="session" type="OpenBatSession">
+Session context (page URL, referrer, device, country).
+</ParamField>
+
+<ParamField path="custom" type="Record<string, string | number | boolean>">
+Arbitrary key-value pairs. Values must be `string`, `number`, or `boolean`.
+</ParamField>
+
+<ParamField path="systemPromptTemplate" type="string">
+The unrendered system prompt template — enables versioning. See [System prompt versioning](/sdk/system-prompt-versioning).
+</ParamField>
+
+<ParamField path="systemPromptVariables" type="Record<string, string | number | boolean>">
+The resolved variable values for this call, stored verbatim alongside each message.
+</ParamField>
+
+<ParamField path="headers" type="Record<string, string>">
+Forwarded client headers so the capture endpoint sees the real user IP and User-Agent. See [Header forwarding](/sdk/header-forwarding).
+</ParamField>
+
+<ParamField path="framework" type="string">
+Optional integration hint, surfaced as the `x-openbat-framework` header (e.g. `"vercel-ai-sdk"`).
+</ParamField>
+
+<ParamField path="messages" type="Array" required>
+The messages to capture. Required.
+</ParamField>
+
+#### Message fields
+
+| Field | Type | Notes |
+|---|---|---|
+| `role` | `"user" \| "assistant" \| "system"` | Required. |
+| `content` | `string` | Required. |
+| `id` | `string` | External ID for deduplication. See [Deduplication](/sdk/deduplication). |
+| `sentAt` | `Date` | Timestamp, serialized to an ISO string. |
+| `tools` | `OpenBatToolCall[]` | Tools the assistant called — assistant messages only. |
+| `reasoning` | `string` | The model's internal reasoning/thinking — assistant messages only. |
+
+<Note>
+`tools` and `reasoning` apply only to assistant messages. The same fields on user or system messages are ignored. See [Tool-aware verification](/sdk/tool-aware-verification).
+</Note>
+
+### `OpenBatToolCall`
+
+```typescript
+interface OpenBatToolCall {
+  name: string;      // Tool name, e.g. "getBrandMetrics"
+  input?: unknown;   // Arguments passed to the tool (optional)
+  output?: unknown;  // Result returned by the tool (optional)
+}
+```
+
+### `OpenBatUser`
+
+```typescript
+interface OpenBatUser {
+  id?: string;
+  name?: string;
+  email?: string;
+  plan?: string;         // e.g. "pro", "enterprise"
+  createdAt?: string;    // ISO datetime
+  industry?: string;
+  mrr?: number;          // Monthly recurring revenue in cents
+}
+```
+
+### `OpenBatOrganization`
+
+```typescript
+interface OpenBatOrganization {
+  id?: string;
+  name?: string;
+  plan?: string;
+  mrr?: number;
+  industry?: string;
+}
+```
+
+### `OpenBatSession`
+
+```typescript
+interface OpenBatSession {
+  id?: string;
+  pageUrl?: string;
+  referrer?: string;
+  device?: "mobile" | "desktop" | "tablet";
+  country?: string;     // ISO country code
+}
+```
+
+### `WrapperOptions`
+
+The second argument to `withOpenBat`.
+
+```typescript
+interface WrapperOptions {
+  apiKey?: string;
+  baseUrl?: string;
+  messages: Array<{ role: string; content: unknown }>;
+  conversationId?: string;
+  user?: OpenBatUser;
+  organization?: OpenBatOrganization;
+  session?: OpenBatSession;
+  custom?: Record<string, string | number | boolean>;
+}
+```
+
+### `PromptState`
+
+The shape passed to `onPromptStateChange`, and the `prompt` field returned in capture responses when you send `systemPromptTemplate`. It is a discriminated union on `isNew`.
+
+```typescript
+type PromptState =
+  | {
+      // Steady state — your submitted template hash matches the active version.
+      currentVersionId: string | null;   // null if no published prompt yet
+      killSwitchOn: boolean;
+      isNew: false;
+    }
+  | {
+      // Update — your submitted template hash differs from the active version.
+      currentVersionId: string;
+      killSwitchOn: boolean;
+      isNew: true;
+      template: string;
+      publishedAt: string;               // ISO 8601
+      publishedBy: { id: string; email: string };
+    };
+```
+
+| Field | When present | Purpose |
+|---|---|---|
+| `currentVersionId` | always | What OpenBat thinks is active right now (or `null`). |
+| `killSwitchOn` | always | When `true`, your app must serve the hardcoded fallback regardless of DB contents. |
+| `isNew` | always | `true` iff your submitted `systemPromptTemplate` doesn't match the active version. |
+| `template` | only when `isNew` | The new prompt text. |
+| `publishedAt` | only when `isNew` | ISO 8601 timestamp. |
+| `publishedBy` | only when `isNew` | Who on the operator's team published — for your audit log. |
+
+## Environment variables
+
+| Variable | Purpose | Default |
+|---|---|---|
+| `OPENBAT_API_KEY` | API key, used if not passed in the constructor. | — |
+| `OPENBAT_BASE_URL` | Override the capture endpoint base URL. | `https://openbat.dev` |
+| `OPENBAT_ENABLED` | Set to `"false"` or `"0"` to disable. | `"true"` |
+
+Constructor values take precedence over environment variables. See [Configuration](/sdk/configuration).
+
+## Runtime behavior
+
+- **`recordMessages()` is fire-and-forget.** Messages are sent asynchronously; the SDK catches all errors and logs them to `console.error` — they never propagate to your code.
+- **`withOpenBat()` returns the original `Response` unchanged.** It fires `recordMessages()` in the background, filters out `system` messages, and generates a UUID for `conversationId` if omitted.
+- **The constructor throws** at construction if `enabled` is `true` and no API key is available.
+- **`onPromptStateChange` is swallowed on error.** If the callback throws, the SDK catches and logs to `console.error`; the error never propagates to `recordMessages()`.
+- **`getSystemPrompt()` never throws.** On any failure it returns your `fallback`.
+
+For request limits, error formats, and disabling the SDK in test environments, see [Limits and errors](/sdk/limits-and-errors).

@@ -1,0 +1,56 @@
+---
+title: "Message deduplication"
+description: "Skip duplicate messages when re-sending history."
+icon: "copy-check"
+---
+{/* SOURCES: _sources/sdk-readme.md */}
+
+Set `id` on messages to prevent duplicates when re-sending conversation history. This matters when your integration forwards the full message array on every turn instead of only the new messages — without an `id`, the same exchange is ingested again each call.
+
+```typescript
+client.recordMessages({
+  conversationId: "session-abc-123",
+  messages: [
+    { id: "msg-001", role: "user", content: "Hello" },         // stored on first call
+    { id: "msg-002", role: "assistant", content: "Hi there!" }, // stored on first call
+    { id: "msg-001", role: "user", content: "Hello" },         // skipped (duplicate)
+    { id: "msg-003", role: "user", content: "Help me" },       // stored (new)
+  ],
+});
+```
+
+## How it behaves
+
+Messages with `id` are deduplicated per conversation. Messages without `id` are always inserted.
+
+<ParamField path="id" type="string">
+  External ID for deduplication, set per message. Scoped to the `conversationId` — the same `id` under a different conversation is treated as a distinct message. Maximum 256 characters.
+</ParamField>
+
+| Message | Result |
+|---------|--------|
+| Has `id`, first time seen in this conversation | Stored |
+| Has `id`, already seen in this conversation | Skipped |
+| No `id` | Always inserted |
+
+<Note>
+  Deduplication keys off the `id` value, not the message content. Re-sending the same `id` is skipped even if you changed `content`; sending the same `content` under a new `id` is stored as a new message.
+</Note>
+
+## When to use it
+
+Reach for `id` whenever a turn could be captured more than once:
+
+- Your route re-sends the entire conversation history (rather than just the latest exchange) on each call to `recordMessages()`.
+- A request may be retried, so the same payload could arrive twice.
+- You want at-least-once delivery from the client without duplicating stored messages.
+
+<Tip>
+  If you already send only new messages per turn — for example, the Vercel AI SDK [`onFinish` pattern](/sdk/integrations/vercel-ai-sdk) that records just the last user message and the assistant reply — duplicates are unlikely and `id` is optional. Add it anyway when retries are possible.
+</Tip>
+
+## Limits
+
+`message.id` is capped at 256 characters. Requests exceeding this receive a `400 Bad Request` response, logged to console and never thrown.
+
+For the full constraint list, see [Limits and errors](/sdk/limits-and-errors). The `id` field is documented alongside `sentAt`, `tools`, and `reasoning` on the message shape in the [API reference](/sdk/api-reference).

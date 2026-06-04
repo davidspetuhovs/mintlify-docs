@@ -1,0 +1,97 @@
+---
+title: "Troubleshooting"
+description: "Resolve common credential and tool errors."
+icon: "life-buoy"
+---
+{/* SOURCES: _sources/mcp-readme.md */}
+
+Most failures with `@openbat/mcp` come down to credential strength or HTTP status semantics: the exposed tool surface scales with key kind, and the v1 routes return distinct status codes for "bad key" versus "valid key without permission." Match the symptom to the row below, apply the fix, and restart your client if the tool list looks stale.
+
+## Symptom-to-fix table
+
+| Symptom | Likely cause | Fix |
+|---|---|---|
+| `openbat-mcp: ob_live_* keys are SDK-only` | Pasted an ingest key | Generate a read/admin/PAT key instead |
+| Tool not in `tools/list` | Your key kind is below the tool's `minKind` | Use a higher-kind key |
+| `Tool X requires a Y key or higher` on call | Same as above, but client cached the list | Restart the client |
+| 401 from a tool | Key invalid / expired / revoked | Rotate via the dashboard |
+| 403 from a write tool | Read-scope PAT, or non-owner trying an owner action | Use admin-scope key or an owner credential |
+| 404 on a chatbot id | Cross-org / not in scope (404 by design, no enumeration) | Pass the right id |
+| 429 with `Retry-After` | Per-tool rate-limit hit | Wait the indicated seconds and retry |
+
+## Wrong key kind pasted
+
+The server inspects the prefix of `OPENBAT_API_KEY` at startup before registering any tool.
+
+If you paste an ingest key (`ob_live_*`), the server refuses to start and exits with:
+
+```text
+openbat-mcp: ob_live_* keys are SDK-only — use an ob_read_*, ob_admin_*, or ob_pat_* key instead.
+```
+
+Ingest keys are SDK-only — there are deliberately no mutation tools for them, and they remain reserved for `OpenBat.recordMessages`. Anything that doesn't match one of the four known prefixes is also rejected before any tool is registered.
+
+<Note>
+At startup the server logs a banner to stderr — `using <kind> key <prefix>…<hidden>, base <url>` — so you can confirm the resolved kind without exposing plaintext. Check stderr first when a key behaves unexpectedly.
+</Note>
+
+## A tool is missing from the list
+
+The server filters `tools/list` by an authority ranking: `pat > admin > read`. Each tool declares a `minKind`, and the response only includes tools whose `minKind` is ≤ the resolved kind. A higher kind can call every tool a lower kind can call.
+
+So if a tool you expected is absent, your key kind is below that tool's `minKind`. Match the work you need to the right kind:
+
+| Goal | Key kind |
+|---|---|
+| Read-only dashboards / analytics for one chatbot | `ob_read_*` |
+| Manage one chatbot's webhooks / workflows / reports / settings | `ob_admin_*` |
+| Create new chatbots, mint admin keys, manage your orgs | `ob_pat_*` |
+
+<Tip>
+If you swapped in a higher-kind key but a call still returns `Tool X requires a Y key or higher`, the client cached the old `tools/list`. Restart the client to refresh it.
+</Tip>
+
+## HTTP status codes are meaningful
+
+The split between 401 and 403 tells you whether the key itself is the problem or whether it lacks permission for this specific action.
+
+<ResponseField name="401" type="bad / expired / wrong-kind key">
+  The key is invalid, expired, or revoked. Rotate it via the dashboard.
+</ResponseField>
+
+<ResponseField name="403" type="valid key, missing permission">
+  The key is valid but lacks permission — a read-scope PAT trying to mutate, or a non-owner attempting an owner-only operation. Use an admin-scope key or an owner credential.
+</ResponseField>
+
+<ResponseField name="404" type="chatbot not in scope">
+  The chatbot id is cross-org or otherwise out of scope. This is 404 by design — there's no enumeration. Pass the right id.
+</ResponseField>
+
+<ResponseField name="429" type="rate-limit hit">
+  A per-tool rate-limit bucket was exhausted. The response includes `Retry-After`, which the MCP tool error surfaces. Wait the indicated seconds and retry.
+</ResponseField>
+
+PATs carry a per-row sub-scope (`read` or `admin`). A read-scope PAT can run every read tool across every chatbot in your orgs but cannot mutate anything — the server surfaces the write tools, but the v1 routes return 403.
+
+<Warning>
+Rate-limit buckets are server-side and per-tool. Stricter buckets apply to `create_chatbot` (5/hr per PAT), mint operations (10/hr per credential), and `chat_ai_report` (30/min per credential). A 429 means you hit one of these — wait out the `Retry-After` window rather than retrying immediately.
+</Warning>
+
+## Pin verification fails at startup
+
+When you pin to one chatbot with `OPENBAT_CHATBOT_ID` (or `openbat use <id>`), the server verifies the pin against the key's reachable set at startup and exits if the chatbot isn't reachable. On success it logs `pinned to "<name>" (<id>)`.
+
+If a pinned call rejects with a mismatch, you passed a different `chatbotId` than the pinned one — the server injects the pinned id into every per-chatbot tool and rejects calls that pass a different one. To switch targets, change `OPENBAT_CHATBOT_ID` (or run `openbat use <other>`) and restart.
+
+## Reading errors safely
+
+Tool error messages are key-redacted (`ob_<kind>_…<hidden>`) before they reach the client, and the API key is read from `OPENBAT_API_KEY` only — never from arguments or stdin. If you need to reconstruct what happened, every authenticated call (success and failure) lands in the audit log, so operators can trace exactly what an MCP-driven LLM did.
+
+<Columns cols={2}>
+  <Card title="Credentials" icon="key" href="/mcp/credentials">
+    How the server detects key kind and ranks authority.
+  </Card>
+  <Card title="Security" icon="shield" href="/mcp/security">
+    Status-code semantics, rate-limit buckets, and the audit log.
+  </Card>
+</Columns>

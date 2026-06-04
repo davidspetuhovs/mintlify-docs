@@ -1,0 +1,126 @@
+---
+title: "System prompt versioning"
+description: "Link messages to the prompt that produced them."
+icon: "git-compare"
+---
+{/* SOURCES: _sources/sdk-readme.md */}
+
+Pass the unrendered system prompt your chatbot is running under to OpenBat. The capture endpoint hashes it (SHA-256 of exact bytes) and stores each unique template once per chatbot. Every captured message is then linked to the prompt version active at the time it was sent — so you can correlate quality issues, tag rates, or sentiment shifts back to the specific prompt that produced them, and review your prompt history in the dashboard.
+
+## The two fields
+
+Both are optional and both sit at the root of `recordMessages()`.
+
+```typescript
+client.recordMessages({
+  conversationId: "session-abc-123",
+  messages: [...],
+
+  // The TEMPLATE — pass it before any variable interpolation, exactly as it
+  // lives in your source. OpenBat does NOT parse it: any syntax works
+  // (mustache, JS template literals, f-strings, etc.).
+  systemPromptTemplate:
+    "You are a {{role}} assistant for {{company}}. Be concise and {{tone}}.",
+
+  // Optional: the resolved values for THIS call, stored verbatim alongside
+  // each message. Use this if you want to investigate variable-conditional
+  // behaviour later.
+  systemPromptVariables: {
+    role: "support",
+    company: "Acme",
+    tone: "warm",
+  },
+});
+```
+
+<ParamField path="systemPromptTemplate" type="string">
+  The unrendered system prompt — passing it enables versioning. Send it before any variable interpolation, exactly as it lives in your source. OpenBat does not parse it; any templating syntax works.
+</ParamField>
+
+<ParamField path="systemPromptVariables" type="Record<string, string | number | boolean>">
+  The resolved values for this call, stored verbatim alongside each message. Use it to investigate variable-conditional behaviour later.
+</ParamField>
+
+## Wiring it into an AI SDK call
+
+Define the template once, render it for the LLM call, and pass both the template and the variables to OpenBat.
+
+```typescript
+const SYSTEM_TEMPLATE =
+  "You are a {{role}} assistant for {{company}}. Be concise and {{tone}}.";
+
+const variables = { role: "support", company: "Acme", tone: "warm" };
+
+const renderedSystem = SYSTEM_TEMPLATE
+  .replace("{{role}}", variables.role)
+  .replace("{{company}}", variables.company)
+  .replace("{{tone}}", variables.tone);
+
+const result = streamText({
+  model: openai("gpt-4o"),
+  system: renderedSystem,
+  messages,
+  onFinish: async ({ text }) => {
+    await client.recordMessages({
+      conversationId: "session-abc-123",
+      systemPromptTemplate: SYSTEM_TEMPLATE,  // unrendered
+      systemPromptVariables: variables,
+      messages: [
+        { role: "user", content: lastUserContent },
+        { role: "assistant", content: text },
+      ],
+    });
+  },
+});
+```
+
+## How identity works
+
+Identity is byte-exact: SHA-256 of the UTF-8 bytes of `systemPromptTemplate`. No whitespace normalization, no case-folding, no punctuation stripping.
+
+- Pass the same template twice → same version row.
+- Trim a trailing space → new version row.
+- Revert to a previous template's exact bytes → new messages re-link to the **original** version row. No duplicate version is created, and the dashboard shows it as a single entity.
+
+<Warning>
+  Because identity is byte-exact, an invisible change — a trailing space, a tab-vs-spaces edit, a line-ending difference — creates a brand-new version row. Keep the template stable to keep your version history clean.
+</Warning>
+
+## Why pass the template, not the rendered prompt
+
+If you pre-interpolate variables (e.g. RAG context, user profile, current date) into the prompt before sending it to OpenBat, every call would land in its own version bucket and the dashboard couldn't aggregate metrics across them. Keeping `systemPromptTemplate` stable and passing values through `systemPromptVariables` keeps your version history meaningful.
+
+## What you see in the dashboard
+
+The chatbot's **System Prompt** page shows:
+
+- The currently active version (the one most recently linked to a message).
+- The full version history with first-seen timestamps and message counts.
+- Inline diffs between any two versions.
+
+<Note>
+  The dashboard is read/write — you can edit and publish prompts directly. Your hardcoded `fallback` stays the safety net. See [DB-backed prompts](/sdk/db-backed-prompts) and [Remote-controlled prompts](/sdk/remote-prompts) for consuming dashboard-published prompts back into your app.
+</Note>
+
+## What happens if you don't pass it
+
+Messages still capture as normal, but with no prompt-version link (`prompt_version_id = NULL`). The Settings tab shows an empty state with the SDK snippet to wire up. No errors, no warnings, no breaking change to existing integrations.
+
+## Limits
+
+| Constraint | Limit |
+|------------|-------|
+| `systemPromptTemplate` length | 1–64,000 characters |
+| `systemPromptVariables` keys | max 100, key 1–256 characters |
+| `systemPromptVariables` values | `string`, `number`, or `boolean` only |
+
+Requests exceeding these limits receive a `400 Bad Request` response (logged to console, never thrown).
+
+<Columns cols={2}>
+  <Card title="DB-backed prompts" icon="database" href="/sdk/db-backed-prompts">
+    Store the active version in your own DB and receive updates pushed back through capture responses.
+  </Card>
+  <Card title="Remote-controlled prompts" icon="cloud" href="/sdk/remote-prompts">
+    Fetch the dashboard-published prompt at runtime with a one-line `getSystemPrompt` call.
+  </Card>
+</Columns>

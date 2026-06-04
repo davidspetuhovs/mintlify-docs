@@ -1,0 +1,202 @@
+---
+title: "Security & rate limits"
+description: "Key handling, base-URL rules, audit log, and limits."
+icon: "shield-check"
+---
+{/* SOURCES: _sources/cli-readme.md; _sources/skill-openbat-safe-mutations.md */}
+
+The CLI enforces a set of fixed security properties around how keys are stored, where plaintext secrets are written, which base URLs it accepts, and how often each operation can run. This page documents those guarantees, the server-side audit log behind every authenticated call, and the per-tool rate-limit buckets.
+
+## Security properties
+
+The CLI ships with these guarantees built in:
+
+- **API key plaintext never lands in any error message** — it is auto-redacted to `ob_<kind>_<first 16>…<hidden>`.
+- **HTTPS-only base URL**, with a localhost exception only.
+- **`~/.openbatrc` is enforced at `mode 0600`** — the loader refuses to read it if the perms are looser.
+- **Mint commands print plaintext to stderr only**, inside a "shown ONCE" banner. Pipe stderr to `/dev/null` if you don't want it on screen (you'll lose the secret).
+- **Every authenticated call lands in `api_audit_log`** server-side (migration 036), so operators can answer "who did what when".
+
+### How the key is stored
+
+Save the key over stdin so the plaintext stays out of shell history:
+
+```bash
+# Recommended — stdin keeps the plaintext out of shell history:
+echo "ob_pat_..." | openbat config set-key --from-stdin
+```
+
+The key is stored at `~/.openbatrc` with mode `0600`. The CLI refuses to load it if the perms are looser than that.
+
+<Warning>
+Each plaintext key is shown exactly once. Mint commands write the secret to **stderr** inside the "shown ONCE" banner. If you redirect stderr to `/dev/null`, you lose the secret with no way to recover it — recreate the credential to get a new one.
+</Warning>
+
+The auth resolution order, where each entry falls through to the next:
+
+<ParamField path="--api-key <key>" type="flag">
+Convenient but leaks into shell history; discouraged.
+</ParamField>
+
+<ParamField path="$OPENBAT_API_KEY" type="env var">
+Best for CI.
+</ParamField>
+
+<ParamField path="~/.openbatrc" type="file">
+Persistent local default.
+</ParamField>
+
+If you accidentally try to set an ingest key (`ob_live_*`), the CLI rejects it with a helpful error. Ingest keys are SDK-only and are rejected by the CLI.
+
+### Base-URL rules
+
+```bash
+openbat config set-url https://staging.openbat.dev
+# or per-invocation:
+openbat --base-url http://localhost:3000 auth whoami
+# or via env:
+OPENBAT_BASE_URL=http://localhost:3000 openbat auth whoami
+```
+
+The CLI **refuses non-HTTPS base URLs** unless they point at `localhost` or `127.0.0.1`.
+
+<Note>
+There is no `--insecure` escape hatch. Any non-HTTPS URL that is not `localhost` or `127.0.0.1` is rejected.
+</Note>
+
+## Output convention for write commands
+
+Mutating commands follow a consistent output convention so scripts and humans can both consume them cleanly:
+
+- **Plaintext secrets go to stderr**, inside a "shown ONCE" banner:
+
+  ```text
+  ────────────────────────────────────────────────────────────
+    Webhook signing secret (shown ONCE — store this now)
+
+    whsec_abcdef…
+  ────────────────────────────────────────────────────────────
+  ```
+
+- **Structured response goes to stdout** without the plaintext, so `... | jq` keeps working:
+
+  ```bash
+  openbat webhooks create --chatbot $CB --name foo --url ... --type slack > webhook.json
+  jq .id webhook.json
+  ```
+
+- **Errors go to stderr with a non-zero exit code.** API key plaintext is automatically redacted from any error message (`ob_admin_<16 chars>…<hidden>`).
+
+### HTTP status codes
+
+| Status | Meaning | Fix |
+|---|---|---|
+| `401` | Key invalid / expired / wrong kind for this endpoint | Run `openbat auth whoami` + use a fresh key |
+| `403` | Key valid but lacks permission — e.g. a read-scope PAT trying to mutate, or a member doing an owner-only action | Use a credential with the right scope |
+| `429` | Rate limited | Includes a `Retry-After` header; the CLI surfaces it in the error message |
+
+## Audit log
+
+Every authenticated request lands in `api_audit_log`. There is no CLI subcommand for audit history yet — query the table directly in Supabase Studio:
+
+```sql
+select occurred_at, actor_kind, tool_name, outcome, ip
+from api_audit_log
+where user_id = 'user_xxx'
+  and occurred_at > now() - interval '7 days'
+order by occurred_at desc
+limit 50;
+```
+
+The fields you filter on:
+
+| Field | Values |
+|---|---|
+| `actor_kind` | `pat`, `admin`, `read`, `ingest`, `session`, `internal` |
+| `actor_id` | The credential's table id (PAT id, admin key id, user id for sessions) — never plaintext, never hash |
+| `outcome` | `ok`, `forbidden`, `rate_limited`, `error`, `invalid` |
+
+<Tip>
+Filter by `outcome != 'ok'` to surface every rejection.
+</Tip>
+
+## Key hygiene
+
+Plan rotation and recovery up front — destructive operations don't get an automatic "undo". The recovery path is usually a fresh mint (key) or recreation (webhook / workflow).
+
+| Action | Frequency | How to recover |
+|---|---|---|
+| Rotate ingest key | When you suspect leak | Old key dies immediately; deploy new one to SDK env |
+| Generate new read key | When you need it; old read auto-revokes | New plaintext, one slot per chatbot |
+| Mint admin key | One per environment (CI, dev, prod) | Mint a new one; old keeps working until revoked |
+| Revoke admin key | Immediately on suspected leak / on departure | None — must mint fresh |
+| Rotate PAT | Every 90 days by default | Mint via dashboard; old expires per `expires_at` |
+
+<Note>
+Set `expires_at` on every admin key. The CLI accepts `--expires-in-days N` — 30-90 days is reasonable for CI.
+</Note>
+
+### Confirmation discipline
+
+Before firing any `delete_*`, `revoke_*`, or `rotate_*` operation:
+
+<Steps>
+  <Step title="List first">
+    Get the current state so you can confirm what you're about to remove is the right thing.
+
+    ```bash
+    openbat settings keys list-admin --chatbot $CB
+    openbat webhooks list --chatbot $CB
+    openbat workflows list --chatbot $CB
+    ```
+  </Step>
+  <Step title="Type the id explicitly">
+    Don't construct it from a search; pass the exact uuid you got from the list step.
+  </Step>
+  <Step title="For chatbot deletion, type the chatbot name as --confirm">
+    The tool requires the literal name match to fire.
+  </Step>
+</Steps>
+
+### Scoping discipline
+
+- **Read PAT for CI dashboards.** No write authority, blast radius zero.
+- **Admin key per environment.** Pin to one chatbot, named with the env (`"CI key"`, `"prod key"`).
+- **Full PAT only for chatbot creation + org admin.** Treat like an SSH key — single user, no sharing.
+- **Never use ingest keys in CLI or MCP.** Those are SDK-only.
+
+### Common failure modes
+
+- **Lost webhook signing secret**: delete the webhook + recreate. No rotation endpoint exists yet.
+- **Accidentally rotated ingest key**: the SDK starts failing 401s immediately. Roll forward — deploy the new key to your SDK env.
+- **Read-scope PAT trying to mutate**: 403 with "permission read". Mint a new admin-scope PAT.
+- **`delete_org` cascades everything**: the org and all chatbots / conversations / messages / analyses go. There is no soft-delete. Confirm the org name twice.
+
+### Always-true invariants
+
+- `chatbot_id` filtering is enforced server-side in every handler. A leaked admin key for chatbot A cannot touch chatbot B.
+- Plaintext credentials are never logged, never stored, never echoed.
+- Every list-returning tool caps at 200 rows. Pagination is mandatory.
+- Rate-limit responses include `Retry-After`. Respect it.
+
+## Rate limits
+
+Rate limits are per-tool buckets keyed by credential. The strict ones to know about:
+
+| Operation | Limit |
+|---|---|
+| Create chatbot | 5 per hour per PAT |
+| Mint or rotate any key | 10 per hour per credential |
+| Create backtest | 10 per hour per PAT |
+| Invite org member | 20 per hour per PAT |
+| Chat with an AI report | 30 per minute per credential |
+| Daily review digest (`review`) | 30 per minute per credential |
+| Publish prompt | 20 per hour per credential |
+| Activate prompt / toggle kill switch | 30 per hour per credential |
+| Generic write | 60 per minute per credential |
+| Generic read | 600 per minute per credential |
+| Export | 30 per hour per credential |
+
+<Note>
+`429` responses include `Retry-After` (seconds).
+</Note>

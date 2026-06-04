@@ -1,0 +1,547 @@
+[
+  {
+    "name": "Sign up from landing page",
+    "description": "Visitor lands on homepage, scrolls features, clicks 'Start listening' CTA",
+    "persona": "Product manager at a company running an AI chatbot who wants visibility into conversation quality and customer sentiment",
+    "preconditions": [
+      "Visitor does not have an existing OpenBat account"
+    ],
+    "startingPage": "/",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "Land on the homepage at openbat.dev — hero section visible with 'Google Analytics for AI chatbots' heading",
+        "screenshotKey": "flow-step-sign-up-from-landing-page-1",
+        "pageUrl": "/"
+      },
+      {
+        "stepNumber": 2,
+        "action": "Scroll through feature sections (problem statement, ingest & analyze, system prompt suggestions, stakeholder notifications, analytics, integration code)",
+        "screenshotKey": "flow-step-sign-up-from-landing-page-2",
+        "pageUrl": "/"
+      },
+      {
+        "stepNumber": 3,
+        "action": "Click 'Start listening' button (appears in nav header, mid-page CTA, and bottom CTA) — opens inline 'Get started' modal with work email field, NOT a redirect to /auth/sign-up",
+        "screenshotKey": "flow-step-sign-up-from-landing-page-3",
+        "pageUrl": "/"
+      },
+      {
+        "stepNumber": 4,
+        "action": "Enter email in modal and click 'Sign up' — shows 'You're in. Check your inbox; we'll be in touch with next steps shortly.' confirmation",
+        "screenshotKey": "flow-step-sign-up-from-landing-page-4",
+        "pageUrl": "/"
+      }
+    ],
+    "expectedOutcome": "User lands on the sign-up page and can create an account",
+    "failureModes": [
+      {
+        "trigger": "Already logged-in user clicks 'Start listening'",
+        "result": "Same lead-capture modal opens — no redirect to /platform. Nav still shows 'Sign in' button even when authenticated.",
+        "screenshotKey": "flow-failure-sign-up-from-landing-page-1"
+      }
+    ],
+    "relatedFlows": [
+      "Email sign up",
+      "Email login"
+    ],
+    "alternativePaths": [
+      "Direct navigation to /auth/sign-up"
+    ]
+  },
+  {
+    "name": "Email login",
+    "description": "Authenticate using email and password",
+    "persona": "Returning user who already has an account and wants to access their chatbot analytics dashboard",
+    "preconditions": [
+      "User has an existing account",
+      "User is not already logged in",
+      "User knows their email and password"
+    ],
+    "startingPage": "/auth/login",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "Navigate to /auth/login — form visible with 'Welcome back.' heading, Email field, Password field, 'Sign in' button",
+        "screenshotKey": "flow-step-email-login-1",
+        "pageUrl": "/auth/login"
+      },
+      {
+        "stepNumber": 2,
+        "action": "Enter email address (info@openbat.dev)",
+        "screenshotKey": "flow-step-email-login-2",
+        "pageUrl": "/auth/login"
+      },
+      {
+        "stepNumber": 3,
+        "action": "Enter password",
+        "screenshotKey": "flow-step-email-login-3",
+        "pageUrl": "/auth/login"
+      },
+      {
+        "stepNumber": 4,
+        "action": "Click 'Sign in' button",
+        "screenshotKey": "flow-step-email-login-4",
+        "pageUrl": "/auth/login"
+      },
+      {
+        "stepNumber": 5,
+        "action": "Verify redirect to /platform — dashboard shows 'Sophie Finance' org with chatbot list",
+        "screenshotKey": "flow-step-email-login-5",
+        "pageUrl": "/platform"
+      }
+    ],
+    "expectedOutcome": "User is redirected to /platform showing their organization's chatbot list",
+    "failureModes": [
+      {
+        "trigger": "Submit form with wrong password",
+        "result": "Inline error shown in red: 'Invalid email or password'. Form stays on /auth/login.",
+        "screenshotKey": "flow-failure-email-login-1"
+      }
+    ],
+    "relatedFlows": [
+      "Password reset request",
+      "Email sign up"
+    ],
+    "alternativePaths": [
+      "Navigate to /auth/sign-up via 'Create an account' link"
+    ]
+  },
+  {
+    "name": "Email sign up",
+    "description": "Register a new account with work email and password",
+    "persona": "New user who wants to set up chatbot analytics for the first time",
+    "preconditions": [
+      "User does not already have an account",
+      "User has access to their work email"
+    ],
+    "startingPage": "/auth/sign-up",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "Navigate to /auth/sign-up — 'Get started.' heading with Work email, Password (min 8 chars), Confirm password fields, 'Create account' button, Terms/Privacy links",
+        "screenshotKey": "flow-step-email-sign-up-1",
+        "pageUrl": "/auth/sign-up"
+      }
+    ],
+    "expectedOutcome": "Account is created and verified. User can now log in and is redirected to /platform where an organization is auto-created.",
+    "failureModes": [
+      {
+        "trigger": "Password too short (5 chars)",
+        "result": "Generic error: 'Something went wrong. Please try again.' — not specific about password length. UX could be improved.",
+        "screenshotKey": "flow-failure-email-sign-up-1"
+      },
+      {
+        "trigger": "Passwords don't match",
+        "result": "Specific client-side validation: 'Passwords do not match.'",
+        "screenshotKey": "flow-failure-email-sign-up-2"
+      },
+      {
+        "trigger": "Duplicate email (existing account)",
+        "result": "Generic error: 'Something went wrong. Please try again.' — same generic message as password-too-short (good for security, doesn't reveal account existence, but confusing UX)",
+        "screenshotKey": "flow-failure-email-sign-up-3"
+      }
+    ],
+    "relatedFlows": [
+      "Email login",
+      "Sign up from landing page"
+    ],
+    "alternativePaths": [
+      "Navigate to /auth/login via 'Sign in' link"
+    ]
+  },
+  {
+    "name": "Password reset request",
+    "description": "Request a password reset email",
+    "persona": "Existing user who cannot remember their password",
+    "preconditions": [
+      "User has an existing account with a verified email"
+    ],
+    "startingPage": "/auth/forgot-password",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "Navigate to /auth/forgot-password — 'Forgot your password?' heading with Email field, 'Send reset link' button, 'Back to sign in' link",
+        "screenshotKey": "flow-step-password-reset-request-1",
+        "pageUrl": "/auth/forgot-password"
+      },
+      {
+        "stepNumber": 2,
+        "action": "Enter email (info@openbat.dev) and click 'Send reset link'",
+        "screenshotKey": "flow-step-password-reset-request-2",
+        "pageUrl": "/auth/forgot-password"
+      },
+      {
+        "stepNumber": 3,
+        "action": "Success state: 'RESET LINK SENT' badge, 'If info@openbat.dev is registered, a reset link is on its way. The link expires in one hour.'",
+        "screenshotKey": "flow-step-password-reset-request-3",
+        "pageUrl": "/auth/forgot-password"
+      }
+    ],
+    "expectedOutcome": "User's password is updated and they can log in with the new password",
+    "failureModes": [
+      {
+        "trigger": "Non-existent email submitted",
+        "result": "Same success message: 'If nonexistent@nobody.com is registered, a reset link is on its way.' — correct security practice, doesn't reveal account existence.",
+        "screenshotKey": "flow-failure-password-reset-request-1"
+      }
+    ],
+    "relatedFlows": [
+      "Email login"
+    ],
+    "alternativePaths": [
+      "Back to sign in link"
+    ]
+  },
+  {
+    "name": "Create new chatbot",
+    "description": "Create a new chatbot and start the onboarding wizard",
+    "persona": "Team admin or owner who wants to set up analytics for a new chatbot",
+    "preconditions": [
+      "User is authenticated",
+      "User has owner or admin role in the organization"
+    ],
+    "startingPage": "/platform",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "Navigate to /platform — chatbot list visible with Active/Pending/Archive/Demo tabs",
+        "screenshotKey": "flow-step-create-new-chatbot-1",
+        "pageUrl": "/platform"
+      },
+      {
+        "stepNumber": 2,
+        "action": "Click '+ New chatbot' — modal opens with Name field (0/100 char counter) and 'Continue to setup' button",
+        "screenshotKey": "flow-step-create-new-chatbot-2",
+        "pageUrl": "/platform"
+      },
+      {
+        "stepNumber": 3,
+        "action": "Enter chatbot name ('Flow Test Bot') and click 'Continue to setup'",
+        "screenshotKey": "flow-step-create-new-chatbot-3",
+        "pageUrl": "/platform"
+      },
+      {
+        "stepNumber": 4,
+        "action": "Redirected to 9-step onboarding wizard (Basics, Product, Brand, Pricing, Competitors, Analysis, Personas, Calibrate, Connect) — Step 1 shows Product name, Website URL, Documentation URL (MCP), and demo preview chatbot",
+        "screenshotKey": "flow-step-create-new-chatbot-4",
+        "pageUrl": "/platform/[chatbotId]/onboarding"
+      },
+      {
+        "stepNumber": 5,
+        "action": "Test chatbot created then deleted via Pending tab → three-dot menu → Delete with confirmation dialog",
+        "screenshotKey": "flow-step-create-new-chatbot-5",
+        "pageUrl": "/platform"
+      }
+    ],
+    "expectedOutcome": "New chatbot is created with an API key, and user is guided through SDK setup on the onboarding page",
+    "failureModes": [],
+    "relatedFlows": [
+      "Explore demo chatbot"
+    ],
+    "alternativePaths": []
+  },
+  {
+    "name": "Explore demo chatbot",
+    "description": "Browse a read-only demo chatbot dashboard with sample data",
+    "persona": "New user evaluating OpenBat, or existing user wanting to see what a fully populated dashboard looks like",
+    "preconditions": [
+      "User is authenticated"
+    ],
+    "startingPage": "/platform",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "Navigate to /platform — on Pending tab, switch to Demo tab",
+        "screenshotKey": "flow-step-explore-demo-chatbot-1",
+        "pageUrl": "/platform"
+      },
+      {
+        "stepNumber": 2,
+        "action": "Click 'Demo' tab — 2 demo chatbots visible: 'Demo Chatbot — E-Commerce' (Threadworks Co.) and 'Demo Chatbot — SaaS' (Helmsmith), both marked 'Provided by OpenBat' and 'Explore reports, browse the UI — no writes'",
+        "screenshotKey": "flow-step-explore-demo-chatbot-2",
+        "pageUrl": "/platform"
+      },
+      {
+        "stepNumber": 3,
+        "action": "Click E-Commerce demo — full dashboard loads with DEMO banner, AI chat, AT-RISK ORGS, ALERTS (13 buying signals), PERFORMANCE (Resolution 54%, Sentiment positive, 3 quality issues, AI Literacy 74/100), full sidebar navigation",
+        "screenshotKey": "flow-step-explore-demo-chatbot-3",
+        "pageUrl": "/platform/[demoId]"
+      }
+    ],
+    "expectedOutcome": "User sees a fully populated dashboard with sample conversations, analyses, and reports — all read-only",
+    "failureModes": [],
+    "relatedFlows": [
+      "Create new chatbot"
+    ],
+    "alternativePaths": [
+      "SaaS demo chatbot"
+    ]
+  },
+  {
+    "name": "Invite team member",
+    "description": "Send an invitation to a colleague to join the organization",
+    "persona": "Organization owner who wants to give a colleague access to chatbot analytics",
+    "preconditions": [
+      "User has owner or admin role",
+      "Invitee has an email address"
+    ],
+    "startingPage": "/platform/members",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "Navigate to /platform/members — member table visible with current member (info@openbat.dev, Owner, May 15, 2026)",
+        "screenshotKey": "flow-step-invite-team-member-1",
+        "pageUrl": "/platform/members"
+      },
+      {
+        "stepNumber": 2,
+        "action": "Click '+ Invite member' — modal opens with Email field, Organization role dropdown (Member), Chatbot access checkboxes (Sophie, E-Commerce Demo, SaaS Demo) with 'Select all', chatbot role dropdown (Viewer), Cancel/Send invitation buttons",
+        "screenshotKey": "flow-step-invite-team-member-2",
+        "pageUrl": "/platform/members"
+      }
+    ],
+    "expectedOutcome": "Invitation email is sent. Invitee clicks the link to accept and join the organization.",
+    "failureModes": [],
+    "relatedFlows": [],
+    "alternativePaths": []
+  },
+  {
+    "name": "Ask AI about chatbot data",
+    "description": "Ask a natural-language question to the platform AI assistant about chatbot analytics",
+    "persona": "Product manager who wants quick answers without writing queries",
+    "preconditions": [
+      "Chatbot has captured conversations",
+      "User is on the chatbot dashboard"
+    ],
+    "startingPage": "/platform/[chatbotId]",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "On Sophie dashboard, view message input field with command hints (@ tag entity, $ scope by plan, # user analysis, ! assistant analysis, ^ scope by prompt)",
+        "screenshotKey": "flow-step-ask-ai-about-chatbot-data-1",
+        "pageUrl": "/platform/[chatbotId]"
+      },
+      {
+        "stepNumber": 2,
+        "action": "Type 'What's driving negative sentiment?' and click Submit — URL updates with ?c= conversation ID, question shown in chat view",
+        "screenshotKey": "flow-step-ask-ai-about-chatbot-data-2",
+        "pageUrl": "/platform/[chatbotId]?c=[convId]"
+      }
+    ],
+    "expectedOutcome": "AI responds with relevant data, charts, and insights based on the chatbot's conversation data",
+    "failureModes": [
+      {
+        "trigger": "Submit a question — AI backend returns errors (401/404/400/422)",
+        "result": "Silent failure: question appears in chat but no AI response, no error message, no loading indicator timeout. User sees empty chat forever.",
+        "screenshotKey": "flow-failure-ask-ai-about-chatbot-data-1"
+      }
+    ],
+    "relatedFlows": [
+      "Create report from template"
+    ],
+    "alternativePaths": []
+  },
+  {
+    "name": "Create report from template",
+    "description": "Create a dashboard report using a pre-built template",
+    "persona": "CS manager who wants a weekly sentiment overview without building from scratch",
+    "preconditions": [
+      "Chatbot has conversation data"
+    ],
+    "startingPage": "/platform/[chatbotId]/reports",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "Navigate to /platform/[chatbotId]/reports — 'START FROM A TEMPLATE' section with 4 templates (Customer Pulse, Sentiment Distribution, Risk Flags Leaderboard, Topics & Intents Overview), 'Your reports' section with 'No reports yet'",
+        "screenshotKey": "flow-step-create-report-from-template-1",
+        "pageUrl": "/platform/[chatbotId]/reports"
+      },
+      {
+        "stepNumber": 2,
+        "action": "Click 'Customer Pulse' template card",
+        "screenshotKey": "flow-step-create-report-from-template-2",
+        "pageUrl": "/platform/[chatbotId]/reports"
+      },
+      {
+        "stepNumber": 3,
+        "action": "Report created and loaded — shows CONVERSATIONS (200), AVG SENTIMENT (0), TOTAL MESSAGES (400), SENTIMENT TREND (No data). Filters: Last 30 days, Prompt: All versions. Actions: + Add chart, Customize, Pin, Delete. Chat button for copilot.",
+        "screenshotKey": "flow-step-create-report-from-template-3",
+        "pageUrl": "/platform/[chatbotId]/reports/[reportId]"
+      }
+    ],
+    "expectedOutcome": "A new report is created with pre-populated widgets showing relevant chatbot analytics",
+    "failureModes": [],
+    "relatedFlows": [
+      "Ask AI about chatbot data"
+    ],
+    "alternativePaths": [
+      "Create a blank report",
+      "New report button"
+    ]
+  },
+  {
+    "name": "Create workflow from template",
+    "description": "Create an automated workflow from a pre-built template",
+    "persona": "CS manager who wants Slack notifications when churn risk is detected",
+    "preconditions": [
+      "Chatbot has analysis running",
+      "Webhook destination configured in settings"
+    ],
+    "startingPage": "/platform/[chatbotId]/workflows",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "Navigate to /platform/[chatbotId]/workflows — tabs: Workflows, Runs, Templates. 'No workflows yet' shown.",
+        "screenshotKey": "flow-step-create-workflow-from-template-1",
+        "pageUrl": "/platform/[chatbotId]/workflows"
+      },
+      {
+        "stepNumber": 2,
+        "action": "Click 'Templates' tab — filter pills (All, Public, Your Org | Alerting, Escalation, Reporting, Moderation, General). 1 template: 'Notify Slack when an organization becomes at risk' (Public, Alerting)",
+        "screenshotKey": "flow-step-create-workflow-from-template-2",
+        "pageUrl": "/platform/[chatbotId]/workflows?tab=templates"
+      },
+      {
+        "stepNumber": 3,
+        "action": "Click template — preview panel shows title, description, tags (Alerting, Public), Workflow Steps (Organization at risk → Slack notification), 'Use This Template' button",
+        "screenshotKey": "flow-step-create-workflow-from-template-3",
+        "pageUrl": "/platform/[chatbotId]/workflows?tab=templates"
+      }
+    ],
+    "expectedOutcome": "Workflow is created and will trigger automatically when conditions are met during conversation analysis",
+    "failureModes": [],
+    "relatedFlows": [],
+    "alternativePaths": [
+      "Create workflow button (blank)"
+    ]
+  },
+  {
+    "name": "Create new prompt version",
+    "description": "Edit the system prompt and create a new version",
+    "persona": "Engineer who wants to fix a hallucination pattern identified in analysis by editing the system prompt",
+    "preconditions": [
+      "Chatbot has an existing prompt",
+      "User has edit permissions"
+    ],
+    "startingPage": "/platform/[chatbotId]/system-prompt",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "Navigate to /platform/[chatbotId]/system-prompt — mode progression (Manual → Half-automated → Fully Automated), tabs (Prompt, Experiments, Suggested), current version v6.0 LIVE, Actions (Publish mode, Kill switch OFF, Roll back v5.0), version history",
+        "screenshotKey": "flow-step-create-new-prompt-version-1",
+        "pageUrl": "/platform/[chatbotId]/system-prompt"
+      },
+      {
+        "stepNumber": 2,
+        "action": "Click '+ New version' — side panel 'Draft 1' opens with Manual/AI Suggest tabs, editable PROMPT TEXT, DIFF VS ACTIVE ('No changes vs active'), Discard/Save & close/Publish buttons",
+        "screenshotKey": "flow-step-create-new-prompt-version-2",
+        "pageUrl": "/platform/[chatbotId]/system-prompt?draft=[draftId]&edit=1"
+      },
+      {
+        "stepNumber": 3,
+        "action": "Click Discard — confirmation dialog: 'Discard this draft? This deletes the draft permanently. The active published prompt is unaffected.' Click 'Discard draft' — draft deleted",
+        "screenshotKey": "flow-step-create-new-prompt-version-3",
+        "pageUrl": "/platform/[chatbotId]/system-prompt"
+      }
+    ],
+    "expectedOutcome": "New prompt version is published and the chatbot uses it for future conversations",
+    "failureModes": [],
+    "relatedFlows": [],
+    "alternativePaths": [
+      "AI Suggest mode for AI-generated changes"
+    ]
+  },
+  {
+    "name": "Review a specific conversation",
+    "description": "View a specific conversation's full message thread and analysis results",
+    "persona": "CS manager investigating a flagged interaction to understand why a customer expressed frustration",
+    "preconditions": [
+      "Conversations exist in the chatbot"
+    ],
+    "startingPage": "/platform/[chatbotId]/conversations",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "Navigate to /platform/[chatbotId]/conversations — table with User, Messages, Outcome, Issues, Sentiment, Flags, Last Message columns. Search/filter bar. Date filter: Last 30 days.",
+        "screenshotKey": "flow-step-review-a-specific-conversation-1",
+        "pageUrl": "/platform/[chatbotId]/conversations"
+      },
+      {
+        "stepNumber": 2,
+        "action": "Click first conversation row — detail page loads with full message thread: user message 'How much did I spend last month?' (translated from Latvian), assistant response with REASONING, TOOL calls (search_tran, summarize_s, aggregate_t), and formatted answer '€4,019.32'. Right panel shows Analysis Overview (Flag: data visibility query, Outcome: Msg #2), Persona section, General/User/Assistant tabs.",
+        "screenshotKey": "flow-step-review-a-specific-conversation-2",
+        "pageUrl": "/platform/[chatbotId]/conversations/[convId]"
+      }
+    ],
+    "expectedOutcome": "User understands the full context of the conversation including analysis tags, flags, and outcomes",
+    "failureModes": [],
+    "relatedFlows": [
+      "Configure analysis definitions"
+    ],
+    "alternativePaths": [
+      "Use search/filter to narrow results"
+    ]
+  },
+  {
+    "name": "Configure analysis definitions",
+    "description": "Add or modify analysis definitions for conversation analysis",
+    "persona": "Product lead who wants to add a custom flag for 'pricing_complaint' specific to their product",
+    "preconditions": [
+      "User has admin or owner role"
+    ],
+    "startingPage": "/platform/[chatbotId]/analysis-config",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "Navigate to /platform/[chatbotId]/analysis-config — tabs: Integration, Metadata, Translation, User Analysis, Assistant Analysis, Calibration, Personas. Shows '4 of 5 layers active' with layer progression (Baseline, Prompt, Tools, Knowledge, Synced).",
+        "screenshotKey": "flow-step-configure-analysis-definitions-1",
+        "pageUrl": "/platform/[chatbotId]/analysis-config"
+      },
+      {
+        "stepNumber": 2,
+        "action": "Click 'User Analysis' tab — shows Sentiment section (Very Negative/Negative/Positive/Very Positive with color, priority, enabled toggles), AI Literacy section, Flags section with '+ Add custom' button for defining new flag types",
+        "screenshotKey": "flow-step-configure-analysis-definitions-2",
+        "pageUrl": "/platform/[chatbotId]/analysis-config"
+      }
+    ],
+    "expectedOutcome": "New analysis definition is active and will be detected in future conversations",
+    "failureModes": [],
+    "relatedFlows": [
+      "Review a specific conversation"
+    ],
+    "alternativePaths": [
+      "Assistant Analysis tab",
+      "Calibration tab"
+    ]
+  },
+  {
+    "name": "Export conversation data",
+    "description": "Download chatbot conversation data for external analysis",
+    "persona": "Data analyst who needs chatbot conversation data for custom analysis in their own tools",
+    "preconditions": [
+      "Chatbot has conversations"
+    ],
+    "startingPage": "/platform/[chatbotId]/settings",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "Navigate to /platform/[chatbotId]/settings — tabs: General, Billing, Company Info, API Keys, Members, Webhooks, Import/Export Data",
+        "screenshotKey": "flow-step-export-conversation-data-1",
+        "pageUrl": "/platform/[chatbotId]/settings"
+      },
+      {
+        "stepNumber": 2,
+        "action": "Click 'Import/Export Data' tab — Export section: Format dropdown (JSON), 'Include analysis results' checkbox (checked), '1,208 messages across all conversations', Export button. Import section: Upload JSON/CSV, Download template CSV, Choose File + Import button.",
+        "screenshotKey": "flow-step-export-conversation-data-2",
+        "pageUrl": "/platform/[chatbotId]/settings?tab=import-export"
+      }
+    ],
+    "expectedOutcome": "Complete conversation data file is downloaded with all messages and optionally analysis results",
+    "failureModes": [],
+    "relatedFlows": [],
+    "alternativePaths": [
+      "Import conversations from JSON/CSV"
+    ]
+  }
+]

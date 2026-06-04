@@ -1,0 +1,237 @@
+---
+title: "Settings, keys & webhooks"
+description: "Manage settings, keys, webhooks, and analysis definitions."
+icon: "settings"
+---
+{/* SOURCES: _sources/cli-readme.md; _sources/skill-openbat-settings.md */}
+
+The `settings`, `webhooks`, and `analysis` command groups manage a chatbot's configuration: its description and language, the API keys that authenticate against it, the webhook endpoints that receive alerts, and the analysis definitions OpenBat scores conversations against. Every command targets one chatbot — pass `--chatbot ID` explicitly. All of these commands require an admin or PAT key; the read-only `ob_read_*` kind cannot reach them.
+
+<Note>
+Mint commands (`rotate-ingest`, `generate-read`, `generate-admin`, `webhooks create`) print plaintext secrets to **stderr** inside a "shown ONCE" banner, and the structured response (without the plaintext) to **stdout**. Capture the secret immediately — it is not re-revealable. Piping stderr to `/dev/null` loses the secret.
+</Note>
+
+## Keys
+
+OpenBat has four key kinds. The three you mint and manage here are the ingest key (`ob_live_*`, used only by the SDK capture endpoint), the read key (`ob_read_*`), and admin keys (`ob_admin_*`). See [Authentication](/cli/authentication) for the full ladder including PATs.
+
+```bash
+# Rotate the ingest (SDK) key — immediately invalidates the previous one:
+openbat settings keys rotate-ingest --chatbot $CB
+
+# Generate or rotate the read key (one per chatbot):
+openbat settings keys generate-read --chatbot $CB
+
+# Mint a fresh admin key (N admin keys per chatbot allowed):
+openbat settings keys generate-admin --chatbot $CB --name "CI key" --expires-in-days 30
+
+# List admin keys for a chatbot:
+openbat settings keys list-admin --chatbot $CB
+
+# Revoke an admin key:
+openbat settings keys revoke-admin --chatbot $CB --key $KEY_ID
+```
+
+| Command | Required key | What it does |
+|---|---|---|
+| `keys list-admin --chatbot ID` | admin or PAT | List admin keys for a chatbot |
+| `keys rotate-ingest --chatbot ID` | admin or PAT | New `ob_live_*` (shown once) |
+| `keys generate-read --chatbot ID` | admin or PAT | New `ob_read_*` (shown once) |
+| `keys generate-admin --chatbot ID --name N [--expires-in-days]` | PAT | New `ob_admin_*` |
+| `keys revoke-admin --chatbot ID --key KEYID` | PAT | Revoke an admin key |
+
+<ParamField path="--chatbot" type="string" required>
+The chatbot id every key command targets.
+</ParamField>
+
+<ParamField path="--name" type="string">
+A label for the minted admin key. Required by `generate-admin`.
+</ParamField>
+
+<ParamField path="--expires-in-days" type="number">
+Optional expiry for a minted admin key.
+</ParamField>
+
+<ParamField path="--key" type="string">
+The key id to revoke, passed to `revoke-admin`.
+</ParamField>
+
+### Mint a key in the dashboard
+
+The CLI itself needs a key before it can mint others. Generate the first one in the dashboard:
+
+- **Read key** → `Settings → API Keys → Generate Read key`
+- **Admin key** → `Settings → API Keys → Generate Admin key`
+- **PAT** → `Settings → Personal Access Tokens`
+
+Each plaintext is shown exactly once. Save it with stdin to keep it out of shell history:
+
+```bash
+echo "ob_pat_..." | openbat config set-key --from-stdin
+```
+
+### Key rotation rules
+
+<Warning>
+The read key has at most **one active version** per chatbot — generating a new read key implicitly rotates and invalidates the old one. `rotate-ingest` likewise immediately invalidates the previous ingest key.
+</Warning>
+
+Admin keys behave differently: a chatbot may hold multiple active admin keys at once, which lets you mint a replacement before retiring the old one. Revoke retired admin keys explicitly with `revoke-admin`.
+
+### Scoping a key to one chatbot
+
+`ob_read_*` and `ob_admin_*` keys are scoped to one chatbot server-side, so the CLI can only ever see that chatbot — there is nothing to pin. A `ob_pat_*` spans many chatbots; pin one with `openbat use <id>` so every command stays on it. See [Active chatbot](/cli/active-chatbot) for the pinning model.
+
+## Webhooks
+
+Webhooks are the endpoints that [workflows](/cli/workflows-reports) fire when an analysis result matches a trigger. Each webhook is one of three types and is host-allowlisted at write time (appears to be SSRF defence). The signing secret returned at create time is shown ONCE.
+
+```bash
+openbat webhooks list --chatbot $CB
+openbat webhooks create --chatbot $CB --name slack-on-flag \
+  --url https://hooks.slack.com/services/T.../B.../X --type slack
+openbat webhooks delete --chatbot $CB --webhook $WH
+```
+
+| Command | Required key | What it does |
+|---|---|---|
+| `webhooks list --chatbot ID` | admin or PAT | List webhooks for a chatbot |
+| `webhooks create --chatbot ID --name --url --type discord\|slack\|custom` | admin or PAT | Create a webhook; returns the signing secret (once) |
+| `webhooks delete --chatbot ID --webhook WHID` | admin or PAT | Delete a webhook |
+
+<ParamField path="--type" type="string" required>
+One of `discord`, `slack`, or `custom`.
+</ParamField>
+
+<ParamField path="--url" type="string" required>
+The destination URL. The host is allowlisted at write time.
+</ParamField>
+
+<ParamField path="--name" type="string" required>
+A label for the webhook.
+</ParamField>
+
+<ParamField path="--webhook" type="string" required>
+The webhook id (`WHID`) passed to `delete`.
+</ParamField>
+
+`create` writes the structured response to stdout, so you can capture the new id for a workflow:
+
+```bash
+openbat webhooks create --chatbot $CB --name foo --url ... --type slack > webhook.json
+jq .id webhook.json
+```
+
+<Warning>
+Webhook signing secrets are not re-revealable. If you lose one, delete and recreate the webhook. `delete` is irreversible — any workflow node that references the webhook will be invalidated at runtime.
+</Warning>
+
+## Chatbot settings
+
+Update a chatbot's description, public website URL, or language. The allowlist of settable keys is enforced server-side; unknown keys are rejected.
+
+```bash
+openbat settings update --chatbot $CB \
+  --description "Help desk for Acme support" \
+  --website-url https://acme.com \
+  --language en
+```
+
+| Flag | Description |
+|---|---|
+| `--chatbot ID` | The chatbot to update (required) |
+| `--description` | New description text |
+| `--website-url` | Public website URL |
+| `--language` | Language code, e.g. `en` |
+
+## Analysis definitions
+
+Analysis definitions are the dimensions OpenBat scores conversations against — intents, flags, assistant outcomes, and assistant issues. List the current set or add a new one. Both subcommands require an admin or PAT key.
+
+```bash
+# List definitions, optionally filtered by type or to pending ones:
+openbat analysis list --chatbot $CB --type flag --pending
+
+# Add a flag definition:
+openbat analysis add --chatbot $CB --type flag --name billing_issue \
+  --display-name "Billing Issue" --description "Customer raises a billing concern"
+```
+
+| Command | What it does |
+|---|---|
+| `analysis list --chatbot ID [--type] [--pending]` | List analysis definitions |
+| `analysis add --chatbot ID --type T --name SLUG --display-name "..." --description "..."` | Add a definition |
+
+<ParamField path="--type" type="string" required>
+One of `intent`, `flag`, `assistant_outcome`, or `assistant_issue`.
+</ParamField>
+
+<ParamField path="--name" type="string" required>
+The slug for the definition, e.g. `billing_issue`.
+</ParamField>
+
+<ParamField path="--display-name" type="string" required>
+The human-readable label.
+</ParamField>
+
+<ParamField path="--description" type="string" required>
+What the analyzer should match — for example, "Customer raises a billing concern".
+</ParamField>
+
+## Custom metadata fields
+
+Metadata fields are auto-discovered from SDK capture payloads. They start as `pending` and can be accepted or denied.
+
+<Note>
+There is no CLI command for metadata fields yet — use the dashboard or MCP. The MCP tools `openbat_list_metadata_fields` and `openbat_update_metadata_field` support both flows.
+</Note>
+
+## Worked example
+
+Wire a chatbot from a fresh admin key through a flag-triggered Slack alert:
+
+<Steps>
+<Step title="Mint an admin key">
+With a PAT configured, mint an admin key so you can manage the chatbot without the broader-scoped PAT.
+
+```bash
+openbat settings keys generate-admin --chatbot $CB --name "dev" --expires-in-days 30
+#   stderr: ob_admin_... (shown ONCE)
+```
+</Step>
+
+<Step title="Create the webhook">
+Create the Slack webhook and capture its id from stdout.
+
+```bash
+openbat webhooks create --chatbot $CB --name "ops" \
+  --url https://hooks.slack.com/services/T.../B.../X --type slack
+#   stdout: { id: WH_ID, ... }
+```
+</Step>
+
+<Step title="Add the analysis definition">
+Define the flag the workflow will trigger on.
+
+```bash
+openbat analysis add --chatbot $CB --type flag --name billing_issue \
+  --display-name "Billing Issue" --description "Customer raises a billing concern"
+```
+</Step>
+
+<Step title="Create the workflow">
+Connect the flag to the webhook so the alert fires on a match. See [Workflows & reports](/cli/workflows-reports) for templates.
+
+```bash
+openbat workflows create --chatbot $CB \
+  --name "billing → slack" \
+  --template flag-to-webhook \
+  --trigger-value billing_issue \
+  --webhook $WH_ID
+```
+</Step>
+</Steps>
+
+<Tip>
+A `403` on any of these commands means the key is valid but lacks permission — for example, a read-scope PAT trying to mint, or an admin key trying to run a PAT-only command like `generate-admin` or `revoke-admin`. A `401` means the key is invalid, expired, or the wrong kind; run `openbat auth whoami` and try a fresh key.
+</Tip>

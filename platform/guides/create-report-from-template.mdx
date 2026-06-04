@@ -1,0 +1,55 @@
+---
+title: "Create a report from a template"
+description: "Build a dashboard report from a template."
+icon: "chart-column"
+---
+{/* SOURCES: flows/create-report-from-template.md; pages/reports.md */}
+
+Start a new report from a pre-built template to get a populated dashboard of relevant widgets without building from scratch. This suits a CS manager who wants a recurring sentiment overview.
+
+<Note title="Before you begin">
+  - Your chatbot has conversation data.
+</Note>
+
+<Steps>
+  <Step title="Open the Reports page">
+    Navigate to the chatbot's **Reports** page (`/platform/[chatbotId]/reports`). The **START FROM A TEMPLATE** section lists four templates — Customer Pulse, Sentiment Distribution, Risk Flags Leaderboard, and Topics & Intents Overview. The **Your reports** section shows **No reports yet** until you create one.
+
+    <Frame caption="The Reports page with the START FROM A TEMPLATE section and an empty Your reports list.">
+      <img src="/images/guides/create-report-from-template/step-01.png" alt="create-report-from-template step 1" />
+    </Frame>
+  </Step>
+  <Step title="Click a template card">
+    Click the **Customer Pulse** template card to create a report from it.
+
+    <Frame caption="Selecting the Customer Pulse template card.">
+      <img src="/images/guides/create-report-from-template/step-02.png" alt="create-report-from-template step 2" />
+    </Frame>
+  </Step>
+  <Step title="Review the created report">
+    The report is created and loaded with pre-configured widgets. The Customer Pulse report shows CONVERSATIONS, AVG SENTIMENT, TOTAL MESSAGES, and SENTIMENT TREND. Filters default to **Last 30 days** and Prompt **All versions**. Report actions include **+ Add chart**, **Customize**, **Pin**, and **Delete**, plus a **Chat** button for the copilot. Optionally customize the report by chatting with the copilot sidebar.
+  </Step>
+</Steps>
+
+<Check>
+A new report is created with pre-populated widgets showing relevant chatbot analytics.
+</Check>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Widgets appear empty">
+    A template can show empty widgets if your chatbot has no data for that analysis type. Confirm the chatbot has conversation data for the metrics the template tracks.
+  </Accordion>
+</AccordionGroup>
+
+## Next steps
+
+<Columns cols={2}>
+  <Card title="Ask AI about chatbot data" icon="message-bot" href="/platform/guides/ask-ai-about-chatbot-data">
+    Use the built-in AI assistant to ask natural-language questions about your conversation data.
+  </Card>
+  <Card title="Reports" icon="chart-column" href="/platform/features/reports">
+    Learn how reports work, including creating a blank report and adding widgets.
+  </Card>
+</Columns>

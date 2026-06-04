@@ -1,0 +1,87 @@
+---
+title: "Core concepts"
+description: "Chatbots, conversations, analyses, prompts, and keys."
+icon: "shapes"
+---
+{/* SOURCES: knowledgebase/architecture.md; knowledgebase/feature-inventory.md */}
+
+OpenBat works in three stages: **capture** the messages your AI chatbot exchanges, **analyze** each message against the definitions you configure, and **surface** the results across dashboards, search, reports, and workflows. The terms below are the vocabulary you'll see throughout the platform.
+
+## The capture, analyze, surface loop
+
+- **Capture** — Your SDK sends conversation messages to the ingestion endpoint (`POST /api/v1/capture`) using a chatbot API key. Messages are stored against the chatbot they belong to.
+- **Analyze** — Each message is run through the analysis definitions you set up in [Analysis Config](/platform/features/analysis-config): sentiment, AI literacy, custom flags, outcome types, issue types, personas, and more. Results are stored per message, and a message can carry multiple analysis results.
+- **Surface** — Analysis results appear in the conversation transcript, aggregate into the overview dashboard, and feed search, query-type clustering, reports, and workflow alerts.
+
+This pipeline is the core differentiator: instead of hardcoded metrics, you define what gets analyzed. (The ingestion-to-analysis flow described here is inferred from URL and API patterns and appears to run server-side.)
+
+## Core entities
+
+These are the objects OpenBat tracks. The hierarchy below is inferred from the platform's URL structure.
+
+- **Organization** — The top-level tenant. All data is scoped to an organization, and you manage members and org settings at this level. You can switch organizations from the sidebar org switcher.
+- **Chatbot** — An independent analytics unit inside an organization, with its own conversations, analysis config, prompts, reports, workflows, and settings. Chatbots have statuses: Active, Pending, Archive, and Demo.
+- **Conversation** — A thread of messages captured from one chatbot. Each conversation has an outcome, sentiment, flags, and a message count.
+- **Message** — A single user or assistant turn within a conversation. Messages are color-coded in the transcript (user in pink, assistant in green).
+- **Analysis** — A result attached to a message. Multiple analysis types can apply to the same message, and they roll up into conversation-level and dashboard-level views.
+- **User** — An external end-user of the chatbot (not a team member), tracked with health score, persona, AI literacy score, and conversation count.
+- **External customer organization** — A customer org that the chatbot's users belong to, populated automatically when the SDK sends organization metadata.
+- **System prompt** — The versioned prompt that drives the chatbot, managed with a version timeline, publish modes, rollback, and experiments.
+- **API key** — A chatbot-specific ingestion credential (format `ob_live_*`) used to authenticate SDK capture calls. Keys can be rotated from chatbot settings.
+
+## The kinds of analysis
+
+What OpenBat looks for in each message is configurable. You climb this ladder from built-in scoring toward custom, domain-specific definitions in [Analysis Config](/platform/features/analysis-config):
+
+1. **Sentiment** — User sentiment scoring per message and conversation.
+2. **AI literacy** — A score reflecting how effectively a user works with the chatbot.
+3. **Flags** — Built-in and custom flag definitions (name, description, color, priority) that mark notable moments such as risk signals.
+4. **Outcome types** — How a conversation resolved (for example Resolved, Partially Resolved, Failed), configured under Assistant Analysis.
+5. **Issue types** — Assistant-side problems such as quality issues or hallucinations, with custom definitions.
+6. **Personas** — AI-generated user persona cards with auto-discovery.
+7. **Calibration** — Training examples you provide to tune accuracy across sentiment, intent, flags, outcomes, issues, and faithfulness.
+
+Custom definitions apply to future conversations once active; existing conversations need re-analysis to pick up changes.
+
+## The four surfaces
+
+Once messages are analyzed, the results show up across four kinds of surfaces.
+
+<Columns cols={2}>
+  <Card title="Dashboards" icon="gauge" href="/platform/features/overview-dashboard">
+    The chatbot overview rolls analyses into summary cards — At-Risk Orgs, Performance, Activity, and Risks — with sparkline charts and a built-in AI chat for natural-language questions.
+  </Card>
+  <Card title="Search and clustering" icon="magnifying-glass" href="/platform/features/deep-search">
+    Deep Search finds conversations by meaning, and Query Types clusters user messages into canonical question categories with volume, intent, sentiment, and resolution rates.
+  </Card>
+  <Card title="Reports" icon="chart-column" href="/platform/features/reports">
+    Chat-driven dashboards built by the AI from templates like Customer Pulse and Sentiment Distribution, or from a blank report.
+  </Card>
+  <Card title="Workflows" icon="bell" href="/platform/features/workflows">
+    Automated alerts that fire when analysis conditions are met, sending notifications to Slack, Discord, or custom webhooks.
+  </Card>
+</Columns>
+
+## How keys and access fit together
+
+OpenBat uses two separate credential paths, inferred from the platform's auth behavior:
+
+- **Dashboard access** — You sign in with email and password to reach the platform. Access is role-based: Owner, Admin, and Member at the organization level, and Editor and Viewer at the chatbot level.
+- **SDK ingestion** — Your application authenticates capture calls with a chatbot API key (`ob_live_*`), managed under the API Keys tab in [chatbot settings](/platform/features/chatbot-settings).
+
+## Where to go next
+
+<Columns cols={2}>
+  <Card title="How OpenBat works" icon="diagram-project" href="/get-started/how-openbat-works">
+    See the capture, analyze, surface loop end to end.
+  </Card>
+  <Card title="Surfaces" icon="grid-2" href="/get-started/surfaces">
+    Tour the four places analysis results show up.
+  </Card>
+  <Card title="Analysis config" icon="sliders" href="/platform/features/analysis-config">
+    Configure what each message gets analyzed for.
+  </Card>
+  <Card title="System prompt" icon="file-pen" href="/platform/features/system-prompt">
+    Version, publish, and experiment with your prompt.
+  </Card>
+</Columns>

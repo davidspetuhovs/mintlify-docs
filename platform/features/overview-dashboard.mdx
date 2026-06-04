@@ -1,0 +1,69 @@
+---
+title: "Overview dashboard"
+description: "Headline metrics, risks, and the AI chat."
+icon: "gauge"
+---
+{/* SOURCES: knowledgebase/feature-inventory.md; pages/chatbot-overview-dashboard.md */}
+
+The overview dashboard is the primary workspace for a chatbot, combining an AI chat for asking natural-language questions about your data with summary cards for health, performance, activity, and risk. It opens when you click a chatbot card from `/platform` and lives at `/platform/[chatbotId]`.
+
+<Frame caption="The chatbot overview dashboard with the AI chat and summary cards">
+  <img src="/images/platform/overview-dashboard.png" alt="Chatbot overview dashboard" />
+</Frame>
+
+## What you can do here
+
+- Ask the AI chat any question about your chatbot data using the message input ("What can I help you discover?").
+- Use command hints while typing: `@` to tag an entity, `$` to scope by plan, `#` for user analysis, `!` for assistant analysis, and `^` to scope by prompt.
+- View at-risk organizations through the At-Risk Orgs card and the "View all" link.
+- Check performance metrics: Resolution %, Quality Issues, and AI Literacy.
+- Monitor activity trends through the conversation count on the Activity card.
+- Review risk signals: churn risks, yes-man, and hallucinations.
+- Click any metric to drill down, and read its sparkline chart.
+- Reopen a past AI chat from the History dropdown.
+
+## Summary cards
+
+Each summary card surfaces a different dimension of chatbot health, and every metric is clickable with a sparkline chart.
+
+- **At-Risk Orgs** — customer organizations flagged as at risk, with a "View all" link to the full directory.
+- **Performance** — Resolution %, Quality Issues, and AI Literacy.
+- **Activity** — conversation count over the period.
+- **Risks** — churn risks, yes-man, and hallucinations.
+
+<Frame caption="Credit usage on the overview dashboard">
+  <img src="/images/states/overview-credits.png" alt="Overview credits" />
+</Frame>
+
+## Where it lives
+
+The dashboard is at `/platform/[chatbotId]`, reached by clicking a chatbot card from `/platform`. Selecting a chatbot switches the sidebar to chatbot-specific navigation: Dashboard, Reports, Workflows, Prompt, Users, Conversations, Query Types, Deep Search, Analysis Config, and Chatbot Settings.
+
+<Frame caption="Reopening a previous chat from the History dropdown">
+  <img src="/images/states/overview-history.png" alt="Overview history" />
+</Frame>
+
+<Frame caption="Switching between chatbots from the overview">
+  <img src="/images/states/overview-switcher.png" alt="Overview switcher" />
+</Frame>
+
+<Note>
+The dashboard reflects data once your chatbot has captured conversations and been onboarded. Asking the AI chat before any conversations are captured returns empty results.
+</Note>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Ask AI about chatbot data" icon="message-circle" href="/platform/guides/ask-ai-about-chatbot-data">
+    Step-by-step guide to querying your data in the AI chat.
+  </Card>
+  <Card title="Users and organizations" icon="users" href="/platform/features/users-and-organizations">
+    Drill into at-risk organizations and end-user health.
+  </Card>
+  <Card title="Conversations" icon="messages-square" href="/platform/features/conversations">
+    Browse and filter the conversations behind each metric.
+  </Card>
+  <Card title="Reports" icon="layout-dashboard" href="/platform/features/reports">
+    Build reusable dashboards from your analytics.
+  </Card>
+</Columns>

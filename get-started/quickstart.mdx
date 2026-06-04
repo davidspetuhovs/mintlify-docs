@@ -1,0 +1,126 @@
+---
+title: "Quickstart"
+description: "Capture your first conversation in five minutes."
+icon: "rocket"
+---
+{/* SOURCES: knowledgebase/onboarding-guide.md; _sources/sdk-readme.md; _sources/cli-readme.md */}
+
+OpenBat captures conversations between end-users and your AI chatbot, then runs automated analysis over them. To get there, you create a chatbot, copy its API key, wire up the SDK, and confirm the first message arrives.
+
+<Steps>
+  <Step title="Create an account and a chatbot">
+    Sign up at `/auth/sign-up` with your work email and a password (minimum 8 characters), then check your inbox and click the verification link. Sign in at `/auth/login` to land on `/platform`, your organization's chatbot list.
+
+    On `/platform`, click **New chatbot** in the top right and fill in the chatbot configuration. A new chatbot is created with its own API key, and you're taken to the onboarding wizard.
+  </Step>
+
+  <Step title="Copy your API key">
+    The onboarding wizard at `/platform/[chatbotId]/onboarding` walks you through copying the API key and integrating the SDK. Use the copy button to grab the key — it has an `ob_live_` prefix and is the ingest key the SDK uses to send conversations.
+
+    <Frame caption="The onboarding wizard for a new chatbot — copy the API key, then integrate the SDK.">
+      <img src="/images/platform/onboarding.png" alt="Chatbot onboarding wizard" />
+    </Frame>
+
+    Set the key as an environment variable so the SDK can read it:
+
+    ```bash
+    OPENBAT_API_KEY=ob_live_your_api_key_here
+    ```
+  </Step>
+
+  <Step title="Install the SDK">
+    Install `@openbat/sdk` in your chatbot's codebase:
+
+    ```bash
+    npm install @openbat/sdk
+    ```
+  </Step>
+
+  <Step title="Record your first conversation">
+    Initialize the client and call `recordMessages()` after a conversation turn. The client reads `OPENBAT_API_KEY` from the environment if you don't pass `apiKey`:
+
+    ```typescript
+    import { OpenBat } from "@openbat/sdk";
+
+    const client = new OpenBat({
+      apiKey: process.env.OPENBAT_API_KEY,
+    });
+
+    await client.recordMessages({
+      conversationId: "session-abc-123",
+      messages: [
+        { role: "user", content: "How do I reset my password?" },
+        { role: "assistant", content: "Go to Settings > Security > Reset Password." },
+      ],
+    });
+    ```
+
+    Messages are sent asynchronously, and the SDK never throws — errors are caught internally and logged to `console.error`, so a failed capture can't break your app.
+
+    Not using TypeScript? Call the capture endpoint directly with the same key in the `x-openbat-key` header:
+
+    ```bash
+    curl -X POST https://openbat.dev/api/v1/capture \
+      -H "Content-Type: application/json" \
+      -H "x-openbat-key: ob_live_your_api_key_here" \
+      -d '{
+        "conversationId": "session-abc-123",
+        "messages": [
+          { "role": "user", "content": "How do I reset my password?" },
+          { "role": "assistant", "content": "Go to Settings > Security > Reset Password." }
+        ]
+      }'
+    ```
+
+    A successful capture returns the stored conversation id and the number of messages queued for analysis:
+
+    ```json
+    {
+      "ok": true,
+      "conversationId": "uuid-...",
+      "messagesStored": 2,
+      "analysisQueued": 2
+    }
+    ```
+  </Step>
+
+  <Step title="Verify the first event arrived">
+    Send a real chat turn through your app, then confirm the message reached OpenBat. To check your console, the SDK logs any failure as `OpenBat Error: ...`; a clean console plus messages in the dashboard means it's working.
+
+    If you have the CLI installed, you can poll for the first event instead. Install it and verify against your chatbot id:
+
+    ```bash
+    npm i -g @openbat/cli
+    openbat sdk verify --chatbot <chatbotId> --timeout 60
+    ```
+
+    `openbat sdk verify` polls until the first event lands, exiting `0` on the first event and `2` on timeout.
+  </Step>
+</Steps>
+
+<Check>
+  Your first conversation is captured. Once analysis runs, it surfaces in the chatbot dashboard at `/platform/[chatbotId]` and in the conversation list at `/platform/[chatbotId]/conversations`.
+</Check>
+
+## Next steps
+
+<Columns cols={2}>
+  <Card title="SDK quickstart" icon="code" href="/sdk/quickstart">
+    Full SDK setup, the `recordMessages()` shape, and configuration options.
+  </Card>
+  <Card title="Vercel AI SDK integration" icon="plug" href="/sdk/integrations/vercel-ai-sdk">
+    Wrap a `streamText` response with `withOpenBat` or capture in `onFinish`.
+  </Card>
+  <Card title="Enrich your conversations" icon="user" href="/sdk/enriching-context">
+    Attach user, organization, and session context for richer analytics.
+  </Card>
+  <Card title="Review conversations" icon="messages" href="/platform/features/conversations">
+    Filter, search, and drill into transcripts with their analysis results.
+  </Card>
+  <Card title="Overview dashboard" icon="layout-dashboard" href="/platform/features/overview-dashboard">
+    Read at-risk orgs, performance, and risk signals, and ask the AI chat.
+  </Card>
+  <Card title="Run the eval loop" icon="target" href="/eval-mode/index">
+    Probe your chatbot, read the analysis, fix it, and re-test with the CLI.
+  </Card>
+</Columns>

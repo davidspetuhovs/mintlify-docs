@@ -1,0 +1,148 @@
+---
+title: "Install & configure"
+description: "Get a key and configure Claude Desktop, Cursor, others."
+icon: "download"
+---
+{/* SOURCES: _sources/mcp-readme.md */}
+
+`@openbat/mcp` is a [Model Context Protocol](https://modelcontextprotocol.io) server that lets Claude Desktop, Cursor, or any MCP-aware client manage an OpenBat chatbot end-to-end. You don't globally install anything — you configure your MCP client to launch the server on demand via `npx`, passing an OpenBat API key through the `OPENBAT_API_KEY` environment variable.
+
+<Note>
+The exposed tool surface scales with credential strength: a read key gives the read-only surface, an admin key adds the per-chatbot write tools, and a PAT also exposes chatbot-creation and org-level tools. See [Credentials](/mcp/credentials) for how to pick the right kind.
+</Note>
+
+## Get an API key
+
+Generate the appropriate key in the OpenBat dashboard. The plaintext is shown exactly once.
+
+| Key kind | Where to generate it |
+|---|---|
+| `ob_read_*` | `Settings → API Keys → Generate Read key` |
+| `ob_admin_*` | `Settings → API Keys → Generate Admin key` |
+| `ob_pat_*` | `Settings → Personal Access Tokens` |
+
+<Tip>
+Each dashboard page has a **"Copy MCP config (with key)"** button that pre-fills the JSON below so you can paste it straight into Claude or Cursor.
+</Tip>
+
+<Warning>
+Don't use an ingest key (`ob_live_*`). It's SDK-only — the server refuses it at startup and exits with `openbat-mcp: ob_live_* keys are SDK-only — use an ob_read_*, ob_admin_*, or ob_pat_* key instead.`
+</Warning>
+
+## Configure your client
+
+<Steps>
+  <Step title="Claude Desktop">
+    Edit `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS), or the equivalent on your platform, and add an `openbat` entry under `mcpServers`:
+
+    ```jsonc
+    {
+      "mcpServers": {
+        "openbat": {
+          "command": "npx",
+          "args": ["-y", "@openbat/mcp"],
+          "env": {
+            "OPENBAT_API_KEY": "ob_pat_..."
+          }
+        }
+      }
+    }
+    ```
+
+    Restart Claude Desktop. The OpenBat tools appear in the tool selector.
+  </Step>
+
+  <Step title="Cursor">
+    Cursor reads `.cursor/mcp.json` in your project, or `~/.cursor/mcp.json` globally — same shape:
+
+    ```jsonc
+    {
+      "mcpServers": {
+        "openbat": {
+          "command": "npx",
+          "args": ["-y", "@openbat/mcp"],
+          "env": {
+            "OPENBAT_API_KEY": "ob_pat_..."
+          }
+        }
+      }
+    }
+    ```
+
+    Reload Cursor.
+  </Step>
+
+  <Step title="Other MCP clients">
+    The server speaks stdio JSON-RPC. Any client that follows the [MCP spec](https://spec.modelcontextprotocol.io) can launch it the same way — `npx -y @openbat/mcp` with `OPENBAT_API_KEY` in the environment.
+  </Step>
+</Steps>
+
+The API key is read from `OPENBAT_API_KEY` only — never from arguments or stdin — so it can't leak via shell history or process listings.
+
+## Pin to a single chatbot
+
+When a PAT can reach many chatbots, set `OPENBAT_CHATBOT_ID` to lock the server to one. This is the safe default. A chatbot-scoped `ob_read_*` or `ob_admin_*` key is single-chatbot by construction, so the pin is automatic — nothing to set.
+
+```jsonc
+{
+  "mcpServers": {
+    "openbat": {
+      "command": "npx",
+      "args": ["-y", "@openbat/mcp"],
+      "env": { "OPENBAT_API_KEY": "ob_pat_...", "OPENBAT_CHATBOT_ID": "<uuid>" }
+    }
+  }
+}
+```
+
+See [Pinning](/mcp/pinning) for what the server injects, hides, and rejects when a pin is active.
+
+## Override the base URL
+
+For dogfooding against a local dev server, set `OPENBAT_BASE_URL`:
+
+```jsonc
+{
+  "mcpServers": {
+    "openbat": {
+      "command": "npx",
+      "args": ["-y", "@openbat/mcp"],
+      "env": {
+        "OPENBAT_API_KEY": "ob_pat_...",
+        "OPENBAT_BASE_URL": "http://localhost:3000"
+      }
+    }
+  }
+}
+```
+
+<Warning>
+The server refuses non-HTTPS base URLs unless they point at `localhost` or `127.0.0.1`.
+</Warning>
+
+## Pre-load context for AI assistants
+
+If you're driving an AI agent through this MCP server, install the OpenBat agent skill bundle so the agent loads the right procedural knowledge — the auth ladder, safe-mutation patterns, and plaintext-only-once conventions — into its context:
+
+```bash
+npx skills add openbat-dev/agent-skills
+```
+
+This drops the `SKILL.md` bundle into the target project. The `using-openbat` skill is the comprehensive reference; the rest cover per-flow specifics (onboarding, settings, conversations, workflows, SDK install, the daily eval→fix loop, safe mutations, plan audit). The skills tell the agent how to choose between tools and when to confirm destructive ones. Source and docs: [github.com/openbat-dev/agent-skills](https://github.com/openbat-dev/agent-skills).
+
+## Next steps
+
+<Columns cols={2}>
+  <Card title="Credentials" icon="key" href="/mcp/credentials">
+    How key kind controls the tool surface and how to pick read, admin, or PAT.
+  </Card>
+  <Card title="Pinning" icon="lock" href="/mcp/pinning">
+    Lock the server to one chatbot and switch between chatbots.
+  </Card>
+  <Card title="Tools" icon="wrench" href="/mcp/tools">
+    The full tool list by `minKind`, with inputs and behavior.
+  </Card>
+  <Card title="Config examples" icon="file-code" href="/mcp/configs">
+    Ready-to-paste configs for read-only, admin, and full-control agents.
+  </Card>
+</Columns>

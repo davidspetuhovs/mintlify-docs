@@ -1,0 +1,88 @@
+---
+title: "Pin the active chatbot"
+description: "Scope every command to one chatbot."
+icon: "pin"
+---
+{/* SOURCES: _sources/cli-readme.md */}
+
+`ob_read_*` and `ob_admin_*` keys are already scoped to one chatbot server-side, so they only ever see that chatbot. A `ob_pat_*` reaches many chatbots across orgs — pin one so every command stays on it instead of asking you for a `--chatbot` each time.
+
+## Pin a chatbot
+
+```bash
+openbat use <id|name>     # persists ~/.openbatrc.activeChatbotId
+openbat use               # no arg → shows the current pin + reachable options
+```
+
+`openbat use` is a shortcut for `openbat config use-chatbot <id|name>`. Run it with no argument to print the current pin and the reachable list before you choose.
+
+<ParamField path="<id|name>" type="string">
+  The chatbot to pin, given as its id or its name. The pin persists to `~/.openbatrc` under `activeChatbotId`. Omit it to print the current pin plus the reachable list.
+</ParamField>
+
+## What pinning changes
+
+Once pinned, every data command (`conversations`, `analytics`, `review`, `prompts`, and the rest) targets that chatbot. Each prints a scope banner to **stderr** so the active chatbot is never in doubt:
+
+```text
+→ chatbot: <name> (<id>)
+```
+
+Because the banner goes to stderr, `--json | jq` stays clean — only structured output reaches stdout.
+
+## Resolution order
+
+The active chatbot is resolved in this order, each falling through to the next:
+
+| Priority | Source | Notes |
+|---|---|---|
+| 1 | `--chatbot <id\|name>` flag | Per-invocation override. |
+| 2 | `$OPENBAT_CHATBOT_ID` | Environment variable. |
+| 3 | `~/.openbatrc` | The persisted pin from `openbat use`. |
+
+```bash
+# Override the pin for a single command without changing it:
+openbat conversations list --chatbot other-bot --days 7
+
+# Or set it for the shell session via the environment:
+OPENBAT_CHATBOT_ID=other-bot openbat analytics overview
+```
+
+## Config subcommands
+
+The `config` group manages the pin alongside the rest of your stored configuration.
+
+| Command | Description |
+|---|---|
+| `openbat config use-chatbot <id\|name>` | Pin the active chatbot (persists to `~/.openbatrc`). |
+| `openbat config clear-chatbot` | Forget the pinned chatbot. |
+| `openbat config show` | Print the resolved config (key prefix + active chatbot). |
+
+```bash
+# Confirm what's currently resolved:
+openbat config show
+
+# Drop the pin entirely:
+openbat config clear-chatbot
+```
+
+<Note>
+  `openbat config show` prints the resolved key prefix and active chatbot, so it is the fastest way to confirm which chatbot your commands are hitting.
+</Note>
+
+## MCP reads the same pin
+
+The MCP server reads the same `~/.openbatrc` pin and **hard-locks** to it, so an MCP client cannot reach beyond the pinned chatbot.
+
+<Tip>
+  Pin once with `openbat use <id>` and both the CLI and the MCP server stay scoped to the same chatbot. See [MCP pinning](/mcp/pinning) for how the lock behaves over MCP.
+</Tip>
+
+<Columns cols={2}>
+  <Card title="Authentication" icon="key" href="/cli/authentication">
+    The four key kinds and which ones reach multiple chatbots.
+  </Card>
+  <Card title="Command tree" icon="list-tree" href="/cli/commands">
+    Every command that runs against the pinned chatbot.
+  </Card>
+</Columns>

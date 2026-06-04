@@ -1,0 +1,42 @@
+---
+title: "Workflows"
+description: "Automated alerts on analysis conditions."
+icon: "git-branch"
+---
+{/* SOURCES: knowledgebase/feature-inventory.md; pages/workflows.md */}
+
+Workflows turn conversation analysis results into automated alerts and actions. When specific analysis conditions are met during a conversation, a workflow fires and notifies an external destination such as Slack, Discord, or a custom webhook.
+
+<Frame caption="The Workflows page with the Workflows, Runs, and Templates tabs.">
+  <img src="/images/platform/workflows.png" alt="Workflows page" />
+</Frame>
+
+## What you can do
+
+- Create a new workflow with the **Create workflow** button.
+- Browse pre-built workflow **Templates**, categorized as Alerting, Escalation, Reporting, Moderation, and General.
+- View workflow execution history on the **Runs** tab.
+- Filter runs by status: All, Pending, Triggered, Skipped, Success, or Failed.
+- Switch between the **Workflows**, **Runs**, and **Templates** tabs.
+
+## Tabs
+
+<CardGroup cols={3}>
+  <Card title="Workflows" icon="list">
+    The list of workflows you have set up for this chatbot.
+  </Card>
+  <Card title="Runs" icon="clock-rotate-left">
+    Execution history, filterable by status (All, Pending, Triggered, Skipped, Success, Failed).
+  </Card>
+  <Card title="Templates" icon="layer-group">
+    Pre-built workflow templates grouped by category.
+  </Card>
+</CardGroup>
+
+## Where it lives
+
+Workflows live at `/platform/[chatbotId]/workflows`, accessed from the chatbot sidebar. Workflows connect analysis results to external actions, so you configure their destinations (Discord, Slack, custom webhooks) on the **Webhooks** tab of [Chatbot settings](/platform/features/chatbot-settings).
+
+<Card title="Create a workflow from a template" icon="git-branch" href="/platform/guides/create-workflow-from-template">
+  Set up an automated alert workflow from a pre-built template, such as notifying Slack when an organization becomes at-risk.
+</Card>

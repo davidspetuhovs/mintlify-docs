@@ -1,0 +1,46 @@
+---
+title: "Export conversation data"
+description: "Download conversations as JSON or CSV."
+icon: "download"
+---
+{/* SOURCES: flows/export-conversation-data.md; pages/chatbot-settings.md */}
+
+Download your chatbot's conversation data as a file for external analysis in your own tools. This is for data analysts who need the raw messages, optionally with analysis results, outside the platform.
+
+<Note title="Before you begin">
+  - The chatbot has conversations to export.
+</Note>
+
+<Steps>
+  <Step title="Open chatbot settings">
+    Navigate to `/platform/[chatbotId]/settings`. The page shows seven tabs: General, Billing, Company Info, API Keys, Members, Webhooks, and Import/Export Data.
+
+    <Frame caption="The chatbot settings page with its seven tabs.">
+      <img src="/images/guides/export-conversation-data/step-01.png" alt="export-conversation-data step 1" />
+    </Frame>
+  </Step>
+
+  <Step title="Open the Import/Export Data tab and export">
+    Click the **Import/Export Data** tab. In the Export section, choose a **Format** from the dropdown (JSON), leave **Include analysis results** checked to include them, and review the count of messages across all conversations. Click **Export** to generate and download the file.
+
+    <Frame caption="The Export section showing the format dropdown, Include analysis results checkbox, message count, and Export button.">
+      <img src="/images/guides/export-conversation-data/step-02.png" alt="export-conversation-data step 2" />
+    </Frame>
+  </Step>
+</Steps>
+
+<Check>
+  A complete conversation data file is downloaded with all messages and, if you kept the option checked, the analysis results.
+</Check>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="The export is taking a while to generate">
+    Large datasets may take time to generate. Allow the export to finish before retrying.
+  </Accordion>
+
+  <Accordion title="The downloaded file is very large">
+    File size may be significant for high-volume chatbots. If you do not need the analysis results, uncheck **Include analysis results** before exporting to reduce the output.
+  </Accordion>
+</AccordionGroup>

@@ -1,0 +1,224 @@
+---
+title: "Command reference"
+description: "The full command tree."
+icon: "list-tree"
+---
+{/* SOURCES: _sources/cli-readme.md */}
+
+`@openbat/cli` exposes every OpenBat capability as a subcommand under a single `openbat` binary. All commands operate on one pinned chatbot (`openbat use <id>`), accept any read-capable key, and support `--json` for raw output. Each command line below is annotated with the key kind it requires — `[any kind]`, `[admin or pat]`, or `[pat]` — matching the four-kind auth ladder.
+
+## Command tree
+
+```text
+openbat
+├── config
+│   ├── set-key            Store / replace the key in ~/.openbatrc
+│   ├── set-url <baseUrl>  Override the API base URL
+│   ├── show               Print the resolved config (key prefix + active chatbot)
+│   ├── use-chatbot <id|name>  Pin the active chatbot (persists to ~/.openbatrc)
+│   └── clear-chatbot     Forget the pinned chatbot
+│
+├── use [id|name]                                             [any kind]
+│   └── Pin the active chatbot (shortcut for `config use-chatbot`).
+│       Omit the arg to print the current pin + the reachable list.
+│
+├── auth                                                      [any kind]
+│   └── whoami             Show kind, chatbots in scope, orgs (PAT only)
+│       (audit history: query api_audit_log in Supabase Studio — no CLI subcommand yet)
+│
+├── org                                                       [pat]
+│   ├── list                                                  List user's orgs
+│   ├── show                                                  Active org + members
+│   ├── rename --id ORG --name "..."                          Owner only
+│   ├── members list --id ORG
+│   ├── members invite --id ORG --email --role member|admin
+│   ├── members set-role --id ORG --member M --role admin|member
+│   ├── members remove --id ORG --member M
+│   └── invitations list --id ORG
+│
+├── chatbots                                                  [any kind]
+│   ├── list                                                  Every chatbot in scope
+│   ├── create --name --website [--docs-url] [--mcp-url]      [pat] mint chatbot + ingest key
+│   └── delete <id>                                           [admin/pat] cascade delete
+│
+├── chatbot (legacy alias)
+│   └── info                                                  [any kind] current chatbot row
+│
+├── conversations                                             [any kind]
+│   ├── list [--days N] [--from ISO] [--to ISO] [--limit N] [--synthetic|--include-synthetic]
+│   │       Organic-only by default; --synthetic = only probes, --include-synthetic = both
+│   ├── show <id>             Messages + ALL analyses (issues/outcomes/flags/intents + reasoning)
+│   └── await <id> [--timeout 90] [--message ID]
+│           Block until the conversation's messages are fully analyzed. Accepts an
+│           internal id OR a probe's obprobe_ id. Exit 0 when done, 2 on timeout.
+│
+├── probe <message> [--adapter PATH] [--timeout 90] [--no-wait]   [any kind]
+│   └── Send a synthetic test query to YOUR chatbot (captured as kind=probe via a
+│       reserved obprobe_ id), wait for analysis, print the verdict. With an
+│       openbat.probe.json adapter it drives the chatbot for you; without one it
+│       prints the conversationId + instructions so the agent issues the call.
+│
+├── eval                                                       [any kind]
+│   ├── run --suite FILE [--adapter PATH] [--candidate VERSIONID] [--timeout 90] [--out FILE]
+│   │       Probe each suite item, await, score against assertions, write a result file.
+│   │       Suite: .json {items:[{id,question,expect?}]} or one-question-per-line .txt.
+│   └── diff <runA.json> <runB.json>   Regression diff between two runs (exit 1 on regression)
+│
+├── optimize [--since 24h]                                     [any kind]
+│   └── One-shot read-only diagnostic: organic review + active prompt + analysis defs
+│       + a suggested probe plan. Bootstraps the eval loop in one command.
+│
+├── review [--since 45m|6h|7d]                                [any kind]
+│   └── Daily eval digest: outcome/sentiment deltas + top issues/flags/intents
+│       with representative conversation pointers. Default window 24h.
+│
+├── users                                                     [any kind]
+│   └── list --chatbot ID [--days] [--search]                 External users + health
+│
+├── settings                                                  [admin or pat]
+│   ├── update --chatbot ID [--description] [--website-url] [--language]
+│   └── keys
+│       ├── list-admin --chatbot ID
+│       ├── rotate-ingest --chatbot ID                        New ob_live_* (shown once)
+│       ├── generate-read --chatbot ID                        New ob_read_* (shown once)
+│       ├── generate-admin --chatbot ID --name N [--expires-in-days]  [pat] new ob_admin_*
+│       └── revoke-admin --chatbot ID --key KEYID             [pat] revoke
+│
+├── webhooks                                                  [admin or pat]
+│   ├── list --chatbot ID
+│   ├── create --chatbot ID --name --url --type discord|slack|custom    Returns signing secret (once)
+│   └── delete --chatbot ID --webhook WHID
+│
+├── workflows                                                 [admin or pat]
+│   ├── list --chatbot ID
+│   └── create --chatbot ID --name --template T --trigger-value V --webhook WHID [--message TPL]
+│       Templates: flag-to-webhook | outcome-to-webhook | sentiment-drop-to-webhook
+│
+├── reports                                                   [admin or pat]
+│   ├── list --chatbot ID
+│   └── create --chatbot ID [--name "..."]                    Returns org-private dashboard URL
+│
+├── prompts                                                   manage the LIVE published prompt
+│   ├── list                                                  [any kind] versions + active + kill-switch
+│   ├── publish --file PATH | --text "..."                    [admin/pat] create a version + set it LIVE
+│   ├── create-draft --file PATH | --text "..."               [admin/pat] create a version WITHOUT activating (probe it, then activate)
+│   ├── activate <versionId>                                  [admin/pat] roll back/forward to a version
+│   └── kill-switch --on | --off                              [admin/pat] emergency fallback toggle
+│
+├── analysis                                                  [admin or pat]
+│   ├── list --chatbot ID [--type] [--pending]
+│   └── add --chatbot ID --type intent|flag|assistant_outcome|assistant_issue
+│            --name SLUG --display-name "..." --description "..."
+│
+├── analytics                                                 [any kind]
+│   ├── overview
+│   └── sentiment [--days N]
+│
+├── export --format json|csv [--out FILE]                     [any kind] streaming export
+│
+└── sdk                                                       [any kind]
+    ├── install-instructions [--framework next|node|vercel-ai-sdk] [--chatbot ID]
+    └── verify --chatbot ID [--timeout N]                     Polls until first event
+```
+
+<Note>
+Every command supports `--json` for raw output. It is the default for non-TTY stdout, so piping into `jq` always works.
+</Note>
+
+## Command groups at a glance
+
+Each top-level group maps to a focused area of the surface. The minimum key kind is the smallest scope that runs every subcommand in the group.
+
+| Group | What it does | Minimum kind |
+|---|---|---|
+| `config` | Store the key, override the base URL, pin the active chatbot | any kind |
+| `use` | Pin the active chatbot (shortcut for `config use-chatbot`) | any kind |
+| `auth` | `whoami` — show kind, chatbots in scope, orgs | any kind |
+| `org` | List orgs, manage members and invitations | pat |
+| `chatbots` | List, create, and delete chatbots | any kind (create/delete need pat/admin) |
+| `chatbot` | Legacy alias — `info` on the current chatbot row | any kind |
+| `conversations` | List, show, and await conversation analysis | any kind |
+| `probe` | Send a synthetic test query and print the verdict | any kind |
+| `eval` | Run a suite and diff two runs for regressions | any kind |
+| `optimize` | One-shot read-only diagnostic that bootstraps the eval loop | any kind |
+| `review` | Daily eval digest with conversation pointers | any kind |
+| `users` | List external users and health | any kind |
+| `settings` | Update chatbot settings and manage keys | admin or pat |
+| `webhooks` | List, create, and delete webhooks | admin or pat |
+| `workflows` | List and create workflows from templates | admin or pat |
+| `reports` | List and create AI reports | admin or pat |
+| `prompts` | Manage the live published prompt | any kind (writes need admin/pat) |
+| `analysis` | List and add analysis definitions | admin or pat |
+| `analytics` | `overview` and `sentiment` | any kind |
+| `export` | Streaming export to JSON or CSV | any kind |
+| `sdk` | Install instructions and ingestion verification | any kind |
+
+## Write commands — what to expect
+
+Mutating commands follow a consistent output convention so scripts and humans can both consume them cleanly.
+
+- **Plaintext secrets go to stderr**, inside a "shown ONCE" banner:
+
+  ```text
+  ────────────────────────────────────────────────────────────
+    Webhook signing secret (shown ONCE — store this now)
+
+    whsec_abcdef…
+  ────────────────────────────────────────────────────────────
+  ```
+
+- **Structured response goes to stdout** without the plaintext, so `... | jq` keeps working:
+
+  ```bash
+  openbat webhooks create --chatbot $CB --name foo --url ... --type slack > webhook.json
+  jq .id webhook.json
+  ```
+
+- **Errors go to stderr with a non-zero exit code.** API key plaintext is automatically redacted from any error message (`ob_admin_<16 chars>…<hidden>`).
+
+- **HTTP 401 vs 403**: a 401 means "key invalid / expired / wrong kind for this endpoint" — usually fixed by `openbat auth whoami` plus a fresh key. A 403 means "key valid but lacks permission" — for example, a read-scope PAT trying to mutate, or a member trying to do an owner-only action.
+
+- **HTTP 429** includes a `Retry-After` header. The CLI surfaces it in the error message.
+
+## Override the API base URL
+
+```bash
+openbat config set-url https://staging.openbat.dev
+# or per-invocation:
+openbat --base-url http://localhost:3000 auth whoami
+# or via env:
+OPENBAT_BASE_URL=http://localhost:3000 openbat auth whoami
+```
+
+<Warning>
+The CLI refuses non-HTTPS base URLs unless they point at `localhost` or `127.0.0.1`. There is no `--insecure` escape hatch.
+</Warning>
+
+## Where to go next
+
+<Columns cols={2}>
+  <Card title="Authentication" icon="key" href="/cli/authentication">
+    The four key kinds, auth resolution order, and saving the key to `~/.openbatrc`.
+  </Card>
+  <Card title="Active chatbot" icon="crosshairs" href="/cli/active-chatbot">
+    Pin one chatbot with `openbat use` and how active-chatbot scope resolves.
+  </Card>
+  <Card title="Conversations & analytics" icon="comments" href="/cli/conversations-analytics">
+    List and inspect conversations, read overview and sentiment analytics.
+  </Card>
+  <Card title="Settings, keys & webhooks" icon="sliders" href="/cli/settings-keys-webhooks">
+    Update settings, mint and rotate keys, and manage webhooks.
+  </Card>
+  <Card title="Workflows & reports" icon="diagram-project" href="/cli/workflows-reports">
+    Create workflows from templates and generate AI reports.
+  </Card>
+  <Card title="Prompts" icon="file-pen" href="/cli/prompts">
+    Publish, draft, activate, and kill-switch the live system prompt.
+  </Card>
+  <Card title="SDK install" icon="download" href="/cli/sdk-install">
+    Generate install instructions and verify first-event ingestion.
+  </Card>
+  <Card title="Security & rate limits" icon="shield" href="/cli/security-rate-limits">
+    Key redaction, HTTPS-only base URLs, audit log, and per-tool rate limits.
+  </Card>
+</Columns>

@@ -1,0 +1,73 @@
+---
+title: "Security properties"
+description: "Validation, redaction, and audit logging."
+icon: "shield-check"
+---
+{/* SOURCES: _sources/mcp-readme.md */}
+
+The MCP server runs locally and talks to OpenBat over HTTPS, but an LLM is driving the tool calls — so the server constrains what those calls can do. It reads the credential from the environment, validates every input, caps response size, redacts keys from errors, rate-limits per tool, and records each authenticated call to an audit log.
+
+## Credential handling
+
+<ParamField path="OPENBAT_API_KEY" type="string" required>
+  The only place the server reads the key from — never from arguments or stdin, so it can't leak via shell history or process listings.
+</ParamField>
+
+At startup the server logs a banner to stderr in the form `using <kind> key <prefix>…<hidden>, base <url>`. Startup logs print the **resolved kind plus the 16-char prefix only** — the plaintext never lands in any log.
+
+<Note>
+  The server inspects the key prefix before registering any tool. An ingest key (`ob_live_*`) is rejected as SDK-only, and a key that doesn't match the four known prefixes is refused before any tool exists. See [Credentials](/mcp/credentials) for the full kind-detection rules.
+</Note>
+
+## Input validation
+
+All inputs are Zod-validated with `.strict()`, bounded numeric ranges, and explicit enums. An LLM that hallucinates extra arguments gets a clean validation error rather than an unexpected call reaching the API.
+
+## Response size cap
+
+Every tool caps its response at ~1MB. This protects the LLM context window and limits the damage if a prompt steers the LLM toward bulk exfiltration. `openbat_export_data` is bound by the same cap.
+
+## HTTPS enforcement
+
+The HTTP client refuses non-HTTPS base URLs, with one exception: `localhost` and `127.0.0.1`.
+
+<Warning>
+  `OPENBAT_BASE_URL` must point at an HTTPS endpoint unless it targets localhost. A plain-HTTP remote URL is rejected.
+</Warning>
+
+## Error redaction
+
+Tool error messages are key-redacted to the form `ob_<kind>_…<hidden>` before they reach the client, so a key never round-trips back into the LLM through an error string.
+
+## Plaintext shown exactly once
+
+Mint tools (admin keys and the like) return plaintext **exactly once** in the tool response, and the LLM sees it. Skill prompts should instruct the assistant to surface that value to the user immediately.
+
+<Tip>
+  The `using-openbat` skill from the agent skill bundle carries this plaintext-only-once convention. Install it with `npx skills add openbat-dev/agent-skills` so a driven agent handles minted secrets correctly.
+</Tip>
+
+## Rate limits
+
+Each tool has a server-side rate-limit bucket. A 429 response includes a `Retry-After` value, and the MCP tool error surfaces it. Stricter buckets apply to the highest-impact operations:
+
+| Operation | Limit |
+|---|---|
+| `create_chatbot` | 5/hr per PAT |
+| Mint operations | 10/hr per credential |
+| `chat_ai_report` | 30/min per credential |
+
+## Audit log
+
+Every authenticated call — success and failure both — lands in `api_audit_log` (Supabase, migration 036). Operators can reconstruct exactly what an MCP-driven LLM did.
+
+## 401 vs 403
+
+The HTTP status distinguishes a bad credential from an insufficient one:
+
+| Status | Meaning | What to do |
+|---|---|---|
+| 401 | Bad, expired, or wrong-kind key | Rotate via the dashboard |
+| 403 | Key valid but lacks permission — a read-scope PAT trying to mutate, or a non-owner trying an owner-only op | Use an admin-scope key or an owner credential |
+
+See [Troubleshooting](/mcp/troubleshooting) for the full symptom-to-fix table.

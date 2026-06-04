@@ -1,0 +1,167 @@
+---
+title: "CLI quickstart"
+description: "Chatbot zero to first event."
+icon: "rocket"
+---
+{/* SOURCES: _sources/cli-readme.md; _sources/skill-openbat-onboarding.md */}
+
+Go from no chatbot to your first analyzed event end-to-end in under 5 minutes. This walkthrough uses a PAT (`ob_pat_*`) — the only credential that can create chatbots — then mints scoped keys, wires a webhook and workflow, installs the SDK, and reads your data back.
+
+<Note>
+The full A-Z run (including SDK install in a real Next.js app) lives in the repo's `docs/agent-surface-testing.md`. This page covers the CLI-driven path.
+</Note>
+
+## Install
+
+```bash
+npm i -g @openbat/cli
+# or run on demand without installing:
+npx @openbat/cli --help
+```
+
+## Run it
+
+<Steps>
+<Step title="Configure a PAT">
+You mint the PAT in the dashboard. Pipe it over stdin so the plaintext stays out of your shell history.
+
+```bash
+echo "ob_pat_..." | openbat config set-key --from-stdin
+```
+
+The key is stored at `~/.openbatrc` with mode `0600`. Creating a chatbot requires a PAT — ingest, read, and admin keys are pinned to one existing chatbot and cannot create new ones. See [Authentication](/cli/authentication) for the four key kinds.
+</Step>
+
+<Step title="Verify scope">
+```bash
+openbat auth whoami
+```
+
+Shows the key kind, the chatbots in scope, and (for a PAT) the orgs.
+</Step>
+
+<Step title="Create a chatbot">
+```bash
+openbat chatbots create --name "My Bot" --website https://example.com
+#   stderr: Ingest API key (shown ONCE)
+#   stdout: { chatbot: { id, ... }, dashboardUrl }
+CB=<chatbot id from stdout>
+```
+
+The new ingest key (`ob_live_*`) prints to **stderr** inside a "shown ONCE" banner — capture it immediately, there is no recovery path. The structured response goes to **stdout** as JSON: `{ chatbot: { id, name, created_at, organization_id, api_key_prefix }, dashboardUrl }`. The `dashboardUrl` points to `/platform/<id>/onboarding` for the optional brand-voice / pricing / competitor wizard; nothing else blocks on completing it.
+
+<Warning>
+The org auto-selected for a new chatbot is the PAT user's primary org (oldest membership). There's no CLI flag for cross-org creation yet — to use a different org, switch the PAT user's org in the dashboard first. Chatbot creation is rate-limited at 5 per hour per PAT.
+</Warning>
+</Step>
+
+<Step title="Mint an admin key">
+Mint a scoped admin key so you can manage the chatbot without the broader PAT.
+
+```bash
+openbat settings keys generate-admin --chatbot $CB --name "dev" --expires-in-days 30
+#   stderr: ob_admin_... (shown ONCE)
+```
+
+You can also generate a read key for read-only CLI / MCP access:
+
+```bash
+openbat settings keys generate-read --chatbot $CB
+```
+</Step>
+
+<Step title="Add a webhook, flag, and workflow">
+Create a webhook destination, define a flag for the analysis pipeline to detect, then a workflow that fires the webhook whenever that flag appears.
+
+```bash
+openbat webhooks create --chatbot $CB --name "ops" \
+  --url https://hooks.slack.com/services/T.../B.../X --type slack
+#   stdout: { id: WH_ID, ... }
+
+openbat analysis add --chatbot $CB --type flag --name billing_issue \
+  --display-name "Billing Issue" --description "Customer raises a billing concern"
+
+openbat workflows create --chatbot $CB \
+  --name "billing → slack" \
+  --template flag-to-webhook \
+  --trigger-value billing_issue \
+  --webhook $WH_ID
+```
+
+The webhook signing secret prints once to stderr. See [Settings, keys & webhooks](/cli/settings-keys-webhooks) and [Workflows & reports](/cli/workflows-reports) for the full options.
+</Step>
+
+<Step title="Install the SDK">
+Generate framework-specific install instructions for the target app. The output is Markdown to stdout — an agent (or you) follows the steps.
+
+```bash
+openbat sdk install-instructions --framework next --chatbot $CB
+```
+
+Drop the ingest key from step 3 into the target app's `.env.local`. See [Install the SDK](/cli/sdk-install) for details.
+</Step>
+
+<Step title="Verify ingestion">
+After the SDK is wired up and a real chat has been sent, verify the first event lands.
+
+```bash
+openbat sdk verify --chatbot $CB --timeout 60
+# Exits 0 on first event, 2 on timeout.
+```
+</Step>
+
+<Step title="Read your data">
+```bash
+openbat conversations list --days 7
+openbat analytics overview
+```
+
+Explore the data commands further in [Conversations & analytics](/cli/conversations-analytics).
+</Step>
+</Steps>
+
+## Pin the chatbot once
+
+After step 3 you can pin the chatbot so every later command targets it without `--chatbot`:
+
+```bash
+openbat use $CB          # persists ~/.openbatrc.activeChatbotId
+openbat use              # no arg → shows the current pin + reachable options
+```
+
+`ob_read_*` and `ob_admin_*` keys are already scoped to one chatbot server-side; a PAT reaches many, so pinning keeps every data command on the same one. See [Active chatbot](/cli/active-chatbot).
+
+<Tip>
+Every command supports `--json` for raw output (the default for non-TTY stdout), so piping into `jq` always works. Plaintext secrets go to stderr and the scope banner prints to stderr too, keeping `--json | jq` clean.
+</Tip>
+
+## Output conventions
+
+The walkthrough relies on a consistent convention across mutating commands.
+
+| Channel | What lands there |
+|---|---|
+| stderr | Plaintext secrets inside a "shown ONCE" banner; the `→ chatbot: <name> (<id>)` scope banner; errors |
+| stdout | Structured JSON response (without the plaintext secret) |
+| Exit code | Non-zero on error; `sdk verify` exits `0` on first event, `2` on timeout |
+
+API key plaintext is auto-redacted from any error message to `ob_<kind>_<first 16>…<hidden>`.
+
+## Next: the closed eval loop
+
+Once events are flowing, the flagship workflow is the closed eval loop — send test queries, read OpenBat's analysis, fix the chatbot, and re-test:
+
+```bash
+# Diagnose what real users hit (probe-clean — excludes synthetic):
+openbat optimize
+
+# Send a synthetic test query (captured as kind=probe), await, print the verdict:
+openbat probe "how do I get a refund?"
+
+# Run a suite + diff against a prior run to catch regressions after a fix:
+openbat eval run --suite golden.json --out before.json
+openbat eval run --suite golden.json --out after.json
+openbat eval diff before.json after.json     # exit 1 if anything regressed
+```
+
+Probe and eval traffic is captured as `kind=probe` and excluded from organic `review`, the dashboard, and analytics, so test queries never skew real metrics.

@@ -1,0 +1,166 @@
+---
+title: "Conversations & analytics"
+description: "Read conversations, analytics, and digests."
+icon: "chart-line"
+---
+{/* SOURCES: _sources/cli-readme.md; _sources/skill-openbat-conversations.md */}
+
+Read commands surface the data OpenBat has captured and analyzed for your pinned chatbot: the `conversations` group lists and inspects individual chats, `analytics` returns aggregate metrics, and `review` produces a daily eval digest. All of these work with any read-capable credential (`ob_read_*`, `ob_admin_*`, `ob_pat_*`), and each targets the chatbot you pinned with `openbat use <id|name>`.
+
+<Note>
+Every command supports `--json` for raw output (the default for non-TTY stdout, so piping into `jq` always works). The `→ chatbot: <name> (<id>)` scope banner prints to **stderr**, so `--json | jq` stays clean.
+</Note>
+
+## conversations
+
+The default time window is 7 days when neither `--from` nor `--to` is supplied. Conversations are organic-only by default; probe and eval traffic is hidden unless you opt in with the synthetic filters.
+
+| Subcommand | Description |
+|---|---|
+| `conversations list` | List conversations, newest first |
+| `conversations show <id>` | Messages plus ALL analyses (issues/outcomes/flags/intents + reasoning) |
+| `conversations await <id>` | Block until the conversation's messages are fully analyzed |
+
+### list
+
+```bash
+# Last 7 days, newest first:
+openbat conversations list --days 7 --limit 50
+
+# Custom window:
+openbat conversations list --from 2026-05-01T00:00:00Z --to 2026-05-13T00:00:00Z
+```
+
+<ParamField path="--days" type="N">
+  Window of the last N days.
+</ParamField>
+<ParamField path="--from" type="ISO">
+  Start of a custom window (ISO timestamp).
+</ParamField>
+<ParamField path="--to" type="ISO">
+  End of a custom window (ISO timestamp).
+</ParamField>
+<ParamField path="--limit" type="N">
+  Maximum number of conversations to return.
+</ParamField>
+<ParamField path="--synthetic">
+  Return ONLY probe/eval conversations.
+</ParamField>
+<ParamField path="--include-synthetic">
+  Return both organic and synthetic conversations.
+</ParamField>
+
+Organic-only is the default. Use `--synthetic` for only probes, or `--include-synthetic` for both:
+
+```bash
+# ONLY probe/eval conversations:
+openbat conversations list --synthetic
+
+# Organic + synthetic:
+openbat conversations list --include-synthetic
+```
+
+### show
+
+`conversations show` returns each message with **all** of its analyses — `user_sentiments`, `user_intents`, `user_flags`, `assistant_outcomes`, and `assistant_issues` — each carrying its `reasoning` plus verification fields (`verification_source`, `answer_available`, `verification_type`, `severity`). This is how you read **why** a message was flagged.
+
+```bash
+openbat conversations show <conversationId>
+```
+
+### await
+
+Analysis is async. `conversations await` blocks until the conversation's messages are fully analyzed. It accepts an internal id OR a probe's `obprobe_` id, exits `0` when done and `2` on timeout.
+
+```bash
+openbat conversations await <conversationId> --timeout 90
+```
+
+<ParamField path="--timeout" type="number" default="90">
+  Seconds to wait before timing out (exit code `2`).
+</ParamField>
+<ParamField path="--message" type="ID">
+  Await analysis for a specific message id.
+</ParamField>
+
+### Filter recipes
+
+```bash
+# Show only the highest-impact conversations of the last week
+openbat conversations list --days 7 --limit 50 --json | jq '.[] | select(.message_count >= 10)'
+
+# Pipe into an LLM prompt
+openbat conversations show $CONV_ID --json | jq '.messages[] | {role, content}'
+```
+
+<Warning>
+Synthetic isolation: probe/eval traffic is captured as `kind=probe` and is **excluded from organic `review`, the dashboard, and analytics** so your test queries never skew real metrics. Surface it with `openbat conversations list --synthetic`.
+</Warning>
+
+<Note>
+Sorting and pagination behavior:
+
+- Conversations are sorted by `last_message_at` desc with NULL last.
+- Messages within a conversation are sorted by `created_at` asc, then by role priority for same-second ties (user before assistant).
+- The 200-row registry cap applies everywhere — paginate via `page` and `limit`.
+</Note>
+
+## analytics
+
+The `analytics` group returns aggregate metrics for the pinned chatbot.
+
+| Subcommand | Description |
+|---|---|
+| `analytics overview` | Aggregate metrics for the chatbot |
+| `analytics sentiment [--days N]` | Sentiment over time |
+
+```bash
+openbat analytics overview
+openbat analytics sentiment --days 30
+```
+
+<ParamField path="--days" type="N">
+  Window in days for the sentiment series (`analytics sentiment` only).
+</ParamField>
+
+## review — daily eval digest
+
+`review` produces the daily eval digest: outcome/sentiment deltas plus top issues, flags, and intents with representative conversation pointers. The default window is 24h.
+
+```bash
+openbat review --since 24h          # also 45m, 6h, 7d (max 30d)
+```
+
+<ParamField path="--since" type="duration" default="24h">
+  Digest window. Accepts values such as `45m`, `6h`, `7d`, up to a max of 30d.
+</ParamField>
+
+For the closed eval loop that turns this aggregate "what went wrong" view into fixes, see the **`openbat-optimize`** skill and the `openbat optimize` command.
+
+<Note>
+`review` is rate-limited to 30 per minute per credential, and `429` responses include a `Retry-After` header (in seconds).
+</Note>
+
+## MCP equivalents
+
+The same surface is available over MCP. `chatbotId` is optional only when the server is pinned.
+
+| Tool | Args |
+|------|------|
+| `openbat_list_conversations` | `{ chatbotId: uuid, page?, limit?, from?, to?, kind?: organic\|probe\|all }` |
+| `openbat_get_conversation` | `{ chatbotId: uuid, id: uuid }` |
+| `openbat_await_analysis` | `{ conversationId: uuid \| obprobe_… }` — poll until analyzed |
+| `openbat_analytics_overview` | `{ chatbotId: uuid }` |
+| `openbat_analytics_sentiment` | `{ chatbotId: uuid, days?: 1-90 }` |
+| `openbat_review` | `{ chatbotId: uuid, windowMinutes?: 1-43200 }` |
+
+## Next steps
+
+<Columns cols={2}>
+  <Card title="Pin the active chatbot" icon="thumbtack" href="/cli/active-chatbot">
+    Set the chatbot every read command targets with `openbat use`.
+  </Card>
+  <Card title="Full command tree" icon="list-tree" href="/cli/commands">
+    Browse every CLI command and its flags.
+  </Card>
+</Columns>

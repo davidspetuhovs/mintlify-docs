@@ -1,0 +1,126 @@
+---
+title: "Workflows & reports"
+description: "Create workflows and AI reports."
+icon: "git-branch"
+---
+{/* SOURCES: _sources/cli-readme.md; _sources/skill-openbat-workflows.md */}
+
+The `workflows` and `reports` command groups both require an admin or PAT key (`ob_admin_*` or `ob_pat_*`) and operate on a single chatbot via `--chatbot ID`. Workflows fire a webhook when an analysis matches a trigger; reports return an org-private dashboard URL backed by your conversation data.
+
+## Workflows
+
+A workflow watches your chatbot's analyses and fires a webhook when one matches. Agents don't author the underlying graph by hand — the CLI accepts a thin template input and compiles it to the `(nodes, edges, trigger_type)` shape the dashboard editor renders.
+
+### Templates
+
+Three templates ship in v1. Pick the one that matches the analysis you want to react to.
+
+| Template | Triggers when | Use for |
+|---|---|---|
+| `flag-to-webhook` | A user message gets a flag analysis of value X | Slack/Discord alerts on customer issues |
+| `outcome-to-webhook` | An assistant message gets an outcome value X | Notify on resolved / escalation outcomes |
+| `sentiment-drop-to-webhook` | Org avg sentiment crosses a threshold (number in `[-1, 1]`) | Account-health alerts |
+
+### Prerequisite — a webhook
+
+A workflow points at a `webhook` row, so create one first. See [Settings, keys & webhooks](/cli/settings-keys-webhooks) for the full webhook surface.
+
+```bash
+openbat webhooks create --chatbot $CB --name slack-ops \
+  --url https://hooks.slack.com/services/T.../B.../X --type slack
+# stderr: signing secret (shown once)
+# stdout: { id: "...", ... }
+```
+
+Capture the `id` from stdout — you pass it to `--webhook` below.
+
+<Warning>
+The webhook id passed to `--webhook` must exist on the **same** chatbot. Cross-chatbot references fail at runtime.
+</Warning>
+
+### Create a workflow
+
+```bash
+openbat workflows create --chatbot $CB \
+  --name "billing flag → slack" \
+  --template flag-to-webhook \
+  --trigger-value billing_issue \
+  --webhook $WEBHOOK_ID \
+  --message "User flagged billing: user={{user.id}} conv={{conversation.id}}"
+```
+
+<ParamField path="--chatbot" type="string" required>
+The chatbot id the workflow operates on.
+</ParamField>
+
+<ParamField path="--name" type="string" required>
+Display name for the workflow.
+</ParamField>
+
+<ParamField path="--template" type="string" required>
+One of `flag-to-webhook`, `outcome-to-webhook`, or `sentiment-drop-to-webhook`.
+</ParamField>
+
+<ParamField path="--trigger-value" type="string" required>
+The value that fires the workflow. For flags/outcomes it must match the analysis-definition `name` (slug); for sentiment it is a `[-1, 1]` float.
+</ParamField>
+
+<ParamField path="--webhook" type="string" required>
+The id of an existing webhook on the same chatbot.
+</ParamField>
+
+<ParamField path="--message" type="string">
+Message template. Supports `{{user.id}}`, `{{conversation.id}}`, `{{flag.value}}`, `{{org.avgSentiment}}` and similar — the workflow runtime interpolates from the analysis context.
+</ParamField>
+
+<Note>
+For flag and outcome templates, `--trigger-value` has to match an existing analysis-definition slug. Add the definition first with `openbat analysis add --type flag|assistant_outcome ...`.
+</Note>
+
+<Warning>
+The compiled workflow starts **enabled**. To disable it, edit it via the dashboard or the raw `update_workflow` path.
+</Warning>
+
+### List workflows
+
+```bash
+openbat workflows list --chatbot $CB
+```
+
+### Power-user mode (raw nodes/edges)
+
+The DSL templates cover roughly 90% of use cases. The registry also exposes an `update_workflow` operation that accepts raw xyflow JSON — drop to raw nodes only when you need branching or non-webhook actions.
+
+<Tip>
+The same workflow templates are available over MCP as `openbat_create_workflow_from_template` with the same fields. See [MCP tools](/mcp/tools).
+</Tip>
+
+## Reports
+
+A report returns an org-private dashboard URL backed by your conversation data. Both subcommands require an admin or PAT key.
+
+### List reports
+
+```bash
+openbat reports list --chatbot $CB
+```
+
+### Create a report
+
+```bash
+openbat reports create --chatbot $CB --name "weekly summary"
+```
+
+<ParamField path="--chatbot" type="string" required>
+The chatbot id the report covers.
+</ParamField>
+
+<ParamField path="--name" type="string">
+Optional display name for the report.
+</ParamField>
+
+The command returns an org-private dashboard URL on stdout.
+
+<Note>
+Chatting with an AI report is rate-limited to 30 requests per minute per credential. See [Security & rate limits](/cli/security-rate-limits).
+</Note>

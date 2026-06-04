@@ -1,0 +1,134 @@
+---
+title: "Test candidate prompts & backtests"
+description: "Validate a draft before shipping it."
+icon: "git-pull-request-draft"
+---
+{/* SOURCES: _sources/skill-openbat-optimize.md; _sources/skill-openbat-eval.md; _sources/sdk-readme.md; _sources/cli-readme.md */}
+
+This is the **fix** step of the probe → diagnose → fix loop, run **without shipping to production**. You stage a prompt change as a draft version, drive your chatbot against that draft with synthetic queries, read OpenBat's verdict, and only activate it once the eval is clean. Nothing reaches real users until you say so.
+
+A draft is just another prompt version that is **not live**. Your chatbot keeps serving the active prompt to organic traffic while a probe or eval run targets the draft. To run the chatbot against a draft, your app fetches it through the SDK's `getSystemPrompt({ versionOverride })` — OpenBat never calls your chatbot, you drive it.
+
+<Note>
+A candidate-prompt eval only works when your chatbot can fetch a specific version at request time. If your prompt is hardcoded in the repo, there is no draft to fetch — edit the prompt locally and probe it directly instead. See [Run a single probe](/eval-mode/probe).
+</Note>
+
+## Stage a candidate as a draft
+
+`openbat prompts create-draft` creates a new prompt version **without activating it**. It returns a `versionId` you reference in the eval. The active prompt is untouched.
+
+```bash
+openbat prompts create-draft --file new-prompt.txt
+# or inline:
+openbat prompts create-draft --text "You are a support assistant for Acme. ..."
+```
+
+Both `create-draft` and `publish` require an `ob_admin_*` or `ob_pat_*` key. List versions to see the draft, the active version, and the kill-switch state at any time:
+
+```bash
+openbat prompts list
+```
+
+The MCP equivalent is `openbat_create_draft_prompt`. See [MCP tools](/mcp/tools).
+
+## Wire the draft into your chatbot
+
+For an eval to run the chatbot **under the draft**, the chatbot must fetch that specific version instead of the live active prompt. Pass the draft `versionId` to `getSystemPrompt`:
+
+```typescript
+const { template, source } = await client.getSystemPrompt({
+  fallback: HARDCODED_SYSTEM_PROMPT,
+  versionOverride: candidateVersionId, // a draft version id
+});
+```
+
+`versionOverride` fetches that specific published version, bypassing the cache. The version must belong to this chatbot (server-enforced), the kill switch still applies, and on any error you get your `fallback`. Forward the candidate from the eval request — the eval substitutes a `{{candidate}}` field into your `openbat.probe.json` adapter, so wire it through as a header your route reads (for example `x-openbat-prompt-version`) and pass that into `versionOverride`. See [Remote-controlled system prompts](/sdk/remote-prompts).
+
+## Run the eval against the candidate
+
+<Steps>
+<Step title="Capture a baseline">
+Run your suite against the current live prompt first, so you can diff against it.
+
+```bash
+openbat eval run --suite golden.json --out before.json
+```
+</Step>
+
+<Step title="Run the suite against the draft">
+Point the run at the draft with `--candidate <versionId>`. Each suite item is probed (captured as `kind=probe`), awaited, and scored against its assertions while the chatbot runs the draft version.
+
+```bash
+openbat eval run --suite golden.json --candidate <versionId> --out after.json
+```
+</Step>
+
+<Step title="Diff the two runs">
+The diff surfaces both regressions and fixes, and exits `1` if anything regressed.
+
+```bash
+openbat eval diff before.json after.json
+```
+</Step>
+
+<Step title="Ship only on a clean diff">
+If the diff is clean, promote the draft to live. This changes the production prompt, so confirm before running it.
+
+```bash
+openbat prompts activate <versionId>
+```
+</Step>
+</Steps>
+
+For a single targeted check rather than a whole suite, probe the exact question that failed organically — the `obprobe_` prefix marks it `kind=probe`, so it stays out of organic analytics:
+
+```bash
+openbat probe "the exact question that failed organically"
+```
+
+<Warning>
+Probe and eval traffic is synthetic. It is captured as `kind=probe` and **excluded from organic `review`, the dashboard, and analytics** — so it never skews real metrics. A clean eval tells you the candidate prompt behaved better on your test queries; it does **not** mean production metrics moved. Inspect synthetic runs with `openbat conversations list --synthetic`.
+</Warning>
+
+## Backtest against historical flagged conversations
+
+A candidate eval tests **fresh** synthetic queries. A backtest complements it by re-running the **same real conversations that failed** under the candidate prompt — so you confirm the fix resolves the exact traffic that prompted it.
+
+```bash
+openbat backtests create --name "fix v2" --candidate-prompt <versionId> \
+  --flags <flag1,flag2> --sample-size 50
+openbat backtests status <backtestId>
+```
+
+Backtests require an `ob_pat_*` key, and creating one is rate-limited to 10 per hour per PAT. The status verdict buckets each replayed conversation:
+
+| Verdict | Meaning |
+|---|---|
+| `still_flagged` | The candidate prompt did not fix it — same flag persists. |
+| `resolved` | The candidate prompt cleared the original flag. |
+| `new_flag` | The candidate prompt introduced a *new* problem — a regression. |
+| `unchanged_clean` | Conversation was clean before and stays clean. |
+
+## Decide whether to ship
+
+Ship the candidate only when the verdict is clean: probe/eval assertions pass, the diff has no regressions, and for a backtest `resolved` dominates with `new_flag` near zero. Then promote it:
+
+- **Runtime-fetch chatbots** — `openbat prompts activate <versionId>` makes the draft the live active version. For chatbots that pull their prompt from OpenBat, `openbat prompts publish --wait` creates and activates in one step.
+- **Repo-hardcoded prompts** — open a PR with the edited prompt; activating a version in OpenBat won't change runtime if your app doesn't fetch it.
+
+<Warning>
+`prompts activate` and `prompts publish` change the **live** prompt for real users. Confirm with whoever owns the chatbot first, and roll back with `openbat prompts activate <previousVersionId>` or — in an emergency — `openbat prompts kill-switch --on` to fall back to the hardcoded prompt. Never auto-commit a repo edit to the default branch.
+</Warning>
+
+## MCP equivalents
+
+The candidate-prompt loop runs over MCP too: `openbat_create_draft_prompt` stages the draft, then you drive the chatbot and loop `openbat_probe` → `openbat_await_analysis` → `openbat_get_conversation` to read each verdict (the eval suite itself is client-orchestrated file I/O, so you compose it from those tools). `openbat_optimize_context` bootstraps the loop in one call. See [MCP tools](/mcp/tools).
+
+<Columns cols={2}>
+<Card title="Eval suites & regression diffs" icon="list-checks" href="/eval-mode/eval-suites">
+Build a suite, write `expect` assertions, and read a regression diff.
+</Card>
+<Card title="Diagnose and fix" icon="wrench" href="/eval-mode/diagnose-and-fix">
+Map a failing verdict to the prompt, tool, or retrieval lever before you draft a fix.
+</Card>
+</Columns>

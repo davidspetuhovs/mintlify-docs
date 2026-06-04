@@ -1,0 +1,59 @@
+---
+title: "Header forwarding"
+description: "Forward client headers for accurate IP and geo."
+icon: "forward"
+---
+{/* SOURCES: _sources/sdk-readme.md */}
+
+When your SDK calls originate from a server-side route (for example, a Next.js API route), the capture endpoint sees your server's IP and User-Agent instead of the real user's. Forward the original request headers through `recordMessages()` so OpenBat resolves accurate client metadata.
+
+## Forwarding the headers
+
+Inside your API route handler, read the incoming request headers and pass them on the `headers` field of `recordMessages()`:
+
+```typescript
+// Inside your API route handler
+const headers = Object.fromEntries(req.headers.entries());
+
+client.recordMessages({
+  conversationId: "session-abc-123",
+  messages: [...],
+  headers: {
+    "x-original-user-agent": headers["user-agent"] ?? "",
+    "x-original-referer": headers["referer"] ?? "",
+    "x-forwarded-for": headers["x-forwarded-for"] ?? headers["x-real-ip"] ?? "",
+  },
+});
+```
+
+The `headers` field accepts a `Record<string, string>` on the root of [`RecordMessagesInput`](/sdk/api-reference).
+
+## Headers to forward
+
+| Header | Source | Purpose |
+|---|---|---|
+| `x-original-user-agent` | `user-agent` | The user's browser and OS, instead of your server's |
+| `x-original-referer` | `referer` | The page the user came from |
+| `x-forwarded-for` | `x-forwarded-for`, falling back to `x-real-ip` | The user's real IP address, instead of your server's |
+
+## What gets extracted
+
+The capture endpoint automatically parses these headers to extract:
+
+- IP address
+- Browser
+- OS
+- Device type
+- Language
+- Timezone
+- Country
+- City
+- Region
+
+<Note>
+The Vercel AI SDK `onFinish` pattern shows the same header forwarding inline alongside tool and reasoning capture. See [Vercel AI SDK](/sdk/integrations/vercel-ai-sdk).
+</Note>
+
+<Tip>
+If you already pass [enrichment context](/sdk/enriching-context) such as `session.country`, header forwarding complements it — the endpoint derives geo from the forwarded IP when you don't supply it explicitly.
+</Tip>

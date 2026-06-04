@@ -1,0 +1,63 @@
+---
+title: "Team & access"
+description: "Members, roles, and organization settings."
+icon: "users"
+---
+{/* SOURCES: knowledgebase/feature-inventory.md; pages/organization-members.md; pages/organization-settings.md */}
+
+OpenBat uses a multi-tenant organization model with role-based access. The **Members** and **Settings** pages — reached from the organization-level sidebar alongside **Chatbots** — let owners and admins manage who belongs to the organization and configure the organization itself.
+
+## Organization members
+
+The **Members** page lives at `/platform/members`. It shows a table of every organization member with **Email**, **Role**, and **Joined** columns, and supports inviting new people.
+
+From this page you can:
+
+- View the member list with each person's role (Owner, Admin, or Member)
+- Invite a new member by email via **Invite member**
+- Manage member roles
+
+<Frame caption="The organization Members table listing email, role, and join date.">
+  <img src="/images/platform/members.png" alt="Organization members" />
+</Frame>
+
+<Note>
+Inviting members and managing roles requires an Owner or Admin role.
+</Note>
+
+### Roles
+
+Members hold one of three organization roles — **Owner**, **Admin**, or **Member**. Beyond the organization level, members can be given granular chatbot-level permissions (Editor or Viewer) when invited.
+
+<Card title="Chatbot-level access" icon="user-lock" href="/platform/features/chatbot-settings">
+Set per-chatbot access for members on a chatbot's **Members** tab in **Chatbot settings**.
+</Card>
+
+## Inviting a team member
+
+To add someone to the organization, open **Members** and choose **Invite member**. Enter the invitee's email address, select a role (admin or member), and submit. An invitation email is sent; the invitee clicks the link to accept and join the organization. Accepted invitations are handled at `/platform/invitations/accept`.
+
+<Frame caption="The invite member modal — enter an email and pick a role.">
+  <img src="/images/states/members-invite-modal.png" alt="Invite member modal" />
+</Frame>
+
+<Card title="Invite a team member" icon="user-plus" href="/platform/guides/invite-team-member">
+Step-by-step walkthrough of sending an invitation.
+</Card>
+
+## Organization settings
+
+Organization-level settings live at `/platform/settings`. This page is separate from chatbot settings — it controls the organization itself, not any individual chatbot.
+
+From here you can:
+
+- Edit the organization display name in the **Organization name** field and **Save**
+- Delete the organization from the danger zone (destructive, requires confirmation)
+
+<Frame caption="Organization settings — edit the organization name or delete the organization.">
+  <img src="/images/platform/org-settings.png" alt="Organization settings" />
+</Frame>
+
+<Note>
+Deleting the organization is permanent and is available to the organization owner.
+</Note>

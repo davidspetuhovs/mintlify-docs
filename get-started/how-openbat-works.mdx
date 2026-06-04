@@ -1,0 +1,69 @@
+---
+title: "How OpenBat works"
+description: "Capture, analyze, and surface conversation intelligence."
+icon: "workflow"
+---
+{/* SOURCES: knowledgebase/architecture.md; knowledgebase/onboarding-guide.md */}
+
+OpenBat is a conversational analytics platform for AI chatbots. It captures conversations between your end-users and your chatbot, runs automated analysis on them, and surfaces the results as dashboards, reports, search, and alerts. The goal is to answer product, customer-success, and support questions — like which customers are at risk of churning or what users are asking for — rather than engineering questions about token counts.
+
+## The capture, analyze, surface loop
+
+Data moves through OpenBat in three stages:
+
+- **Capture** — Your SDK integration sends messages to the ingestion endpoint (`POST /api/v1/capture`) using a chatbot-specific API key (format `ob_live_*`). Each captured message is stored against its conversation.
+- **Analyze** — A configurable AI pipeline runs analysis on captured messages. You define what gets analyzed — sentiment, intent, flags, outcomes, AI literacy, and personas — and the results are stored per message, with multiple analysis types allowed on a single message.
+- **Surface** — Analysis results appear in the conversation detail view, aggregate into the overview dashboard and reports, power Deep Search and filtering, and trigger workflows when conditions are met.
+
+The analysis pipeline is configurable rather than fixed: you add custom flags, outcome types, and calibration examples in **Analysis Config**, so the pipeline detects patterns specific to your product. Changes apply to future conversations, and you can re-analyze existing ones.
+
+## Core entities
+
+OpenBat organizes data in a hierarchy that scopes everything to your organization. The relationships below are inferred from the URL structure and data model and likely reflect the underlying schema:
+
+- **Organization** — The top-level tenant. Your team members belong to it, and all data is scoped to it. You can switch organizations from the sidebar org switcher.
+- **Chatbot** — An independent analytics unit inside an organization. Each chatbot has its own API key, conversation history, analysis configuration, workflows, reports, and settings. An organization can have many chatbots.
+- **Conversation** — A thread of messages between one end-user and the chatbot. Conversations belong to a chatbot.
+- **Message** — A single user or assistant turn within a conversation.
+- **Analysis** — The results produced by the pipeline for a message. A message can carry several analyses of different types.
+
+Two more entity directories are derived from captured data: **Users** (the external end-users who talk to the chatbot, with health and AI literacy scores) and **Organizations** (external customer orgs, populated automatically when your SDK sends organization metadata).
+
+## The kinds of analysis
+
+The pipeline produces several kinds of analysis, configured in **Analysis Config** under the User Analysis and Assistant Analysis tabs:
+
+- **Sentiment** — Scored sentiment on user messages.
+- **Intent and query types** — User messages are clustered into canonical question categories you can browse on the Query Types page.
+- **Flags** — Tagged signals on conversations; you can add custom flag definitions for your domain.
+- **Outcomes** — How a conversation resolved (for example Resolved, Partially Resolved, or Failed), with custom outcome types available.
+- **AI literacy** — A per-user measure of how effectively the end-user works with the chatbot.
+- **Personas** — AI-generated user persona cards that match users to discovered patterns.
+
+To tune accuracy, you add **calibration** examples for sentiment, intent, flags, outcomes, issues, and faithfulness so the pipeline matches your judgments.
+
+## The four surfaces
+
+Once analysis runs, you read the results through four main surfaces:
+
+- **Overview dashboard** — The chatbot's home page combines summary cards (At-Risk Orgs, Performance, Activity, Risks) with an AI chat where you ask natural-language questions about your data.
+- **Conversations and search** — Browse, filter, and open individual conversations with their full transcript and analysis tabs, or use Deep Search to find conversations by meaning instead of keywords.
+- **Reports** — AI-native dashboards built by chatting with a copilot, started from templates like Customer Pulse or Sentiment Distribution, or from a blank report. Reports persist as reusable dashboards.
+- **Workflows** — Automation rules that fire when analysis conditions are met, sending alerts to destinations such as Slack, Discord, or custom webhooks.
+
+## Where to go next
+
+<Columns cols={2}>
+  <Card title="Core concepts" icon="layers" href="/get-started/concepts">
+    The full entity model and the kinds of analysis OpenBat produces.
+  </Card>
+  <Card title="The four surfaces" icon="layout-dashboard" href="/get-started/surfaces">
+    How dashboards, reports, search, and workflows present your data.
+  </Card>
+  <Card title="Analysis Config" icon="sliders" href="/platform/features/analysis-config">
+    Configure what the pipeline analyzes for your chatbot.
+  </Card>
+  <Card title="Quickstart" icon="rocket" href="/get-started/quickstart">
+    Create a chatbot, integrate the SDK, and start capturing.
+  </Card>
+</Columns>

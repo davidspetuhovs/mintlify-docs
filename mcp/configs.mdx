@@ -1,0 +1,126 @@
+---
+title: "Example configurations"
+description: "Read-only, admin, full-control, and local base-URL setups."
+icon: "file-code"
+---
+{/* SOURCES: _sources/mcp-readme.md */}
+
+Each config below is a complete `mcpServers` entry — the tool surface that
+appears depends entirely on the kind of key you put in `OPENBAT_API_KEY`.
+The authority ranking is `pat > admin > read`, so a higher kind sees every
+tool a lower kind sees plus its own. Pick the example that matches the
+key you generated and paste it into your client's config (Claude Desktop's
+`claude_desktop_config.json`, Cursor's `.cursor/mcp.json`, or any MCP
+client). See [Install](/mcp/install) for the file locations and
+[Credentials](/mcp/credentials) for the key kinds.
+
+## Read-only dashboard agent (CI)
+
+Use an `ob_read_*` key when the agent only needs to read conversations,
+analytics, and prompt versions — for example a CI job that reports on a
+chatbot without ever mutating it.
+
+```jsonc
+{
+  "mcpServers": {
+    "openbat-readonly": {
+      "command": "npx",
+      "args": ["-y", "@openbat/mcp"],
+      "env": { "OPENBAT_API_KEY": "ob_read_..." }
+    }
+  }
+}
+```
+
+The tool selector shows the read-only tools (conversations, `review`,
+analytics, prompt-version listing, and the rest of the `read` minKind set).
+
+## Admin agent for one chatbot
+
+Use an `ob_admin_*` key to manage one chatbot's webhooks, workflows,
+reports, and settings in addition to everything a read key can do.
+
+```jsonc
+{
+  "mcpServers": {
+    "openbat-acme": {
+      "command": "npx",
+      "args": ["-y", "@openbat/mcp"],
+      "env": { "OPENBAT_API_KEY": "ob_admin_..." }
+    }
+  }
+}
+```
+
+The tool selector adds the per-chatbot write tools (webhooks, workflows,
+reports, settings).
+
+## Full-control agent (org admin + chatbot creator)
+
+Use an `ob_pat_*` key to create new chatbots, mint admin keys, and run
+org-level operations on top of the admin and read surfaces.
+
+```jsonc
+{
+  "mcpServers": {
+    "openbat-control": {
+      "command": "npx",
+      "args": ["-y", "@openbat/mcp"],
+      "env": { "OPENBAT_API_KEY": "ob_pat_..." }
+    }
+  }
+}
+```
+
+The tool selector also lights up `openbat_create_chatbot`,
+`openbat_generate_admin_key`, and the org-level tools.
+
+<Note>
+A PAT can reach every chatbot in your orgs. To keep a full-control agent
+locked to one chatbot, add `OPENBAT_CHATBOT_ID` — see [Pin to one
+chatbot](/mcp/pinning).
+</Note>
+
+## Which config to choose
+
+| Goal | Key kind | Example |
+|---|---|---|
+| Read-only dashboards / analytics for one chatbot | `ob_read_*` | Read-only dashboard agent |
+| Manage one chatbot's webhooks / workflows / reports / settings | `ob_admin_*` | Admin agent for one chatbot |
+| Create new chatbots, mint admin keys, manage your orgs | `ob_pat_*` | Full-control agent |
+
+PATs also carry a per-row sub-scope (`read` or `admin`). A read-scope PAT
+can run every read tool across every chatbot in your orgs but cannot
+mutate anything — the server surfaces the write tools, but the v1 routes
+return 403. The full per-kind tool list is on the [Tools](/mcp/tools)
+page.
+
+## Override the base URL
+
+For dogfooding against a local dev server, add `OPENBAT_BASE_URL`:
+
+```jsonc
+{
+  "mcpServers": {
+    "openbat": {
+      "command": "npx",
+      "args": ["-y", "@openbat/mcp"],
+      "env": {
+        "OPENBAT_API_KEY": "ob_pat_...",
+        "OPENBAT_BASE_URL": "http://localhost:3000"
+      }
+    }
+  }
+}
+```
+
+<Warning>
+The server refuses non-HTTPS base URLs unless they point at `localhost`
+or `127.0.0.1`. Any other `http://` URL is rejected.
+</Warning>
+
+<Tip>
+The dashboard has a **"Copy MCP config (with key)"** button on each page.
+It pre-fills the JSON above so you can paste it straight into Claude or
+Cursor.
+</Tip>

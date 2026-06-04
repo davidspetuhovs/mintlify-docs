@@ -1,0 +1,174 @@
+---
+title: "How eval mode works"
+description: "Passive diagnosis plus active synthetic probes."
+icon: "workflow"
+---
+{/* SOURCES: _sources/skill-openbat-eval.md; _sources/skill-openbat-optimize.md; _sources/mcp-readme.md */}
+
+OpenBat is a passive observability layer over your real chatbot traffic. Eval mode adds the active half: you drive the chatbot with synthetic test queries, OpenBat captures and analyzes them, and you read the verdict — to validate a fix before shipping, or to regression-test a suite.
+
+The loop has two halves, and OpenBat does both:
+
+<Steps>
+  <Step title="Diagnose (passive)">
+    OpenBat tells you **what went wrong** in real traffic — flags, issues, outcomes, and the analysis reasoning. Running inside the chatbot's own repo, you diagnose **why** against the actual source: system prompt, tools, and retrieval config. OpenBat's server never sees your code.
+  </Step>
+  <Step title="Validate (active)">
+    You **send synthetic test queries** to the chatbot (`openbat probe` / `openbat eval`), OpenBat analyzes them, and you read the verdict to confirm the fix actually worked — before and after, as a diff.
+  </Step>
+</Steps>
+
+## Who drives the chatbot
+
+OpenBat never calls your chatbot — it can't reach it. You (the agent, in the repo) issue the chatbot call; OpenBat owns the eval leg: synthetic isolation, deterministic await, and the verdict. The chatbot's own `@openbat/sdk` integration captures the turn.
+
+<Note>
+  Synthetic traffic is captured as `kind=probe` and excluded from organic `review` and analytics, so testing never skews real metrics. Inspect probe conversations with `openbat conversations list --synthetic`.
+</Note>
+
+## The probe -> diagnose -> fix loop
+
+<Steps>
+  <Step title="Pull the digest">
+    `openbat review` returns headline aggregates (with deltas vs the prior equal-length window) plus clusters of top issues, flags, intents, and failed outcomes. Each issue carries representative conversation pointers with the analysis `reasoning` and verification fields.
+
+    ```bash
+    openbat review --since 24h          # default; also 45m, 6h, 7d (max 30d)
+    openbat review --since 7d --json    # machine-readable for a script/agent
+    ```
+
+    Fastest start: `openbat optimize` bundles review, the active prompt, analysis definitions, and a probe plan into one read-only call.
+  </Step>
+  <Step title="Drill into the representatives">
+    For each cluster's representative `conversationId`, read the actual turns alongside the analysis `reasoning`, `answer_available`, and `verification_source` on the flagged message.
+
+    ```bash
+    openbat conversations show <id> --json | jq '.messages[] | {role, content, analyses: {
+      intents: .user_intents, flags: .user_flags,
+      outcomes: .assistant_outcomes, issues: .assistant_issues }}'
+    ```
+
+    That `answer_available` × `verification_source` triplet tells you whether the bot *could* have answered.
+  </Step>
+  <Step title="Map symptom to lever">
+    `answer_available = true` means the bot **could** have answered — so it's a delivery failure (prompt, retrieval, or tool), not a knowledge gap. `verification_source` narrows which lever to pull. See [Symptom to lever](/eval-mode/symptom-to-lever) for the full mapping.
+  </Step>
+  <Step title="Apply the fix">
+    Edit the right lever in the repo — system prompt, tool code, or retrieval config. Repo edits require explicit confirmation; offer a PR rather than committing to the default branch. For a chatbot that fetches its prompt from OpenBat, you can also ship a prompt live with `openbat prompts publish`.
+  </Step>
+  <Step title="Validate by probing">
+    Don't ship a fix on faith. Drive the chatbot with synthetic queries targeting the failure, let it capture as `kind=probe`, and read OpenBat's verdict — before and after, as a diff.
+  </Step>
+</Steps>
+
+## Symptom to lever
+
+`answer_available` is the load-bearing field. It separates a delivery failure (the bot had the data but didn't use it) from a knowledge gap (the answer doesn't exist anywhere).
+
+| Cluster signal | `answer_available` | `verification_source` | Lever | Fix |
+|---|---|---|---|---|
+| Wrong/incomplete answer, info exists in docs | true | `docs` / `retrieval` | Retrieval / docs | Improve chunking/topK, add the doc, fix the index — not the prompt |
+| Bot refused/hedged though it had the data | true | `reasoning` / `chatbot_data` | System prompt | Loosen or clarify the instruction that caused the refusal |
+| Bot needed a tool but never called it | n/a | (tool gap) | Tool logic / prompt | Add tool-trigger guidance to the prompt, or fix the tool schema/description |
+| Invented facts not in any source | false | `hallucination` | Prompt + retrieval | Add a "say you don't know" guardrail; fill the knowledge gap |
+| Genuinely unanswerable (info doesn't exist) | false | `missing_knowledge` | Docs / product | Author the missing doc; or route to a human |
+| Recurring spike, no single root cause | n/a | n/a | New analysis + alert | `openbat analysis add` to track it, `openbat workflows create` to alert |
+
+<Warning>
+  Never edit the prompt for a `missing_knowledge` verdict — the answer doesn't exist anywhere, so author the doc instead. A prompt change won't surface knowledge the bot never had.
+</Warning>
+
+## Declare an adapter
+
+To let the CLI drive your chatbot, declare an adapter once at the repo root — `openbat.probe.json` describes how to call your chatbot. `{{conversationId}}` and `{{message}}` are substituted on each turn.
+
+```json
+{
+  "url": "http://localhost:3000/api/chat",
+  "method": "POST",
+  "headers": { "content-type": "application/json" },
+  "body": {
+    "conversationId": "{{conversationId}}",
+    "messages": [{ "role": "user", "content": "{{message}}" }]
+  }
+}
+```
+
+No adapter? `openbat probe "..."` still mints the correlated id and prints the exact call for you to issue, then you `openbat conversations await <id>`.
+
+<Note>
+  For the probe prefix to classify the turn, the chatbot must forward `conversationId` to `recordMessages`. Apps that mint ids server-side should pass `kind: "probe"` explicitly to the SDK.
+</Note>
+
+## A single probe
+
+```bash
+openbat probe "how do I get a refund?"          # drive → await → verdict
+openbat probe "..." --no-wait                    # just send; await later
+openbat conversations await <obprobe_id|uuid>    # block until fully analyzed
+```
+
+`probe` generates a reserved `obprobe_<uuid>` conversationId, the server classifies the conversation as `kind=probe` (excluded from organic analytics and review), it awaits analysis, then prints the verdict: intents, flags, outcome, issues, and `answer_available`.
+
+## Eval suites and the regression diff
+
+A suite is a `.json` file (`{ "items": [{ "id", "question", "expect"? }] }`, max 100 items) or a one-question-per-line `.txt` file. `expect` assertions — `intent`, `outcome` (e.g. `resolved`), and `no_flags: [...]` — must all hold for an item to pass.
+
+```bash
+openbat eval run --suite golden.json --out before.json
+#   …apply your fix (prompt / tools / retrieval)…
+openbat eval run --suite golden.json --out after.json
+openbat eval diff before.json after.json    # surfaces regressions + fixes; exit 1 on regression
+```
+
+<Warning>
+  The suite cap is 100. Each item is a full chatbot turn plus analysis, so an eval run amplifies LLM cost. Keep suites focused on the failures you're fixing.
+</Warning>
+
+## Test a candidate prompt without shipping
+
+```bash
+openbat prompts create-draft --file new-prompt.txt              # creates a version, NOT live
+openbat eval run --suite golden.json --candidate <versionId>    # chatbot runs the draft
+openbat prompts activate <versionId>                            # ship only once the eval is clean
+```
+
+The chatbot must fetch the candidate via the SDK's `getSystemPrompt({ versionOverride })` — forward the `{{candidate}}` adapter field as a header your route reads. For repo-hardcoded prompts, edit the prompt locally and probe.
+
+## Replay flagged conversations with backtests
+
+Backtests complement probing when you want to re-test the **same** real conversations that failed, rather than fresh synthetic queries.
+
+```bash
+openbat backtests create --name "fix v2" --candidate-prompt <versionId> \
+  --flags <flag1,flag2> --sample-size 50      # requires a PAT key
+openbat backtests status <backtestId>          # still_flagged / resolved / new_flag / unchanged_clean
+```
+
+Ship only when the verdict is clean — probe issues resolved, `resolved` dominant, `new_flag` near zero.
+
+<Warning>
+  `prompts activate` and `prompts publish` change the live prompt; repo edits go through a PR. Confirm before shipping, and ship only on a clean eval or diff. A probe run never moves production metrics — never assert prod metrics changed because of a probe.
+</Warning>
+
+## MCP equivalents
+
+The same loop runs over the [MCP tools](/mcp/tools). `eval` itself is client-orchestrated (file I/O plus a loop), so under MCP you compose it from individual tools.
+
+<Steps>
+  <Step title="Start a probe">
+    `openbat_probe` returns a probe id plus next steps. You send the message to your chatbot with that id — OpenBat never calls your chatbot.
+  </Step>
+  <Step title="Await analysis">
+    `openbat_await_analysis { conversationId }` polls until `allComplete`. It accepts the `obprobe_` id.
+  </Step>
+  <Step title="Read the verdict">
+    `openbat_get_conversation` returns the messages plus all analyses (issues, outcomes, flags, intents, reasoning, and verification fields).
+  </Step>
+</Steps>
+
+`openbat_optimize_context` bootstraps the loop in one call. For candidate prompts and replays, use `openbat_create_draft_prompt`, `openbat_get_backtest_status`, and `openbat_create_backtest`.
+
+<Card title="Next: set up eval mode" icon="rocket" href="/eval-mode/setup">
+  Declare your `openbat.probe.json` adapter and confirm scope before your first probe.
+</Card>

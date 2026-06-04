@@ -1,0 +1,71 @@
+---
+title: "Create a chatbot"
+description: "Create a chatbot and start the onboarding wizard."
+icon: "bot"
+---
+{/* SOURCES: flows/create-new-chatbot.md; pages/chatbot-onboarding.md */}
+
+Add a new chatbot to your organization so OpenBat can track and analyze its conversations. This is for a team admin or owner setting up analytics for a new chatbot.
+
+<Note title="Before you begin">
+  - You are authenticated.
+  - You have the owner or admin role in the organization.
+</Note>
+
+<Steps>
+  <Step title="Open the chatbot list">
+    Navigate to `/platform`. The chatbot list appears with the **Active**, **Pending**, **Archive**, and **Demo** tabs.
+  </Step>
+
+  <Step title="Start a new chatbot">
+    Click **+ New chatbot**. A modal opens with a **Name** field (with a `0/100` character counter) and a **Continue to setup** button.
+
+    <Frame caption="The New chatbot modal with the Name field and Continue to setup button.">
+      <img src="/images/guides/create-new-chatbot/step-01.png" alt="create-new-chatbot step 2" />
+    </Frame>
+  </Step>
+
+  <Step title="Name the chatbot and continue">
+    Enter a chatbot name and click **Continue to setup**.
+
+    <Frame caption="Entering a chatbot name before continuing to setup.">
+      <img src="/images/guides/create-new-chatbot/step-02.png" alt="create-new-chatbot step 3" />
+    </Frame>
+  </Step>
+
+  <Step title="Work through the onboarding wizard">
+    You are redirected to the 9-step onboarding wizard: **Basics**, **Product**, **Brand**, **Pricing**, **Competitors**, **Analysis**, **Personas**, **Calibrate**, and **Connect**. The first step shows **Product name**, **Website URL**, and **Documentation URL (MCP)**, alongside a demo preview chatbot.
+
+    The onboarding wizard guides you through copying the API key and integrating the OpenBat SDK. Once you mark onboarding complete, you are redirected to the dashboard.
+  </Step>
+</Steps>
+
+<Check>
+  The new chatbot is created with an API key, and you are guided through SDK setup on the onboarding page. After you copy the API key and follow the SDK installation steps, the chatbot starts receiving and analyzing conversations.
+</Check>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Insufficient permissions for non-owner/admin roles">
+    Creating a chatbot requires the owner or admin role in the organization. If you do not have one of these roles, ask an organization owner or admin to create the chatbot or to update your role.
+  </Accordion>
+
+  <Accordion title="Name validation errors">
+    The **Name** field has a `0/100` character counter. Make sure the name you enter is within the allowed length before clicking **Continue to setup**.
+  </Accordion>
+</AccordionGroup>
+
+## Next steps
+
+<Columns cols={2}>
+  <Card title="Chatbot onboarding" icon="list-checks" href="/platform/features/onboarding">
+    Copy the API key and follow the SDK setup steps to finish onboarding.
+  </Card>
+  <Card title="SDK quickstart" icon="code" href="/sdk/quickstart">
+    Integrate the OpenBat SDK so the chatbot starts capturing conversations.
+  </Card>
+  <Card title="Explore demo chatbot" icon="compass" href="/platform/guides/explore-demo-chatbot">
+    Open a read-only demo chatbot to see a fully populated dashboard.
+  </Card>
+</Columns>

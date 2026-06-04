@@ -1,0 +1,155 @@
+---
+title: "Node & Express"
+description: "Capture from Express or any framework via direct API."
+icon: "server"
+---
+{/* SOURCES: _sources/sdk-readme.md */}
+
+If you aren't on the Vercel AI SDK, initialize the `OpenBat` client once and call `recordMessages()` after each conversation turn. The call is fire-and-forget — messages send asynchronously, and the SDK never throws or blocks your response.
+
+## Install
+
+```bash
+npm install @openbat/sdk
+```
+
+## Direct API — any framework
+
+Create the client once in a shared module so you reuse a single instance across your app.
+
+```typescript
+// lib/openbat.ts
+import { OpenBat } from "@openbat/sdk";
+
+export const openbat = new OpenBat({
+  apiKey: process.env.OPENBAT_API_KEY,
+});
+```
+
+Then call `recordMessages()` wherever you handle a chat turn. Pass the user and assistant messages from that turn, plus any context you have:
+
+```typescript
+// wherever you handle chat
+import { openbat } from "@/lib/openbat";
+
+openbat.recordMessages({
+  conversationId: session.id,
+  messages: [
+    { role: "user", content: userMessage },
+    { role: "assistant", content: assistantResponse },
+  ],
+  user: { id: user.id, email: user.email },
+});
+```
+
+## Express / Node.js
+
+In an Express route, instantiate the client at module scope and record messages after you produce a reply. Calling `recordMessages()` without `await` keeps it off the response path — it does not block `res.json()`.
+
+```typescript
+import express from "express";
+import { OpenBat } from "@openbat/sdk";
+
+const app = express();
+const openbat = new OpenBat(); // reads from OPENBAT_API_KEY env var
+
+app.post("/api/chat", async (req, res) => {
+  const { message, conversationId, userId } = req.body;
+
+  // Your chat logic
+  const reply = await getAIResponse(message);
+
+  // Fire-and-forget — does not block the response
+  openbat.recordMessages({
+    conversationId,
+    user: { id: userId },
+    messages: [
+      { role: "user", content: message },
+      { role: "assistant", content: reply },
+    ],
+  });
+
+  res.json({ reply });
+});
+```
+
+<Note>
+When no `apiKey` is passed to the constructor, the client reads `OPENBAT_API_KEY` from the environment. Construction throws if `enabled` is `true` and no API key is found by either route. See [Configuration](/sdk/configuration) for the full option list and environment-variable precedence.
+</Note>
+
+## recordMessages input
+
+`recordMessages()` takes a single object. `conversationId` and `messages` are required; everything else is optional context.
+
+<ParamField path="conversationId" type="string" required>
+Stable identifier for the conversation. 1–256 characters.
+</ParamField>
+
+<ParamField path="messages" type="Array" required>
+The turn's messages. Each entry has `role` (`"user" | "assistant" | "system"`) and `content`. Optional per-message fields: `id` (external ID for deduplication), `sentAt` (a `Date`, serialized to ISO string), and `tools` / `reasoning` on assistant messages. 1–100 messages per request.
+</ParamField>
+
+<ParamField path="kind" type='"organic" | "probe"'>
+Defaults to `"organic"`. Use `"probe"` for synthetic eval traffic, which is excluded from organic analytics and review. The server also infers `"probe"` from a reserved `obprobe_` `conversationId` prefix.
+</ParamField>
+
+<ParamField path="user" type="OpenBatUser">
+Who is chatting — `id`, `name`, `email`, `plan`, `createdAt`, `industry`, `mrr`. All fields optional.
+</ParamField>
+
+<ParamField path="organization" type="OpenBatOrganization">
+Their organization — `id`, `name`, `plan`, `mrr`, `industry`.
+</ParamField>
+
+<ParamField path="session" type="OpenBatSession">
+Session context — `id`, `pageUrl`, `referrer`, `device` (`"mobile" | "desktop" | "tablet"`), `country` (ISO code).
+</ParamField>
+
+<ParamField path="custom" type="Record<string, string | number | boolean>">
+Arbitrary key-value pairs for segmenting conversations.
+</ParamField>
+
+<ParamField path="systemPromptTemplate" type="string">
+The unrendered system prompt template, which enables prompt versioning. See [System prompt versioning](/sdk/system-prompt-versioning).
+</ParamField>
+
+<ParamField path="systemPromptVariables" type="Record<string, string | number | boolean>">
+The resolved variable values for this call, stored verbatim.
+</ParamField>
+
+<ParamField path="headers" type="Record<string, string>">
+Forwarded client headers so the capture endpoint sees the real user's IP and User-Agent instead of your server's. See [Header forwarding](/sdk/header-forwarding).
+</ParamField>
+
+<ParamField path="framework" type="string">
+Optional integration hint, surfaced as the `x-openbat-framework` header (e.g. `"vercel-ai-sdk"`).
+</ParamField>
+
+<Tip>
+Every context field is optional — send what you have. Even just `user.id` helps segment conversations in the dashboard. See [Enriching context](/sdk/enriching-context) for the full set of business-context fields.
+</Tip>
+
+## Provide your AI response
+
+`recordMessages()` records the conversation; it does not call your model. Produce the reply however your stack already does (in the example above, via `getAIResponse(message)`), then pass the resulting text as the `assistant` message `content`.
+
+<Warning>
+The SDK is designed to be invisible: `recordMessages()` catches all errors internally and never throws or blocks your application. HTTP errors are logged as `OpenBat Error: HTTP 400 — ...` and network failures as `OpenBat Error: Failed to record messages.` — all to `console.error`. To confirm it's working, check your server console or the OpenBat dashboard. See [Limits and errors](/sdk/limits-and-errors).
+</Warning>
+
+## Next steps
+
+<Columns cols={2}>
+  <Card title="Enriching context" icon="user" href="/sdk/enriching-context">
+    Attach user, organization, session, and custom fields for richer dashboard analytics.
+  </Card>
+  <Card title="Header forwarding" icon="globe" href="/sdk/header-forwarding">
+    Forward original client headers so capture records the real IP and User-Agent.
+  </Card>
+  <Card title="API reference" icon="brackets-curly" href="/sdk/api-reference">
+    Full `OpenBat` class, `recordMessages` input, and type definitions.
+  </Card>
+  <Card title="Raw HTTP — any language" icon="terminal" href="/sdk/integrations/rest-http">
+    Call the capture endpoint directly if you aren't using TypeScript.
+  </Card>
+</Columns>

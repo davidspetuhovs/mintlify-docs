@@ -1,0 +1,171 @@
+---
+title: "Remote-controlled prompts"
+description: "Fetch the live prompt at runtime."
+icon: "cloud-download"
+---
+{/* SOURCES: _sources/sdk-readme.md */}
+
+Author and publish your chatbot's system prompt directly from the OpenBat dashboard, then fetch the live version at request time with `client.getSystemPrompt()`. Iterate on a prompt — even a one-line tweak — without a redeploy, roll back to a previous version in one click, or hit the kill switch during incidents to revert to your hardcoded fallback. The `fallback` you pass stays the safety net: if OpenBat is unreachable, the kill switch is on, or no prompt has been published, your chatbot keeps running on the prompt that lives in your code.
+
+<Note>
+For most production setups, prefer [DB-backed system prompts](/sdk/db-backed-prompts). Use this runtime-fetch path when you can't host a database or you need single-line setup.
+</Note>
+
+## Opt in with one line
+
+```typescript
+const { template: systemPrompt } = await client.getSystemPrompt({
+  fallback: HARDCODED_SYSTEM_PROMPT,
+});
+```
+
+Pass `systemPrompt` to your LLM. Adoption is opt-in by this single call — until you add it, your chatbot keeps using your hardcoded prompt and nothing changes.
+
+## End-to-end with `streamText`
+
+This example fetches the live template, renders the variables for the LLM call, then passes the template the LLM actually saw back to `recordMessages()` so [version history](/sdk/system-prompt-versioning) stays accurate.
+
+```typescript
+import { streamText } from "ai";
+import { openai } from "@ai-sdk/openai";
+import { OpenBat } from "@openbat/sdk";
+
+const client = new OpenBat();
+
+const FALLBACK_TEMPLATE =
+  "You are a {{role}} assistant for {{company}}. Be concise and {{tone}}.";
+
+export async function POST(req: Request) {
+  const { messages, conversationId } = await req.json();
+
+  const variables = { role: "support", company: "Acme", tone: "warm" };
+
+  const { template, source } = await client.getSystemPrompt({
+    fallback: FALLBACK_TEMPLATE,
+    conversationId,
+  });
+
+  const renderedSystem = template
+    .replace("{{role}}", variables.role)
+    .replace("{{company}}", variables.company)
+    .replace("{{tone}}", variables.tone);
+
+  const result = streamText({
+    model: openai("gpt-4o"),
+    system: renderedSystem,
+    messages,
+    onFinish: async ({ text }) => {
+      await client.recordMessages({
+        conversationId,
+        // Pass the template the LLM actually saw (live or fallback) so
+        // version history stays accurate.
+        systemPromptTemplate: template,
+        systemPromptVariables: variables,
+        messages: [...],
+      });
+    },
+  });
+
+  return result.toUIMessageStreamResponse();
+}
+```
+
+## Behaviour
+
+`getSystemPrompt` returns `{ template, source }` and **never throws**. The `source` field tells you where the prompt came from.
+
+| Situation | Returns | `source` |
+|---|---|---|
+| Cache hit (within 60s of last fetch) | cached template | `"cache"` |
+| Cache miss, server reachable | live template | `"remote"` |
+| Cache miss, cold-start, fetch exceeds `coldStartTimeoutMs` (default 100ms) | your fallback | `"fallback"` |
+| OpenBat unreachable, prior cache exists | last-known-good (stale) | `"cache"` |
+| OpenBat unreachable, no cache | your fallback | `"fallback"` |
+| Kill switch ON in dashboard | your fallback | `"kill_switch"` |
+| No published prompt for this chatbot | your fallback | `"fallback"` |
+
+The first call after a cold start hits the network. Subsequent calls within 60s return synchronously from the in-memory cache. Stale entries refresh in the background while serving the existing value, so you never block on a refresh.
+
+## Configuration
+
+```typescript
+await client.getSystemPrompt({
+  fallback: "...",                   // required
+  conversationId: "...",             // optional, plumbed for future A/B testing
+  mode: "instant_fallback",          // optional — skips the cold-start fetch entirely
+  coldStartTimeoutMs: 100,           // optional — default 100ms
+  versionOverride: "...",            // optional — pin a specific (draft) version for probe/eval
+});
+```
+
+<ParamField path="fallback" type="string" required>
+The hardcoded prompt to serve when OpenBat is unreachable, the kill switch is on, or no prompt has been published. Returned as the `template` with a `"fallback"` or `"kill_switch"` source.
+</ParamField>
+
+<ParamField path="conversationId" type="string">
+Optional. Plumbed for future A/B testing.
+</ParamField>
+
+<ParamField path="mode" type='"instant_fallback"'>
+Never block on the fetch; return the fallback immediately on cold start. The fetch still runs in the background so subsequent calls return the live prompt. Use if you have extreme first-request latency requirements.
+</ParamField>
+
+<ParamField path="coldStartTimeoutMs" type="number" default="100">
+Only enforced before the cache is warm. Once a fetch has succeeded once, subsequent calls return synchronously from cache.
+</ParamField>
+
+<ParamField path="versionOverride" type="string">
+Fetch a specific published version id instead of the live active prompt, bypassing the cache. The version must belong to this chatbot (server-enforced); the kill switch still applies; on any error you get your `fallback`.
+</ParamField>
+
+### Pinning a candidate version for evals
+
+`versionOverride` fetches a specific published version id instead of the live active prompt, bypassing the cache. Forward it from a probe/eval request (for example, an `x-openbat-prompt-version` header your route reads) so an eval can run the chatbot against a candidate draft created with `openbat prompts create-draft` — without shipping it to production.
+
+```typescript
+const versionOverride = req.headers.get("x-openbat-prompt-version") ?? undefined;
+
+const { template } = await client.getSystemPrompt({
+  fallback: FALLBACK_TEMPLATE,
+  versionOverride,
+});
+```
+
+<Note>
+See [candidate prompts](/eval-mode/candidate-prompts) for how the eval loop pins a draft and the [`openbat prompts`](/cli/prompts) commands for creating one.
+</Note>
+
+## The fallback is sacred
+
+<Warning>
+Keep your hardcoded fallback up to date. It's what runs during an OpenBat outage, when the kill switch is on, or before the first fetch resolves. Treat it as your prompt's last line of defence — anyone reading your repo can still see what your chatbot says.
+</Warning>
+
+## Versus DB-backed prompts
+
+`getSystemPrompt` (runtime fetch, this page) and `onPromptStateChange` ([DB-backed](/sdk/db-backed-prompts)) are two ways to consume dashboard-published prompts. They solve the same problem from opposite ends.
+
+| | `getSystemPrompt` (runtime fetch) | `onPromptStateChange` (DB-backed) |
+|---|---|---|
+| Runtime source | OpenBat (with TTL cache + fallback) | Your own DB |
+| Network dep at request time | Yes — SDK calls OpenBat | None — local DB read |
+| Cold-start latency | Up to 100ms then fallback | Always fast (local read) |
+| OpenBat outage | Stale cache then eventual fallback | Your DB keeps serving forever |
+| Setup cost | One SDK call | Schema + write handler + read path |
+
+**Use `getSystemPrompt`** if you can't host a database (edge functions, browser-based agents, simple scripts) or if your prompt rarely changes and the convenience of a one-line setup outweighs the runtime dependency.
+
+**Use `onPromptStateChange`** if you have a database and want zero runtime dependency on OpenBat.
+
+<Note>
+You can configure both, but it's unusual — the two paths will populate two different runtime sources. Pick one.
+</Note>
+
+<Columns cols={2}>
+  <Card title="DB-backed system prompts" icon="database" href="/sdk/db-backed-prompts">
+    The recommended path — push prompt updates into your own database through the capture response.
+  </Card>
+  <Card title="System prompt versioning" icon="code-branch" href="/sdk/system-prompt-versioning">
+    Link every captured message to the prompt version active when it was sent.
+  </Card>
+</Columns>

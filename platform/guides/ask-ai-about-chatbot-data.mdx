@@ -1,0 +1,46 @@
+---
+title: "Ask AI about your data"
+description: "Query analytics in natural language."
+icon: "sparkles"
+---
+{/* SOURCES: flows/ask-ai-about-chatbot-data.md; pages/chatbot-overview-dashboard.md */}
+
+Ask the AI assistant on the chatbot dashboard a natural-language question about your chatbot's analytics, and get back relevant data, charts, and insights. This is for product managers who want quick answers without writing queries.
+
+<Note title="Before you begin">
+  - The chatbot has captured conversations.
+  - You are on the chatbot dashboard at `/platform/[chatbotId]`.
+</Note>
+
+<Steps>
+  <Step title="Open the message input field">
+    On the dashboard, locate the AI chat message input field. Command hints next to it show the available scopes you can add to a question: `@` to tag an entity, `$` to scope by plan, `#` for user analysis, `!` for assistant analysis, and `^` to scope by prompt.
+  </Step>
+  <Step title="Type your question and submit">
+    Type a natural-language question, for example `What's driving negative sentiment?`, then click **Submit**. The URL updates with a `?c=` conversation ID and your question appears in the chat view.
+
+    <Frame caption="Asking the AI assistant a natural-language question from the dashboard chat input.">
+      <img src="/images/guides/ask-ai-about-chatbot-data/step-01.png" alt="ask-ai-about-chatbot-data step 2" />
+    </Frame>
+  </Step>
+</Steps>
+
+<Check>
+The AI responds with relevant data, charts, and insights based on the chatbot's conversation data.
+</Check>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="The question appears but no response comes back">
+    If the AI backend returns an error, the failure appears silently: your question shows in the chat, but no AI response, error message, or loading-timeout indicator appears, leaving the chat empty. If the chat stays empty, try submitting the question again or rephrasing it.
+  </Accordion>
+</AccordionGroup>
+
+## Next steps
+
+<Columns cols={2}>
+  <Card title="Create a report from a template" href="/platform/guides/create-report-from-template" icon="chart-line">
+    Turn recurring questions into a reusable dashboard built from a pre-built template.
+  </Card>
+</Columns>

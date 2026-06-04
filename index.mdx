@@ -1,3 +1,41 @@
 ---
-title: "OpenBat"
+title: "Introduction"
+description: "What OpenBat is and who it's for."
+icon: "book-open"
 ---
+{/* SOURCES: knowledgebase/onboarding-guide.md; knowledgebase/feature-inventory.md */}
+
+OpenBat is conversational analytics for AI chatbots — "Google Analytics for AI chatbots." It captures conversations between your end-users and your chatbot, then runs automated analysis to surface sentiment trends, churn risk signals, hallucination detection, feature request patterns, and resolution rates.
+
+It's built for product teams, customer success, and support — not just engineers. Where LLM observability tools (Langfuse, LangSmith, Helicone) focus on token counts and trace debugging, OpenBat answers questions like "Which customers are at risk of churning?" and "What are users actually asking for?"
+
+OpenBat uses a multi-tenant organization model. Each organization can have multiple chatbots, each with its own API key, conversation history, analysis configuration, and automated workflows. Data flows in through an SDK integration, gets analyzed by configurable AI pipelines, and surfaces through dashboards, reports, and alerting workflows.
+
+## Where to go next
+
+<Columns cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/get-started/quickstart">
+    Sign up, create your first chatbot, copy its API key, and integrate the SDK.
+  </Card>
+  <Card title="How OpenBat works" icon="diagram-project" href="/get-started/how-openbat-works">
+    Follow data from SDK ingestion through the analysis pipeline to dashboards and alerts.
+  </Card>
+  <Card title="Platform guides" icon="layout-dashboard" href="/platform/guides/create-new-chatbot">
+    Step-by-step walkthroughs for chatbots, conversations, reports, workflows, and prompts.
+  </Card>
+  <Card title="Overview dashboard" icon="gauge" href="/platform/features/overview-dashboard">
+    Read the metric cards for at-risk orgs, performance, activity, and risk signals.
+  </Card>
+  <Card title="SDK" icon="code" href="/sdk/index">
+    Send conversations to OpenBat with @openbat/sdk and enrich them with context.
+  </Card>
+  <Card title="CLI" icon="terminal" href="/cli/index">
+    Manage chatbots, conversations, prompts, and webhooks from @openbat/cli.
+  </Card>
+  <Card title="MCP" icon="plug" href="/mcp/index">
+    Connect your chatbot data to MCP clients with @openbat/mcp.
+  </Card>
+  <Card title="Eval Mode" icon="target" href="/eval-mode/index">
+    Probe the chatbot, run eval suites, diagnose issues, and ship candidate prompts.
+  </Card>
+</Columns>

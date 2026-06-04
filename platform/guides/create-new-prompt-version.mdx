@@ -1,0 +1,61 @@
+---
+title: "Create a prompt version"
+description: "Edit, version, and publish the system prompt."
+icon: "file-pen"
+---
+{/* SOURCES: flows/create-new-prompt-version.md; pages/system-prompt.md */}
+
+Edit your chatbot's system prompt and create a new version from the **System Prompt** page. This is for engineers and product team members who want to change chatbot behavior — for example, to fix a hallucination pattern found in analysis.
+
+<Note title="Before you begin">
+  - The chatbot has an existing prompt.
+  - You have edit permissions for the chatbot.
+</Note>
+
+<Steps>
+  <Step title="Open the System Prompt page">
+    Navigate to `/platform/[chatbotId]/system-prompt` from the chatbot sidebar. The **Prompt** tab shows the current live version (for example, v6.0 LIVE), the mode progression (Manual, Half-automated, Fully Automated), the version history timeline, and Actions including **Publish mode**, **Kill switch**, and **Roll back**. The page also has **Experiments** and **Suggested** tabs.
+
+    <Frame caption="The System Prompt page with the current live version, mode progression, and version history.">
+      <img src="/images/guides/create-new-prompt-version/step-01.png" alt="create-new-prompt-version step 1" />
+    </Frame>
+  </Step>
+
+  <Step title="Open a new draft">
+    Click **+ New version**. A side panel titled **Draft 1** opens with **Manual** and **AI Suggest** tabs. The panel has editable **PROMPT TEXT**, a **DIFF VS ACTIVE** view that reads `No changes vs active` until you edit, and **Discard**, **Save & close**, and **Publish** buttons. Edit the prompt text in the **Manual** tab, or switch to the **AI Suggest** tab to have AI generate changes. As you edit, the diff updates to show your changes against the active version.
+
+    <Frame caption="The Draft 1 side panel with editable prompt text, diff vs active, and Discard, Save & close, and Publish buttons.">
+      <img src="/images/guides/create-new-prompt-version/step-02.png" alt="create-new-prompt-version step 2" />
+    </Frame>
+  </Step>
+
+  <Step title="Discard or publish the draft">
+    To remove the draft, click **Discard**. A confirmation dialog appears: `Discard this draft? This deletes the draft permanently. The active published prompt is unaffected.` Click **Discard draft** to delete it. To keep working without publishing, use **Save & close**. To make the version live, click **Publish**.
+  </Step>
+</Steps>
+
+<Check>
+  The new prompt version is published and the chatbot uses it for future conversations. Analysis tracks the impact of the change.
+</Check>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Publishing errors">
+    If publishing fails, the version is not made live. Review your prompt text in the draft panel and try **Publish** again.
+  </Accordion>
+  <Accordion title="The new version causes issues">
+    If a published version causes problems, use the **Kill switch** in Actions for an emergency disable, or **Roll back** to a previous version from the version history.
+  </Accordion>
+</AccordionGroup>
+
+## Next steps
+
+<Columns cols={2}>
+  <Card title="System prompt" icon="file-pen" href="/platform/features/system-prompt">
+    Review version timeline, experiments, and AI-suggested improvements on the System Prompt page.
+  </Card>
+  <Card title="System prompt versioning" icon="code" href="/sdk/system-prompt-versioning">
+    Reference prompt versions from the SDK so the chatbot uses your published prompt.
+  </Card>
+</Columns>

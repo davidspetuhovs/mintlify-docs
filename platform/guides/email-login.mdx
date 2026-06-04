@@ -1,0 +1,75 @@
+---
+title: "Log in"
+description: "Sign in with email and password."
+icon: "log-in"
+---
+{/* SOURCES: flows/email-login.md; pages/sign-in.md */}
+
+Authenticate with your email and password to reach your chatbot analytics dashboard. This is for returning users who already have an OpenBat account.
+
+<Note title="Before you begin">
+  - You have an existing OpenBat account.
+  - You are not already logged in.
+  - You know your email and password.
+</Note>
+
+<Steps>
+  <Step title="Open the sign-in page">
+    Navigate to `/auth/login`. The form shows a "Welcome back." heading with an **Email** field, a **Password** field, and a **Sign in** button.
+
+    <Frame caption="The sign-in form at /auth/login">
+      <img src="/images/guides/email-login/sign-in.png" alt="Sign in page" />
+    </Frame>
+
+    <Frame caption="Step 1: the login form with Email and Password fields visible">
+      <img src="/images/guides/email-login/step-01.png" alt="email-login step 1" />
+    </Frame>
+  </Step>
+
+  <Step title="Enter your email address">
+    Type your email address into the **Email** field.
+  </Step>
+
+  <Step title="Enter your password">
+    Type your password into the **Password** field.
+  </Step>
+
+  <Step title="Submit the form">
+    Click the **Sign in** button.
+  </Step>
+
+  <Step title="Wait for the redirect">
+    After authentication completes, you are redirected to `/platform`, where the dashboard shows your organization and its chatbot list.
+
+    <Frame caption="Step 5: the /platform dashboard showing the organization's chatbot list">
+      <img src="/images/guides/email-login/step-02.png" alt="email-login step 5" />
+    </Frame>
+  </Step>
+</Steps>
+
+<Check>
+You are redirected to `/platform`, showing your organization's chatbot list.
+</Check>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Sign in returns an 'Invalid email or password' error">
+    Submitting the form with a wrong password shows an inline error in red: "Invalid email or password". The form stays on `/auth/login`. Re-check your email and password and try again, or use the **Forgot?** link to reset your password.
+
+    <Frame caption="Inline error shown after submitting with a wrong password">
+      <img src="/images/guides/email-login/failure-01.png" alt="email-login failure 1" />
+    </Frame>
+  </Accordion>
+</AccordionGroup>
+
+## Next steps
+
+<Columns cols={2}>
+  <Card title="Password reset request" icon="key" href="/platform/guides/password-reset-request">
+    Request a reset email if you have forgotten your password.
+  </Card>
+  <Card title="Email sign up" icon="user-plus" href="/platform/guides/email-sign-up">
+    Create a new OpenBat account with email and password.
+  </Card>
+</Columns>

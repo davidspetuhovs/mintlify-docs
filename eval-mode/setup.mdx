@@ -1,0 +1,114 @@
+---
+title: "Point OpenBat at your chatbot"
+description: "Configure scope and the probe adapter."
+icon: "plug"
+---
+{/* SOURCES: _sources/skill-openbat-eval.md; _sources/cli-readme.md */}
+
+Before you can run the probe → diagnose → fix loop, the CLI needs two things: which **one chatbot** every command targets, and **how to call your chatbot** so it can drive a synthetic test query end to end. This is the setup step the rest of eval mode builds on — [run a single probe](/eval-mode/probe), [run a suite](/eval-mode/eval-suites), and [test a candidate prompt](/eval-mode/candidate-prompts) all assume the scope and adapter you configure here.
+
+<Note>
+OpenBat never calls your chatbot — it can't reach it. You (the agent, in the repo) issue the chatbot call; OpenBat owns the eval leg: synthetic isolation, deterministic await, and the verdict. The chatbot's own `@openbat/sdk` integration captures the turn. The adapter below just tells the CLI how to make that call on your behalf.
+</Note>
+
+## Confirm scope (one chatbot)
+
+The active eval loop operates on exactly **one chatbot per run**. Confirm which one the CLI resolves to:
+
+```bash
+openbat auth whoami        # shows the kind, chatbots in scope, and the active chatbot
+```
+
+A chatbot-scoped key (`ob_read_*` or `ob_admin_*`) is single-chatbot by construction — there is nothing to pin. A PAT (`ob_pat_*`) reaches many chatbots, so if `whoami` shows the active chatbot is not pinned, select one first:
+
+```bash
+openbat use <id|name>     # persists ~/.openbatrc.activeChatbotId
+openbat use               # no arg → shows the current pin + reachable options
+```
+
+Once pinned, every command — `probe`, `eval`, `review`, `prompts` — targets that chatbot.
+
+<Warning>
+The CLI rejects ingest keys (`ob_live_*`) — those are SDK-only, for the capture endpoint. Use a read-capable key (`ob_read_*`, `ob_admin_*`, or `ob_pat_*`) here. To save a key without leaking it into shell history, pipe it over stdin:
+
+```bash
+echo "ob_pat_..." | openbat config set-key --from-stdin
+```
+
+It is stored at `~/.openbatrc` with mode `0600`; the CLI refuses to load if the perms are looser.
+</Warning>
+
+## Declare the probe adapter
+
+To let the CLI drive your chatbot, declare an adapter once at the repo root — `openbat.probe.json`. It describes how to call your chatbot. The CLI substitutes `{{conversationId}}` and `{{message}}` per probe:
+
+```json openbat.probe.json
+{
+  "url": "http://localhost:3000/api/chat",
+  "method": "POST",
+  "headers": { "content-type": "application/json" },
+  "body": {
+    "conversationId": "{{conversationId}}",
+    "messages": [{ "role": "user", "content": "{{message}}" }]
+  }
+}
+```
+
+With this file present, `openbat probe "..."` drives the call for you: it mints a correlated id, posts the request, awaits analysis, and prints the verdict. The same adapter feeds `eval run` for every suite item. To point a command at an adapter elsewhere, pass `--adapter PATH`.
+
+<Note>
+For candidate-prompt evals, the CLI also substitutes a `{{candidate}}` field into the adapter so your route can fetch a specific draft version. Wire it through as a header your route reads. See [Test candidate prompts](/eval-mode/candidate-prompts).
+</Note>
+
+The chatbot endpoint can run on `localhost`. The CLI refuses non-HTTPS base URLs **except** when they point at `localhost` or `127.0.0.1`, so a local dev server works without any insecure flag.
+
+## No adapter? Drive the call yourself
+
+The adapter is optional. Without one, `openbat probe "..."` still mints the correlated `obprobe_` id and prints the **exact call** for you to issue — then you await the analysis once you've sent it:
+
+```bash
+openbat probe "how do I get a refund?" --no-wait   # mints the id + prints the call; doesn't drive it
+#   …you issue the printed request against your chatbot…
+openbat conversations await <obprobe_id|uuid>       # block until fully analyzed
+```
+
+`conversations await` accepts either the internal id or the probe's `obprobe_` id, exits `0` when analysis is done, and `2` on timeout.
+
+## Verify the loop is wired
+
+Run one probe to confirm scope, the adapter, and SDK capture all line up:
+
+```bash
+openbat probe "how do I get a refund?"      # drive → await → verdict
+```
+
+A clean run prints the verdict (intents, flags, outcome, issues, `answer_available`) and the conversation is captured as `kind=probe`. Confirm it landed in the synthetic lane rather than organic traffic:
+
+```bash
+openbat conversations list --synthetic       # only probes; organic views stay clean
+```
+
+If the probe never resolves, the chatbot likely isn't forwarding the `conversationId` to the SDK.
+
+<Warning>
+For a turn to classify as `kind=probe`, the chatbot must forward the `conversationId` from the request to the SDK's `recordMessages`. Apps that mint conversation ids server-side won't see the reserved `obprobe_` prefix — pass `kind: "probe"` explicitly to the SDK in that case. Without this, the probe lands in organic analytics and skews your real metrics.
+</Warning>
+
+## Synthetic isolation
+
+Synthetic isolation is the point of eval mode. Probe and eval traffic is captured as `kind=probe` and **excluded from organic `review`, the dashboard, and analytics**, so your test queries never skew real metrics. Inspect synthetic conversations any time with `openbat conversations list --synthetic`.
+
+A clean probe means the *synthetic* turn behaved — never assert that production metrics moved because of a probe run. They don't, by design.
+
+## MCP equivalents
+
+The same scope-and-adapter setup applies under MCP, where you drive the chatbot yourself and loop the primitives: `openbat_probe` returns a probe id plus next steps → you send that to your chatbot → `openbat_await_analysis { conversationId }` polls until `allComplete` (it accepts the `obprobe_` id) → `openbat_get_conversation` reads the verdict. `eval` itself is client-orchestrated (file I/O plus a loop), so you compose it from those tools; `openbat_optimize_context` bootstraps the loop in one call. See [MCP tools](/mcp/tools).
+
+<Columns cols={2}>
+<Card title="Run a single probe" icon="flask-conical" href="/eval-mode/probe">
+Send one synthetic query, await analysis, and read the verdict.
+</Card>
+<Card title="Eval suites & regression diffs" icon="list-checks" href="/eval-mode/eval-suites">
+Probe a batch of questions, score against assertions, and diff two runs.
+</Card>
+</Columns>

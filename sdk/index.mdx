@@ -1,0 +1,109 @@
+---
+title: "OpenBat SDK"
+description: "Capture chatbot conversations from your app."
+icon: "code"
+---
+{/* SOURCES: _sources/sdk-readme.md */}
+
+`@openbat/sdk` is the TypeScript SDK for capturing AI chatbot conversations with OpenBat. You record messages, enrich them with user, organization, and session context, and OpenBat returns AI-powered analysis — sentiment, intent detection, topic classification, quality scoring, behavioral flags, and more. Messages are sent asynchronously, so capture adds no latency to your app and never throws into your code.
+
+## Install
+
+```bash
+npm install @openbat/sdk
+```
+
+## Record your first conversation
+
+Construct a client with your API key, then call `recordMessages()` after a conversation turn.
+
+```typescript
+import { OpenBat } from "@openbat/sdk";
+
+const client = new OpenBat({
+  apiKey: process.env.OPENBAT_API_KEY,
+});
+
+await client.recordMessages({
+  conversationId: "session-abc-123",
+  messages: [
+    { role: "user", content: "How do I reset my password?" },
+    { role: "assistant", content: "Go to Settings > Security > Reset Password." },
+  ],
+});
+```
+
+That's it. Messages are sent asynchronously — errors are logged to console, never thrown.
+
+<Note>
+You can pass `apiKey` to the constructor or set the `OPENBAT_API_KEY` environment variable. The client throws at construction only if `enabled` is `true` and no API key is provided.
+</Note>
+
+## What the SDK exposes
+
+| Export | Purpose |
+|--------|---------|
+| `OpenBat` | Client class. `recordMessages()` captures a turn; `getSystemPrompt()` fetches a dashboard-published prompt at runtime. |
+| `withOpenBat` | Wraps a Vercel AI SDK `Response`, fires capture in the background, and returns the response unchanged. |
+
+## Explore the SDK
+
+<Columns cols={2}>
+  <Card title="Quickstart" icon="play" href="/sdk/quickstart">
+    Install, construct a client, and record your first conversation.
+  </Card>
+  <Card title="Configuration" icon="sliders" href="/sdk/configuration">
+    Constructor options and environment variables.
+  </Card>
+  <Card title="API reference" icon="brackets-curly" href="/sdk/api-reference">
+    The `OpenBat` class, `withOpenBat`, and all types.
+  </Card>
+  <Card title="Limits and errors" icon="triangle-exclamation" href="/sdk/limits-and-errors">
+    Request limits and the SDK's never-throw error handling.
+  </Card>
+</Columns>
+
+### Integrations
+
+<Columns cols={3}>
+  <Card title="Vercel AI SDK" icon="bolt" href="/sdk/integrations/vercel-ai-sdk">
+    The `withOpenBat` wrapper and the `onFinish` pattern.
+  </Card>
+  <Card title="Node and Express" icon="node-js" href="/sdk/integrations/node-express">
+    Fire-and-forget capture from any Node server.
+  </Card>
+  <Card title="REST / HTTP" icon="globe" href="/sdk/integrations/rest-http">
+    Call the capture endpoint directly from any language.
+  </Card>
+</Columns>
+
+### Context and verification
+
+<Columns cols={2}>
+  <Card title="Enriching context" icon="user" href="/sdk/enriching-context">
+    Attach user, organization, session, and custom fields.
+  </Card>
+  <Card title="Header forwarding" icon="arrow-right-arrow-left" href="/sdk/header-forwarding">
+    Forward client IP and User-Agent from server-side routes.
+  </Card>
+  <Card title="Tool-aware verification" icon="wrench" href="/sdk/tool-aware-verification">
+    Attach tool calls and reasoning as ground truth for the verifier.
+  </Card>
+  <Card title="Deduplication" icon="copy" href="/sdk/deduplication">
+    Set `id` on messages to skip duplicates on re-send.
+  </Card>
+</Columns>
+
+### System prompts
+
+<Columns cols={3}>
+  <Card title="Prompt versioning" icon="code-branch" href="/sdk/system-prompt-versioning">
+    Link captured messages to the exact prompt that produced them.
+  </Card>
+  <Card title="DB-backed prompts" icon="database" href="/sdk/db-backed-prompts">
+    Receive prompt updates through `onPromptStateChange` and store them in your DB.
+  </Card>
+  <Card title="Remote-controlled prompts" icon="cloud-arrow-down" href="/sdk/remote-prompts">
+    Fetch a dashboard-published prompt at runtime with `getSystemPrompt`.
+  </Card>
+</Columns>

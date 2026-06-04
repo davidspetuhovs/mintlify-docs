@@ -1,0 +1,53 @@
+---
+title: "Query types"
+description: "Automatic clustering of user questions."
+icon: "tags"
+---
+{/* SOURCES: knowledgebase/feature-inventory.md; pages/query-types.md */}
+
+Query types automatically group user messages into canonical question categories, so you can see what people ask the chatbot most often instead of scrolling raw transcripts. The page lives at `/platform/[chatbotId]/query-types`, reached from the chatbot sidebar under **Clients**.
+
+<Frame caption="The Query types table, with each cluster's volume, top intent, sentiment, and resolution rate.">
+  <img src="/images/platform/query-types.png" alt="Query types table showing clustered question categories with volume and resolution columns" />
+</Frame>
+
+## What you can do
+
+- Browse query types sorted by volume to find the most common question patterns.
+- Read each cluster's name and description to understand what it represents.
+- Compare **Top intent**, **Sentiment**, **Resolved %**, and **Last seen** across clusters.
+- Search for a specific query type with the **Filter query types** box.
+- Change the reporting window with the **date range picker**.
+- Customize visible columns with **View**.
+- Sort by any column.
+- Click a query type to drill into the conversations behind it.
+
+## Table columns
+
+| Column | What it shows |
+|--------|---------------|
+| Query type | Cluster name and description |
+| Volume | Count for the selected period |
+| All-time | All-time count for the cluster |
+| Top intent | The most common intent in the cluster |
+| Sentiment | Sentiment associated with the cluster |
+| Resolved % | Share of conversations resolved |
+| Last seen | When the cluster was last matched |
+
+<Note>
+  Query types require analyzed conversations. The page populates once your chatbot has captured and analyzed conversation data.
+</Note>
+
+## Related
+
+<Columns cols={3}>
+  <Card title="Conversations" icon="messages" href="/platform/features/conversations">
+    Browse and filter the individual conversations behind a cluster.
+  </Card>
+  <Card title="Deep search" icon="magnifying-glass" href="/platform/features/deep-search">
+    Find conversations by meaning rather than keywords.
+  </Card>
+  <Card title="Users and organizations" icon="users" href="/platform/features/users-and-organizations">
+    See which end-users and accounts are driving each question pattern.
+  </Card>
+</Columns>

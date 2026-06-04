@@ -22,12 +22,155 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Documentation",
+        "tab": "Get started",
+        "icon": "rocket",
         "groups": [
           {
-            "group": "Getting started",
+            "group": "Overview",
             "pages": [
-              "index"
+              "index",
+              "get-started/quickstart",
+              "get-started/how-openbat-works",
+              "get-started/concepts",
+              "get-started/surfaces"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Platform",
+        "icon": "layout-dashboard",
+        "groups": [
+          {
+            "group": "Guides",
+            "pages": [
+              "platform/guides/sign-up-from-landing-page",
+              "platform/guides/email-sign-up",
+              "platform/guides/email-login",
+              "platform/guides/password-reset-request",
+              "platform/guides/create-new-chatbot",
+              "platform/guides/explore-demo-chatbot",
+              "platform/guides/invite-team-member",
+              "platform/guides/ask-ai-about-chatbot-data",
+              "platform/guides/create-report-from-template",
+              "platform/guides/create-workflow-from-template",
+              "platform/guides/create-new-prompt-version",
+              "platform/guides/review-a-specific-conversation",
+              "platform/guides/configure-analysis-definitions",
+              "platform/guides/export-conversation-data"
+            ]
+          },
+          {
+            "group": "Features",
+            "pages": [
+              "platform/features/managing-chatbots",
+              "platform/features/overview-dashboard",
+              "platform/features/conversations",
+              "platform/features/deep-search",
+              "platform/features/query-types",
+              "platform/features/users-and-organizations",
+              "platform/features/reports",
+              "platform/features/workflows",
+              "platform/features/system-prompt",
+              "platform/features/analysis-config",
+              "platform/features/team-and-access",
+              "platform/features/chatbot-settings",
+              "platform/features/onboarding"
+            ]
+          },
+          {
+            "group": "Reference",
+            "pages": [
+              "platform/reference/architecture",
+              "platform/reference/page-map",
+              "platform/reference/security"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Eval Mode",
+        "icon": "target",
+        "groups": [
+          {
+            "group": "The eval loop",
+            "pages": [
+              "eval-mode/index",
+              "eval-mode/how-it-works",
+              "eval-mode/setup",
+              "eval-mode/probe",
+              "eval-mode/eval-suites",
+              "eval-mode/diagnose-and-fix",
+              "eval-mode/candidate-prompts",
+              "eval-mode/symptom-to-lever"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "SDK",
+        "icon": "code",
+        "groups": [
+          {
+            "group": "@openbat/sdk",
+            "pages": [
+              "sdk/index",
+              "sdk/quickstart",
+              "sdk/configuration",
+              "sdk/integrations/vercel-ai-sdk",
+              "sdk/integrations/node-express",
+              "sdk/integrations/rest-http",
+              "sdk/enriching-context",
+              "sdk/header-forwarding",
+              "sdk/system-prompt-versioning",
+              "sdk/db-backed-prompts",
+              "sdk/remote-prompts",
+              "sdk/tool-aware-verification",
+              "sdk/deduplication",
+              "sdk/api-reference",
+              "sdk/limits-and-errors"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "CLI",
+        "icon": "terminal",
+        "groups": [
+          {
+            "group": "@openbat/cli",
+            "pages": [
+              "cli/index",
+              "cli/authentication",
+              "cli/active-chatbot",
+              "cli/quickstart",
+              "cli/commands",
+              "cli/conversations-analytics",
+              "cli/settings-keys-webhooks",
+              "cli/org-and-members",
+              "cli/workflows-reports",
+              "cli/prompts",
+              "cli/sdk-install",
+              "cli/security-rate-limits"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "MCP",
+        "icon": "plug",
+        "groups": [
+          {
+            "group": "@openbat/mcp",
+            "pages": [
+              "mcp/index",
+              "mcp/install",
+              "mcp/credentials",
+              "mcp/pinning",
+              "mcp/tools",
+              "mcp/configs",
+              "mcp/security",
+              "mcp/troubleshooting"
             ]
           }
         ]

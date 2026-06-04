@@ -1,0 +1,46 @@
+---
+title: "AI reports"
+description: "Chat-driven dashboards from templates."
+icon: "chart-column"
+---
+{/* SOURCES: knowledgebase/feature-inventory.md; pages/reports.md */}
+
+Reports are persistent, reusable dashboards you build by chatting with AI, which generates widgets to visualize your chatbot's conversation data. Unlike the AI chat on the overview dashboard, reports are saved as dashboards you can reopen and reuse for periodic reporting.
+
+<Frame caption="The Reports page with pre-built templates and the option to create a blank report.">
+  <img src="/images/platform/reports.png" alt="Reports page showing template cards and a New report button" />
+</Frame>
+
+## What you can do
+
+- Start a report from a pre-built template: **Customer Pulse**, **Sentiment Distribution**, **Risk Flags Leaderboard**, or **Topics & Intents Overview**.
+- Create a blank report with **Create a blank report** and build it from scratch.
+- Open an existing report to revisit a saved dashboard.
+- Create a new report with **New report**.
+- Browse the full template list with **Browse all templates**.
+- Customize a report by chatting with the copilot sidebar, which generates and adjusts widgets for you.
+
+When you pick a template, the report is created with pre-configured widgets so you get a populated dashboard right away. A template may show empty widgets if your chatbot has no data for that analysis type yet.
+
+## Where it lives
+
+Reports are accessed from the chatbot sidebar:
+
+```text
+/platform/[chatbotId]/reports
+```
+
+<Note>
+Reports visualize analyzed conversation data, so your chatbot needs captured conversations for widgets to populate.
+</Note>
+
+## Related
+
+<Columns cols={2}>
+  <Card title="Create a report from a template" icon="chart-column" href="/platform/guides/create-report-from-template">
+    Step-by-step guide to starting a report from a pre-built template.
+  </Card>
+  <Card title="Overview dashboard" icon="gauge" href="/platform/features/overview-dashboard">
+    Ask the AI chat one-off questions about your chatbot data.
+  </Card>
+</Columns>

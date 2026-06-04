@@ -1,0 +1,94 @@
+---
+title: "SDK quickstart"
+description: "Record your first messages in minutes."
+icon: "rocket"
+---
+{/* SOURCES: _sources/sdk-readme.md */}
+
+`@openbat/sdk` is the TypeScript SDK for capturing AI chatbot conversations with OpenBat. You record messages, enrich them with user and organization context, and OpenBat runs its analysis — sentiment, intent detection, topic classification, quality scoring, and behavioral flags — on the captured traffic. Messages are sent asynchronously, so capture appears to add no latency to your app's response.
+
+<Steps>
+  <Step title="Install the package">
+    ```bash
+    npm install @openbat/sdk
+    ```
+  </Step>
+
+  <Step title="Create a client and record messages">
+    Instantiate `OpenBat` with your API key, then call `recordMessages()` with a `conversationId` and the messages from the turn.
+
+    ```typescript
+    import { OpenBat } from "@openbat/sdk";
+
+    const client = new OpenBat({
+      apiKey: process.env.OPENBAT_API_KEY,
+    });
+
+    await client.recordMessages({
+      conversationId: "session-abc-123",
+      messages: [
+        { role: "user", content: "How do I reset my password?" },
+        { role: "assistant", content: "Go to Settings > Security > Reset Password." },
+      ],
+    });
+    ```
+
+    That's it. Messages are sent asynchronously — errors are logged to console, never thrown.
+  </Step>
+</Steps>
+
+<Note>
+  `OpenBat` reads `OPENBAT_API_KEY` from the environment if you don't pass `apiKey` in the constructor. See [Configuration](/sdk/configuration) for the full list of constructor options and environment variables.
+</Note>
+
+## What gets sent
+
+Each `recordMessages()` call takes a `conversationId` that groups messages into one conversation, plus a `messages` array. Each message has a `role` of `user`, `assistant`, or `system`, and a `content` string.
+
+<ParamField path="conversationId" type="string" required>
+  Groups messages into a single conversation. 1–256 characters.
+</ParamField>
+
+<ParamField path="messages" type="array" required>
+  The messages from this turn. Send only new messages each call — you don't have to re-send the full history. 1–100 messages per request.
+</ParamField>
+
+<ParamField path="messages[].role" type='"user" | "assistant" | "system"' required>
+  Who produced the message.
+</ParamField>
+
+<ParamField path="messages[].content" type="string" required>
+  The message text. 1–32,000 characters.
+</ParamField>
+
+You can attach business context (`user`, `organization`, `session`, `custom`) and other optional fields to the same call — those are covered in [Enriching context](/sdk/enriching-context) and the [API reference](/sdk/api-reference).
+
+## Verify capture is working
+
+The SDK is designed to be invisible — it never throws or blocks your app. To confirm messages are arriving:
+
+- Check your browser or server console for error messages (errors are logged as `OpenBat Error: ...`).
+- Visit the OpenBat dashboard to confirm messages show up for your chatbot.
+
+## Next steps
+
+<Columns cols={2}>
+  <Card title="Configuration" icon="gear" href="/sdk/configuration">
+    Constructor options, environment variables, and how to disable the SDK in test environments.
+  </Card>
+  <Card title="Vercel AI SDK" icon="bolt" href="/sdk/integrations/vercel-ai-sdk">
+    Wrap a `streamText` response with `withOpenBat`, or capture from `onFinish` to record tool calls and reasoning.
+  </Card>
+  <Card title="Node / Express" icon="server" href="/sdk/integrations/node-express">
+    Initialize once and fire-and-forget `recordMessages()` after each chat turn.
+  </Card>
+  <Card title="REST / HTTP" icon="terminal" href="/sdk/integrations/rest-http">
+    Call the capture endpoint directly from any language with `curl` or `requests`.
+  </Card>
+  <Card title="Enriching context" icon="user" href="/sdk/enriching-context">
+    Attach user, organization, session, and custom fields for richer dashboard analytics.
+  </Card>
+  <Card title="API reference" icon="code" href="/sdk/api-reference">
+    Full `OpenBat`, `withOpenBat`, and type signatures.
+  </Card>
+</Columns>

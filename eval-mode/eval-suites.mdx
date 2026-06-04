@@ -1,0 +1,124 @@
+---
+title: "Eval suites & regression diffs"
+description: "Run a suite and diff two runs."
+icon: "list-checks"
+---
+{/* SOURCES: _sources/skill-openbat-eval.md; _sources/cli-readme.md */}
+
+A single [probe](/eval-mode/probe) tests one question. An eval suite probes a batch of questions in one command, scores each against assertions, and writes a result file you can diff. In the probe → diagnose → fix loop, this is the **validate** step at scale: run a suite before your fix, apply the fix, run it again, and `eval diff` the two runs to confirm the failures resolved and nothing regressed.
+
+Like every probe, suite traffic is captured as `kind=probe` and excluded from organic `review`, the dashboard, and analytics, so test runs never skew your real metrics.
+
+<Note>
+OpenBat never calls your chatbot — it can't reach it. You (or the CLI, via an `openbat.probe.json` adapter) drive each suite item against the chatbot; OpenBat owns the eval leg: synthetic isolation, deterministic await, and the verdict. The chatbot's own `@openbat/sdk` integration captures the turn. See [Set up the loop](/eval-mode/setup) for the adapter.
+</Note>
+
+## Write a suite file
+
+A suite is a `.json` file with an `items` array (max 100), or a one-question-per-line `.txt` file.
+
+```json golden.json
+{
+  "items": [
+    { "id": "refund", "question": "how do I get a refund?" },
+    { "id": "cancel", "question": "how do I cancel my subscription?" },
+    { "id": "reset", "question": "I forgot my password, how do I reset it?" }
+  ]
+}
+```
+
+Each item takes an `id`, a `question`, and an optional `expect` block of assertions. **All** assertions in `expect` must hold for the item to pass:
+
+| Assertion | Meaning |
+|---|---|
+| `intent` | The detected intent matches this value |
+| `outcome` | The conversation outcome matches this value (e.g. `resolved`) |
+| `no_flags: [...]` | None of these flags were raised |
+
+```json golden.json
+{
+  "items": [
+    {
+      "id": "refund",
+      "question": "how do I get a refund?",
+      "expect": { "outcome": "resolved", "no_flags": ["hallucination"] }
+    }
+  ]
+}
+```
+
+<Warning>
+The suite cap is **100** items, and an eval run amplifies LLM cost — each item is a chatbot turn plus an analysis. Keep suites focused on the failures you're fixing rather than testing everything every run.
+</Warning>
+
+## Run a suite and diff two runs
+
+<Steps>
+  <Step title="Capture a baseline">
+    Run the suite and write the result to a file. `eval run` probes each item, awaits its analysis, scores it against the item's assertions, and writes the run file.
+
+    ```bash
+    openbat eval run --suite golden.json --out before.json
+    ```
+
+    With an `openbat.probe.json` adapter at the repo root, the CLI drives the chatbot for each item; without one, supply `--adapter PATH`.
+  </Step>
+  <Step title="Apply your fix">
+    Make the change you're validating — a system prompt edit, tool logic, or retrieval config. Use [Symptom → lever](/eval-mode/symptom-to-lever) to pick the right one for the verdict you saw.
+  </Step>
+  <Step title="Re-run the same suite">
+    Run the identical suite against the fixed chatbot and write a second result file.
+
+    ```bash
+    openbat eval run --suite golden.json --out after.json
+    ```
+  </Step>
+  <Step title="Diff the two runs">
+    `eval diff` compares the runs, surfacing both regressions (items that passed in `before` but fail in `after`) and fixes (items that flipped the other way). It exits `1` if anything regressed, so it gates a CI job cleanly.
+
+    ```bash
+    openbat eval diff before.json after.json
+    ```
+  </Step>
+</Steps>
+
+The relevant `eval` flags:
+
+```bash
+openbat eval run --suite FILE [--adapter PATH] [--candidate VERSIONID] [--timeout 90] [--out FILE]
+openbat eval diff <runA.json> <runB.json>
+```
+
+## Test a candidate prompt without shipping
+
+To validate a system prompt change before it goes live, stage it as a draft version and run the suite against that version — the chatbot fetches the draft instead of the live prompt.
+
+```bash
+openbat prompts create-draft --file new-prompt.txt
+openbat eval run --suite golden.json --candidate <versionId>
+openbat prompts activate <versionId>
+```
+
+The chatbot must fetch the candidate via the SDK's `getSystemPrompt({ versionOverride })` — forward the `{{candidate}}` adapter field as a header your route reads. For repo-hardcoded prompts, edit the prompt locally and run the suite. Full walkthrough on [Candidate prompts](/eval-mode/candidate-prompts).
+
+<Warning>
+`openbat prompts activate` changes the live prompt — confirm before shipping, and ship only on a clean eval and diff. Repo edits should go through a PR, not a direct commit to the default branch.
+</Warning>
+
+## Inspect synthetic runs
+
+Probes and eval items are hidden from organic views by default. To see only synthetic conversations:
+
+```bash
+openbat conversations list --synthetic
+```
+
+A run that passes a probe says only that the *synthetic* turn behaved. Don't claim production metrics moved because of an eval run — they didn't, by design.
+
+## MCP equivalents
+
+`eval` is client-orchestrated (file I/O plus a loop over items), so under MCP you compose it from the same primitives a single probe uses: `openbat_probe` mints a probe id and next steps → you send that to your chatbot → `openbat_await_analysis { conversationId }` polls until `allComplete` → `openbat_get_conversation` reads the verdict. `openbat_optimize_context` bootstraps the loop in one call. See [MCP tools](/mcp/tools).
+
+<Note>
+For the chatbot to classify a turn as `kind=probe`, it must forward the `conversationId` to `recordMessages`. Apps that mint ids server-side should pass `kind: "probe"` explicitly to the SDK.
+</Note>

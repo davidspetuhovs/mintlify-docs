@@ -1,0 +1,44 @@
+---
+title: "Chatbot onboarding"
+description: "The SDK setup wizard for new chatbots."
+icon: "list-checks"
+---
+{/* SOURCES: knowledgebase/feature-inventory.md; pages/chatbot-onboarding.md */}
+
+The onboarding wizard guides you through integrating the OpenBat SDK after you create a chatbot. It shows automatically once a new chatbot exists but has not been onboarded yet, walking you through copying the API key and following the SDK setup steps so the chatbot starts receiving and analyzing conversations.
+
+<Frame caption="The onboarding wizard with SDK setup steps and the copy API key control">
+  <img src="/images/platform/onboarding-feature.png" alt="Onboarding wizard" />
+</Frame>
+
+## What you can do
+
+- Copy the chatbot's API key with the copy button.
+- Follow the SDK installation steps shown as code snippets.
+- Track your position through the integration using the progress steps.
+- Complete onboarding to mark the chatbot as set up and reach its dashboard.
+
+## Where it lives
+
+The wizard lives at `/platform/[chatbotId]/onboarding`. It opens automatically after you create a new chatbot from `/platform`. If the chatbot is already onboarded, the page redirects to the chatbot dashboard.
+
+<Note>
+The wizard only appears while the chatbot has not been onboarded. Once you complete it, returning to this route redirects you to the dashboard.
+</Note>
+
+## Next steps
+
+<Columns cols={2}>
+  <Card title="Create a new chatbot" icon="plus" href="/platform/guides/create-new-chatbot">
+    See how a chatbot is created before the onboarding wizard opens.
+  </Card>
+  <Card title="SDK quickstart" icon="code" href="/sdk/quickstart">
+    Follow the full SDK installation and integration reference.
+  </Card>
+  <Card title="Overview dashboard" icon="layout-dashboard" href="/platform/features/overview-dashboard">
+    Where you land once onboarding is complete.
+  </Card>
+  <Card title="Chatbot settings" icon="gear" href="/platform/features/chatbot-settings">
+    Manage API keys, billing, and integrations after setup.
+  </Card>
+</Columns>

@@ -1,0 +1,80 @@
+---
+title: "Ways to use OpenBat"
+description: "Dashboard, SDK, CLI, and MCP surfaces."
+icon: "layers"
+---
+{/* SOURCES: knowledgebase/onboarding-guide.md; _sources/cli-readme.md; _sources/mcp-readme.md; _sources/sdk-readme.md */}
+
+OpenBat captures conversations between end-users and your AI chatbot, runs automated analysis on them, and surfaces the results — sentiment trends, churn risk signals, hallucination detection, feature request patterns, and resolution rates. You reach the same data and operations through four surfaces, depending on whether you're a human in a browser, code in your app, a script in CI, or an AI agent.
+
+## Capture, analyze, surface
+
+The data lifecycle is the same regardless of which surface you use:
+
+- **Capture** — your app sends conversations to the capture endpoint using the `@openbat/sdk` ingest key. Messages are sent asynchronously and never block your app.
+- **Analyze** — captured messages are queued for AI analysis. The analysis pipeline detects sentiment, intent, topics, quality scoring, behavioral flags, outcomes, and issues. What it looks for is configurable per chatbot in **Analysis Config**.
+- **Surface** — analyzed conversations appear across the dashboard (overview metrics, conversations, query types, reports), feed automated workflows, and are readable through the CLI and MCP.
+
+Capture is one-directional: OpenBat receives your conversations but never calls your chatbot.
+
+## Core entities
+
+OpenBat operates on a multi-tenant organization model:
+
+- **Organization** — the top-level tenant. An organization can have multiple chatbots and multiple team members with roles (Owner, Admin, Member).
+- **Chatbot** — a tracked AI chatbot with its own API keys, conversation history, analysis configuration, system prompt versions, and workflows. Each chatbot belongs to one organization.
+- **Conversation** — a thread of user and assistant messages captured under a `conversationId`, plus the analysis results attached to it (flags, outcome, issues, sentiment, intents).
+- **System prompt version** — each unique prompt template your chatbot runs under, identified by a byte-exact SHA-256 hash. Captured messages link to the version active when they were sent.
+
+## The four key kinds
+
+Every surface authenticates with an OpenBat API key, and the key's prefix determines its kind and scope. The CLI and MCP describe this as a four-kind ladder:
+
+| Prefix | Kind | Scope | What it does |
+|---|---|---|---|
+| `ob_live_*` | ingest | one chatbot, capture only | SDK-only — sends conversations to the capture endpoint. Rejected by the CLI and MCP. |
+| `ob_read_*` | read | one chatbot, read-only | Listing, analytics, conversations, export. |
+| `ob_admin_*` | admin | one chatbot, read + write | All of read, plus webhooks, workflows, reports, settings, and minting read keys. |
+| `ob_pat_*` | PAT | one user across multiple chatbots and orgs | All of admin, plus creating and deleting chatbots, org operations, and minting admin keys. |
+
+Generate keys in the dashboard under `Settings → API Keys` (read and admin) or `Settings → Personal Access Tokens` (PAT). Each plaintext is shown exactly once. A PAT also carries a per-row sub-scope (`read` or `admin`): a read-scope PAT can list across every chatbot in your orgs but cannot mutate anything.
+
+The ingest key is deliberately separate — there are no mutation tools for it on the CLI or MCP. It is only used by the SDK's `recordMessages` to capture conversations.
+
+## The four surfaces
+
+<Columns cols={2}>
+  <Card title="Dashboard" icon="layout-dashboard" href="/platform/features/overview-dashboard">
+    The web app at openbat.dev. Browse conversations, ask the AI chat questions about your data, build reports, manage workflows, version your system prompt, and configure analysis. The primary surface for product, customer success, and support teams.
+  </Card>
+  <Card title="SDK" icon="code" href="/sdk/index">
+    `@openbat/sdk` — the TypeScript SDK your app uses to capture conversations. Records messages, enriches them with user, organization, and session context, and can receive prompt updates back from the dashboard. Uses the ingest key only.
+  </Card>
+  <Card title="CLI" icon="terminal" href="/cli/index">
+    `@openbat/cli` — manage one pinned chatbot from the terminal. Read analytics and conversations, pull eval digests, manage the live system prompt, settings, keys, webhooks, workflows, and reports. Accepts any read-capable key.
+  </Card>
+  <Card title="MCP" icon="plug" href="/mcp/index">
+    `@openbat/mcp` — the same surface as the CLI, exposed to Claude Desktop, Cursor, or any MCP-aware client. The exposed tool set scales with the credential: a read key shows read tools, an admin key adds write tools, a PAT adds chatbot creation and org tools.
+  </Card>
+</Columns>
+
+The CLI and MCP share one tool registry, so the same operations are available whether you drive them from a script or an AI agent. Both refuse ingest keys, both filter what you can do by key kind, and both can hard-lock to a single chatbot when a PAT can reach many.
+
+## The eval loop
+
+The CLI and MCP also expose a closed eval loop: an agent sends synthetic test queries (probes) to your chatbot, reads OpenBat's analysis of them, fixes the chatbot, and re-tests. Probe traffic is captured as `kind=probe` and excluded from organic analytics, the dashboard, and the daily review digest, so test queries never skew real metrics.
+
+<Card title="Eval Mode" icon="target" href="/eval-mode/index">
+  Probe, run eval suites, diagnose, and stage candidate prompts without shipping them.
+</Card>
+
+## Where to go next
+
+<Columns cols={2}>
+  <Card title="How OpenBat works" icon="diagram-project" href="/get-started/how-openbat-works">
+    The end-to-end flow from capture through analysis to the surfaces.
+  </Card>
+  <Card title="Concepts" icon="book" href="/get-started/concepts">
+    The vocabulary — organizations, chatbots, conversations, analysis, and prompt versions.
+  </Card>
+</Columns>

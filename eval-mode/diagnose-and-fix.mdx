@@ -1,0 +1,140 @@
+---
+title: "Diagnose and fix"
+description: "Map failures to the right lever."
+icon: "wrench"
+---
+{/* SOURCES: _sources/skill-openbat-optimize.md; _sources/cli-readme.md */}
+
+This is the middle of the probe → diagnose → fix loop: you have a failing conversation (from organic `review` or a synthetic `probe`), and you decide **why** it failed and **which lever** fixes it — the system prompt, tool logic, retrieval, a new analysis, or the docs. The reasoning runs client-side, in the chatbot's own repo, because only that repo holds the system prompt, tools, and retrieval config. OpenBat's server never sees your code.
+
+OpenBat splits the loop into two halves, and it owns part of each:
+
+- **Diagnose (passive)** — OpenBat tells you **what went wrong** in real traffic (flags, issues, outcomes, plus the analysis *reasoning*); you diagnose **why** against the actual source.
+- **Validate (active)** — you send synthetic test queries with `openbat probe` / `openbat eval`, OpenBat analyzes them, and you read the verdict to confirm the fix worked.
+
+<Note>
+OpenBat never calls your chatbot — it can't reach it. You (the agent, in the repo) drive the chatbot; OpenBat owns the eval leg: synthetic isolation, deterministic await, and the verdict.
+</Note>
+
+## Pull the failures, then drill in
+
+Start from the digest, then open the representative conversations a cluster points to.
+
+<Steps>
+<Step title="Pull the digest">
+`openbat review` returns headline aggregates with deltas versus the prior equal-length window, plus clusters of top issues, flags, and intents and failed outcomes. Each cluster carries representative conversation pointers with the analysis `reasoning` and verification fields.
+
+```bash
+openbat review --since 24h          # default window; also 45m, 6h, 7d (max 30d)
+openbat review --since 7d --json    # machine-readable for a script or agent
+```
+
+`openbat optimize` bootstraps the whole loop in one read-only call — organic review plus the active prompt, analysis definitions, and a suggested probe plan.
+</Step>
+
+<Step title="Drill into the representatives">
+For each cluster's representative `conversationId`, read the actual turns **and** the analysis fields on the flagged message:
+
+```bash
+openbat conversations show <id> --json | jq '.messages[] | {role, content, analyses: {
+  intents: .user_intents, flags: .user_flags,
+  outcomes: .assistant_outcomes, issues: .assistant_issues }}'
+```
+
+Read `reasoning`, `answer_available`, and `verification_source` on the flagged message. That triplet tells you whether the bot *could* have answered.
+</Step>
+
+<Step title="Locate the source in the repo">
+Find the code behind the failure before deciding the lever:
+
+- **System prompt** — grep `systemPrompt`, `system_prompt`, `role: "system"`, large template literals near `streamText` / `generateText` / `messages: [`; paths like `**/prompts/*.{ts,md}`, `system-prompt.*`, `*.prompt.*`.
+- **Tools / functions** — `tools: {`, `tool(`, `functionDeclarations`, `zodFunction`; files `tools.*`, `functions.*`.
+- **Retrieval / RAG** — `embed(`, `similaritySearch`, `vectorStore`, `pgvector`, `retriev`, `topK`; files `retrieval.*`, `rag.*`, `knowledge*`.
+</Step>
+</Steps>
+
+## Map symptom to lever
+
+`answer_available = true` means the bot **could** have answered, so it is a delivery failure (prompt, retrieval, or tool) — **not** a knowledge gap. `verification_source` then narrows which lever to pull.
+
+| Cluster signal | `answer_available` | `verification_source` | Lever | Fix |
+|---|---|---|---|---|
+| Wrong/incomplete answer, info exists in docs | true | `docs` / `retrieval` | Retrieval / docs | Improve chunking/topK, add the doc, fix the index — *not* the prompt |
+| Bot refused/hedged though it had the data | true | `reasoning` / `chatbot_data` | System prompt | Loosen or clarify the instruction that caused the refusal |
+| Bot needed a tool but never called it | n/a | (tool gap) | Tool logic / prompt | Add tool-trigger guidance to the prompt, or fix the tool schema/description |
+| Invented facts not in any source | false | `hallucination` | Prompt + retrieval | Add a "say you don't know" guardrail; fill the knowledge gap |
+| Genuinely unanswerable (info doesn't exist) | false | `missing_knowledge` | Docs / product | Author the missing doc, or route to a human |
+| Recurring spike, no single root cause | n/a | n/a | New analysis + alert | `openbat analysis add` to track it, `openbat workflows create` to alert |
+
+<Warning>
+`answer_available` is the load-bearing field. Never edit the prompt for a `missing_knowledge` cluster — that's a genuine knowledge gap, so author the doc instead.
+</Warning>
+
+For the full reference, see [Symptom to lever](/eval-mode/symptom-to-lever).
+
+## Apply fixes, grouped by lever
+
+For each lever group, list the proposed edit and the **evidence** as conversation links (`/platform/<chatbotId>/conversations/<id>`). Link — don't paste raw conversation content into a public PR, since it may contain customer PII.
+
+Shipping a system-prompt fix has two paths depending on how your chatbot loads its prompt:
+
+- **Chatbot fetches its prompt from OpenBat** — ship it live without a redeploy with `openbat prompts publish` (goes live in roughly 60s). Roll back with `openbat prompts activate <prevVersionId>` or, in an emergency, `openbat prompts kill-switch --on`. Confirm with the user first — this changes the production prompt.
+- **Chatbot hardcodes its prompt** — edit it in the repo; publishing in OpenBat won't change runtime.
+
+Repo edits — system prompt, tool code, retrieval config — require explicit user confirmation. Offer a PR; never auto-commit to the default branch. OpenBat mutations (`openbat analysis add`, `openbat workflows create`, settings writes) follow list-first, confirm, smallest-scope.
+
+## Validate by probing
+
+Don't ship a fix on faith. Test it against the live chatbot with synthetic queries and read OpenBat's verdict. Declare an adapter once at the repo root — `openbat.probe.json` describes how to call your chatbot, with `{{conversationId}}` and `{{message}}` substituted:
+
+```json
+{
+  "url": "http://localhost:3000/api/chat",
+  "method": "POST",
+  "headers": { "content-type": "application/json" },
+  "body": {
+    "conversationId": "{{conversationId}}",
+    "messages": [{ "role": "user", "content": "{{message}}" }]
+  }
+}
+```
+
+Then probe the exact failure, or run a suite diffed before and after the fix to catch regressions:
+
+```bash
+openbat probe "the exact question that failed organically"   # one turn → verdict
+
+openbat eval run --suite golden.json --out before.json
+#   …apply the fix (repo edit, or a candidate prompt — see below)…
+openbat eval run --suite golden.json --out after.json
+openbat eval diff before.json after.json       # exit 1 if anything regressed
+```
+
+To test a candidate prompt **without shipping**, stage it as a draft with `openbat prompts create-draft --file new-prompt.txt`, probe or eval against that version, and only `openbat prompts activate <versionId>` once the eval passes. See [Candidate prompts](/eval-mode/candidate-prompts) for the full draft flow.
+
+<Note>
+Probe and eval traffic is captured as `kind=probe` (a reserved `obprobe_` conversationId) and is **excluded from organic `review`, the dashboard, and analytics**, so your test queries never skew real metrics. Inspect probes with `openbat conversations list --synthetic`. Never assert that production metrics moved because of a probe run.
+</Note>
+
+### Replay the conversations that failed
+
+Probing tests *fresh* synthetic queries. Backtests complement it by replaying the **same** real conversations that failed against a candidate prompt:
+
+```bash
+openbat backtests create --name "fix v2" --candidate-prompt <versionId> \
+  --flags <flag1,flag2> --sample-size 50      # requires a PAT key
+openbat backtests status <backtestId>          # still_flagged / resolved / new_flag / unchanged_clean
+```
+
+Ship only when the verdict is clean — probe issues resolved, `resolved` dominates, `new_flag` near zero — via `openbat prompts publish`, `openbat prompts activate <draftId>`, or a repo PR.
+
+## MCP equivalents
+
+Under MCP you compose the same loop yourself, because OpenBat never calls your chatbot:
+
+- `openbat_review` — pull the digest.
+- `openbat_optimize_context` — bootstrap the loop in one call.
+- `openbat_probe` → issue the chatbot call → `openbat_await_analysis` → `openbat_get_conversation` — drive, await, and read the verdict.
+- `openbat_create_draft_prompt` — stage a candidate without shipping.
+
+See [MCP tools](/mcp/tools) for the full surface.

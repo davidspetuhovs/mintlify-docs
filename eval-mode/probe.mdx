@@ -1,0 +1,121 @@
+---
+title: "Probe with test queries"
+description: "Send synthetic queries and read the verdict."
+icon: "flask-conical"
+---
+{/* SOURCES: _sources/skill-openbat-eval.md; _sources/cli-readme.md */}
+
+`openbat probe` sends one synthetic test query to your chatbot, waits for OpenBat to analyze the turn, and prints the verdict. In the probe → diagnose → fix loop it's the smallest unit of the **validate** step: drive one question, read what OpenBat saw, and decide whether the fix you have in mind is the right one — or, after a fix, whether the failure is gone.
+
+Like every probe, the turn is captured as `kind=probe` and excluded from organic `review`, the dashboard, and analytics, so your test queries never skew real metrics.
+
+<Note>
+OpenBat never calls your chatbot — it can't reach it. You (or the CLI, via an `openbat.probe.json` adapter) drive the chatbot; OpenBat owns the eval leg: synthetic isolation, deterministic await, and the verdict. The chatbot's own `@openbat/sdk` integration captures the turn. Declare the adapter on [Set up the loop](/eval-mode/setup) before your first probe.
+</Note>
+
+## Run a single probe
+
+```bash
+openbat probe "how do I get a refund?"          # drive → await → verdict
+openbat probe "..." --no-wait                    # just send; await later
+openbat conversations await <obprobe_id|uuid>    # block until fully analyzed
+```
+
+With an `openbat.probe.json` adapter at the repo root, the CLI drives the chatbot for you; without one, `probe` mints the correlated id and prints the exact call for you to issue, then you `openbat conversations await <id>`. To point at an adapter elsewhere, pass `--adapter PATH`. The full flag set:
+
+```bash
+openbat probe <message> [--adapter PATH] [--timeout 90] [--no-wait]
+```
+
+## What `probe` does, step by step
+
+<Steps>
+  <Step title="Mint a reserved probe id">
+    `probe` generates a reserved `obprobe_<uuid>` conversationId. The server reads that prefix and classifies the conversation as `kind=probe`, which excludes it from organic analytics, the dashboard, and `review`.
+  </Step>
+  <Step title="Drive the chatbot turn">
+    With an adapter, the CLI substitutes `{{conversationId}}` and `{{message}}` and issues the call. Without one, you issue the call yourself using the printed instructions — the chatbot's `@openbat/sdk` integration records the turn under the same id.
+  </Step>
+  <Step title="Await analysis">
+    `probe` blocks until the turn is fully analyzed (or until `--timeout`, default 90s). `openbat conversations await` does the same and accepts either an internal id or the `obprobe_` id; it exits `0` when done, `2` on timeout.
+  </Step>
+  <Step title="Print the verdict">
+    Once analysis completes, `probe` prints the verdict for the turn: intents, flags, outcome, issues, and `answer_available`.
+  </Step>
+</Steps>
+
+<Note>
+For the probe prefix to classify the turn, the chatbot must forward `conversationId` to `recordMessages`. Apps that mint ids server-side should pass `kind: "probe"` explicitly to the SDK.
+</Note>
+
+## Read the verdict
+
+The verdict is the analysis OpenBat ran on the synthetic turn. The fields you act on:
+
+| Field | What it tells you |
+|---|---|
+| `intent` | The intent OpenBat detected for the user message |
+| `outcome` | How the turn resolved (e.g. `resolved`) |
+| `flags` | User-side flags raised on the turn |
+| `issues` | Assistant-side issues OpenBat found |
+| `answer_available` | Whether the bot **could** have answered — the load-bearing field |
+
+`answer_available = true` means the bot had the data and still failed — a delivery problem (prompt, retrieval, or tool), not a knowledge gap. `verification_source` then narrows which lever to pull. Map the verdict to a lever using the same `answer_available` × `verification_source` table on [Symptom → lever](/eval-mode/symptom-to-lever).
+
+<Warning>
+Never "fix the prompt" for a `missing_knowledge` verdict — the answer doesn't exist anywhere, so a prompt change can't surface it. Author the missing doc instead.
+</Warning>
+
+## Validate a fix with a before/after probe
+
+Use a single probe to confirm a fix on the exact question that failed. Probe before the change to see the failure, apply the fix, then probe again to confirm it's gone.
+
+<Steps>
+  <Step title="Probe the failing question">
+    Drive the exact question that failed organically and read the verdict.
+
+    ```bash
+    openbat probe "the exact question that failed organically"
+    ```
+  </Step>
+  <Step title="Apply the fix">
+    Edit the lever the verdict points to — system prompt, tool logic, or retrieval config. Repo edits should go through a PR, not a direct commit to the default branch.
+  </Step>
+  <Step title="Re-probe">
+    Run the same probe against the fixed chatbot and confirm the flag, issue, or outcome cleared.
+
+    ```bash
+    openbat probe "the exact question that failed organically"
+    ```
+  </Step>
+</Steps>
+
+For a batch of questions scored against assertions and diffed before/after, run an [eval suite](/eval-mode/eval-suites). To validate a system prompt change without shipping it, stage it as a draft and probe against that version — see [Candidate prompts](/eval-mode/candidate-prompts).
+
+## Inspect synthetic conversations
+
+Probes are hidden from organic views by design. To list only synthetic conversations:
+
+```bash
+openbat conversations list --synthetic
+```
+
+A clean probe says the *synthetic* turn behaved — nothing more. Don't claim production metrics moved because of a probe run; by design, they didn't.
+
+## MCP equivalents
+
+The same single-probe loop runs over the [MCP tools](/mcp/tools):
+
+<Steps>
+  <Step title="Start the probe">
+    `openbat_probe` returns a probe id plus next steps. You send the message to your chatbot with that id — OpenBat never calls your chatbot.
+  </Step>
+  <Step title="Await analysis">
+    `openbat_await_analysis { conversationId }` polls until `allComplete` and accepts the `obprobe_` id.
+  </Step>
+  <Step title="Read the verdict">
+    `openbat_get_conversation` returns the messages plus all analyses — issues, outcomes, flags, intents, and the reasoning and verification fields.
+  </Step>
+</Steps>
+
+`openbat_optimize_context` bootstraps the loop in one call.

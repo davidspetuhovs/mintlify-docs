@@ -1,0 +1,125 @@
+---
+title: "Authentication & keys"
+description: "The four-kind key ladder."
+icon: "key-round"
+---
+{/* SOURCES: _sources/cli-readme.md; _sources/skill-using-openbat.md */}
+
+The CLI accepts any read-capable OpenBat key. Keys come in four kinds with disjoint prefixes; pick the smallest scope that does the job. Once you have a key, save it to `~/.openbatrc`, then confirm the resolved scope with `openbat auth whoami`.
+
+## The four key kinds
+
+| Prefix | Kind | Scope | What you can do |
+|---|---|---|---|
+| `ob_read_*` | read | one chatbot, **read-only** | Listing, analytics, conversations, export |
+| `ob_admin_*` | admin | one chatbot, **read+write** | All of read, plus webhooks / workflows / reports / settings / mint read keys |
+| `ob_pat_*` | PAT | one user across multiple chatbots and orgs | All of admin, plus `chatbots create/delete`, `org`, mint admin keys, multi-chatbot inventory |
+| `ob_live_*` | ingest | (rejected by the CLI) | SDK-only — capture endpoint. Never use here. |
+
+PATs also carry a sub-scope on the row (`read` or `admin`). A read-scope PAT can list across all your chatbots but mutate nothing — the resolver gates writes on `permission === "write"`.
+
+<Warning>
+The ingest key (`ob_live_*`) is write-only and SDK-only. If you try to set it in the CLI, the CLI rejects it with a helpful error. Never paste it into the CLI or MCP.
+</Warning>
+
+<Tip>
+Use the smallest scope that works: a read-scope PAT for CI dashboards, an admin key for single-chatbot operations, and a full PAT only for chatbot creation and org admin.
+</Tip>
+
+## Generate keys in the dashboard
+
+Each plaintext key is shown exactly once — capture it immediately.
+
+| Key | Where to generate it |
+|---|---|
+| Read key | `Settings → API Keys → Generate Read key` |
+| Admin key | `Settings → API Keys → Generate Admin key` |
+| PAT | `Settings → Personal Access Tokens` |
+
+## Save the key
+
+<Steps>
+  <Step title="Install the CLI">
+    ```bash
+    npm i -g @openbat/cli
+    # or run on demand without installing:
+    npx @openbat/cli --help
+    ```
+  </Step>
+  <Step title="Store the key via stdin">
+    Piping from stdin keeps the plaintext out of your shell history.
+
+    ```bash
+    echo "ob_pat_..." | openbat config set-key --from-stdin
+    ```
+
+    The key is stored at `~/.openbatrc` with mode `0600`. The CLI refuses to load if the perms are looser than that.
+  </Step>
+  <Step title="Confirm the resolved scope">
+    ```bash
+    openbat auth whoami
+    ```
+
+    `whoami` shows the key kind, the chatbots in scope, and (for a PAT only) the orgs.
+  </Step>
+</Steps>
+
+<Note>
+There is no CLI subcommand for audit history yet. Every authenticated call lands in `api_audit_log` server-side, so operators can answer "who did what when" by querying that table in Supabase Studio.
+</Note>
+
+## Auth resolution order
+
+The CLI resolves the key from the first source that provides one, falling through to the next:
+
+<Steps>
+  <Step title="--api-key <key> flag">
+    Convenient but leaks into shell history; discouraged.
+
+    ```bash
+    openbat --api-key ob_pat_... auth whoami
+    ```
+  </Step>
+  <Step title="$OPENBAT_API_KEY env var">
+    Best for CI.
+
+    ```bash
+    OPENBAT_API_KEY=ob_pat_... openbat auth whoami
+    ```
+  </Step>
+  <Step title="~/.openbatrc">
+    Persistent local default — the file written by `openbat config set-key`.
+  </Step>
+</Steps>
+
+If you accidentally try to set an ingest key (`ob_live_*`), the CLI rejects it with a helpful error.
+
+## Error responses
+
+Auth failures surface as HTTP status codes with distinct meanings:
+
+| Status | Meaning | Fix |
+|---|---|---|
+| `401` | Key invalid / expired / wrong kind for this endpoint | Run `openbat auth whoami` and use a fresh key |
+| `403` | Key valid but lacks permission — e.g. a read-scope PAT trying to mutate, or a member attempting an owner-only action | Use a higher-scope credential |
+| `404` | Object exists in another org/chatbot — returned instead of `403` by design (no enumeration) | Pass the right id |
+| `429` | Per-credential rate-limit bucket exceeded; includes a `Retry-After` header | Wait and retry |
+
+API key plaintext is automatically redacted from any error message, rendered as `ob_<kind>_<first 16>…<hidden>`.
+
+## Where keys go next
+
+<Columns cols={2}>
+  <Card title="Pin to one chatbot" icon="pushpin" href="/cli/active-chatbot">
+    A PAT reaches many chatbots — pin one with `openbat use` so every command stays scoped.
+  </Card>
+  <Card title="Mint & rotate keys" icon="key" href="/cli/settings-keys-webhooks">
+    Generate admin/read keys, rotate the ingest key, and revoke admin keys from the `settings keys` commands.
+  </Card>
+  <Card title="Security & rate limits" icon="shield" href="/cli/security-rate-limits">
+    HTTPS-only base URLs, the `0600` perms requirement, redaction, and per-credential rate limits.
+  </Card>
+  <Card title="MCP credentials" icon="plug" href="/mcp/credentials">
+    The MCP server reads the same key kinds and filters its tool list by scope.
+  </Card>
+</Columns>

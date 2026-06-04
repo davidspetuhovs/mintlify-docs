@@ -1,0 +1,168 @@
+---
+title: "Enriching context"
+description: "Attach user, org, session, and custom data."
+icon: "user-round-cog"
+---
+{/* SOURCES: _sources/sdk-readme.md */}
+
+Attach business context to conversations so you can segment and analyze them in the dashboard. Every context field is optional — send what you have. Even just `user.id` helps segment conversations.
+
+```typescript
+client.recordMessages({
+  conversationId: "session-abc-123",
+  messages: [...],
+
+  // Who is chatting
+  user: {
+    id: "user-42",
+    name: "Jane Smith",
+    email: "jane@acme.com",
+    plan: "enterprise",
+    industry: "fintech",
+    mrr: 49900,  // $499.00
+  },
+
+  // Their organization
+  organization: {
+    id: "org-7",
+    name: "Acme Corp",
+    plan: "enterprise",
+    mrr: 249900,
+    industry: "fintech",
+  },
+
+  // Session context
+  session: {
+    id: "sess-xyz",
+    pageUrl: "https://app.acme.com/support",
+    referrer: "https://google.com",
+    device: "desktop",
+    country: "US",
+  },
+
+  // Arbitrary key-value pairs
+  custom: {
+    feature: "billing",
+    chatbotVersion: "2.1",
+    isTrialUser: true,
+  },
+});
+```
+
+<Note>
+All context fields are optional. Send what you have — even just `user.id` helps segment conversations in the dashboard.
+</Note>
+
+## user
+
+Identify who is chatting. All fields are optional.
+
+<ParamField path="id" type="string">
+  Your stable identifier for the user.
+</ParamField>
+
+<ParamField path="name" type="string">
+  Display name. Max 256 characters.
+</ParamField>
+
+<ParamField path="email" type="string">
+  Must be a valid email, max 256 characters.
+</ParamField>
+
+<ParamField path="plan" type="string">
+  Plan label, e.g. `"pro"`, `"enterprise"`. Max 64 characters.
+</ParamField>
+
+<ParamField path="createdAt" type="string">
+  ISO datetime for when the user was created.
+</ParamField>
+
+<ParamField path="industry" type="string">
+  Industry label.
+</ParamField>
+
+<ParamField path="mrr" type="number">
+  Monthly recurring revenue in cents.
+</ParamField>
+
+## organization
+
+Identify the organization the user belongs to. All fields are optional.
+
+<ParamField path="id" type="string">
+  Your stable identifier for the organization.
+</ParamField>
+
+<ParamField path="name" type="string">
+  Organization name. Max 256 characters.
+</ParamField>
+
+<ParamField path="plan" type="string">
+  Plan label. Max 64 characters.
+</ParamField>
+
+<ParamField path="mrr" type="number">
+  Monthly recurring revenue.
+</ParamField>
+
+<ParamField path="industry" type="string">
+  Industry label.
+</ParamField>
+
+## session
+
+Describe the session the conversation happened in. All fields are optional.
+
+<ParamField path="id" type="string">
+  Your stable identifier for the session.
+</ParamField>
+
+<ParamField path="pageUrl" type="string">
+  URL where the conversation took place. Max 2,048 characters.
+</ParamField>
+
+<ParamField path="referrer" type="string">
+  Referring URL. Max 2,048 characters.
+</ParamField>
+
+<ParamField path="device" type='"mobile" | "desktop" | "tablet"'>
+  Device type the user is on.
+</ParamField>
+
+<ParamField path="country" type="string">
+  ISO country code.
+</ParamField>
+
+## custom
+
+Arbitrary key-value pairs for anything the typed fields don't cover, surfaced for segmentation in the dashboard.
+
+```typescript
+custom: {
+  feature: "billing",
+  chatbotVersion: "2.1",
+  isTrialUser: true,
+}
+```
+
+<Warning>
+`custom` field values must be `string`, `number`, or `boolean` only. Other value types are rejected with a `400 Bad Request` (logged to console, never thrown).
+</Warning>
+
+## Field limits
+
+These context fields are subject to the capture endpoint's validation limits.
+
+| Field | Limit |
+|-------|-------|
+| `user.email` | Must be a valid email, max 256 characters |
+| `user.plan` / `organization.plan` | max 64 characters |
+| `user.name` / `organization.name` | max 256 characters |
+| `session.pageUrl` / `session.referrer` | max 2,048 characters |
+| `custom` field values | `string`, `number`, or `boolean` only |
+
+Requests exceeding these limits receive a `400 Bad Request` response (logged to console, never thrown). See [Limits & errors](/sdk/limits-and-errors) for the full table.
+
+<Tip>
+Session metadata like IP, browser, OS, device type, country, and city is derived automatically when you forward the original client headers from a server-side route. See [Header forwarding](/sdk/header-forwarding).
+</Tip>

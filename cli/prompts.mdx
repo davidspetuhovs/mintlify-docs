@@ -1,0 +1,130 @@
+---
+title: "Manage the live prompt"
+description: "Publish, draft, activate, and kill-switch."
+icon: "file-pen"
+---
+{/* SOURCES: _sources/cli-readme.md */}
+
+The `prompts` command group manages the **live published prompt** for the pinned chatbot. Every subcommand operates on the chatbot you've selected with `openbat use <id|name>`. `list` reads with any key kind; every mutating subcommand requires an admin or PAT key.
+
+## Subcommands
+
+| Subcommand | Key kinds | What it does |
+|---|---|---|
+| `prompts list` | any kind | List versions, the active version, and the kill-switch state |
+| `prompts publish --file PATH \| --text "..."` | admin/pat | Create a version and set it LIVE |
+| `prompts create-draft --file PATH \| --text "..."` | admin/pat | Create a version WITHOUT activating it |
+| `prompts activate <versionId>` | admin/pat | Roll back or forward to a version |
+| `prompts kill-switch --on \| --off` | admin/pat | Emergency fallback toggle |
+
+<Note>
+The same surface is available over MCP (`@openbat/mcp`) and reads the same pinned chatbot. See [the MCP tools reference](/mcp/tools).
+</Note>
+
+## List versions
+
+`prompts list` shows the existing versions, which one is active, and the current kill-switch state.
+
+```bash
+openbat prompts list
+```
+
+Like every data command, this prints a `→ chatbot: <name> (<id>)` banner to **stderr** so the active scope is never in doubt, while structured output goes to stdout. Add `--json` for raw output (it's the default when stdout is not a TTY, so piping into `jq` always works).
+
+## Publish a new live prompt
+
+`prompts publish` creates a new version and immediately sets it LIVE. Provide the prompt either from a file or inline text.
+
+<CodeGroup>
+
+```bash From a file
+openbat prompts publish --file new-prompt.txt
+```
+
+```bash Inline text
+openbat prompts publish --text "You are a helpful support assistant for Acme."
+```
+
+</CodeGroup>
+
+<ParamField path="--file" type="PATH">
+Path to a file containing the prompt to publish.
+</ParamField>
+
+<ParamField path="--text" type="string">
+The prompt content passed inline on the command line.
+</ParamField>
+
+## Create a draft without going live
+
+`prompts create-draft` creates a version but does **not** activate it. Use this to stage a candidate prompt, probe the chatbot against it, and only then activate it.
+
+<CodeGroup>
+
+```bash From a file
+openbat prompts create-draft --file new-prompt.txt
+```
+
+```bash Inline text
+openbat prompts create-draft --text "You are a helpful support assistant for Acme."
+```
+
+</CodeGroup>
+
+After creating a draft, probe the chatbot against that version using the SDK's `versionOverride` or a `{{candidate}}` adapter field, then activate it once the eval passes. See [candidate prompts](/eval-mode/candidate-prompts) and [system prompt versioning](/sdk/system-prompt-versioning).
+
+<Tip>
+Staging a fix as a draft keeps it off live traffic until you've verified it. The full draft-then-activate workflow is part of the closed eval loop documented in [diagnose and fix](/eval-mode/diagnose-and-fix).
+</Tip>
+
+## Activate a version
+
+`prompts activate <versionId>` sets an existing version LIVE. Use it to activate a draft once it passes, or to roll back or forward to any prior version.
+
+```bash
+openbat prompts activate <versionId>
+```
+
+<ParamField path="versionId" type="string" required>
+The id of the version to make LIVE. Get version ids from `prompts list`.
+</ParamField>
+
+## Kill-switch
+
+`prompts kill-switch` is an emergency fallback toggle. Turn it on to switch the chatbot to its fallback behavior, and off to restore the active version.
+
+<CodeGroup>
+
+```bash Enable
+openbat prompts kill-switch --on
+```
+
+```bash Disable
+openbat prompts kill-switch --off
+```
+
+</CodeGroup>
+
+<Warning>
+The kill-switch is an emergency fallback. `prompts list` reports the current kill-switch state alongside the active version.
+</Warning>
+
+## Rate limits
+
+Prompt mutations have their own per-credential buckets. A 429 response includes a `Retry-After` header (seconds), which the CLI surfaces in the error message.
+
+| Operation | Limit |
+|---|---|
+| Publish prompt | 20 per hour per credential |
+| Activate prompt / toggle kill switch | 30 per hour per credential |
+
+See [security and rate limits](/cli/security-rate-limits) for the full table.
+
+## Permission errors
+
+Mutating subcommands need an admin (`ob_admin_*`) or PAT (`ob_pat_*`) key.
+
+- An **HTTP 401** means the key is invalid, expired, or the wrong kind for the endpoint — usually fixed by running `openbat auth whoami` and supplying a fresh key.
+- An **HTTP 403** means the key is valid but lacks permission — for example a read-scope PAT trying to publish or activate.
+
+See [authentication](/cli/authentication) for the four key kinds and how to generate each.

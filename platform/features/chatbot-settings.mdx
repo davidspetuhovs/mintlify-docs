@@ -1,0 +1,53 @@
+---
+title: "Chatbot settings"
+description: "General, billing, keys, webhooks, import/export."
+icon: "settings"
+---
+{/* SOURCES: knowledgebase/feature-inventory.md; pages/chatbot-settings.md */}
+
+Chatbot settings is the chatbot-level configuration panel that holds everything not related to analysis definitions — naming, billing, API keys, company context, members, webhooks, and data import/export. It is organized into a 7-tab panel.
+
+It lives at `/platform/[chatbotId]/settings` and is reached from the bottom of the chatbot sidebar.
+
+<Frame caption="The chatbot settings panel with its seven configuration tabs">
+  <img src="/images/platform/chatbot-settings.png" alt="Chatbot settings page" />
+</Frame>
+
+## Tabs
+
+The settings panel has seven tabs:
+
+| Tab | What it covers |
+|-----|----------------|
+| **General** | Chatbot name, ID, creation date, user/assistant analysis toggles, re-analyze, and the delete (danger zone) action |
+| **Billing** | Pro plan at $39/mo, with credit usage and credit top-ups |
+| **Company Info** | Product name, URL, description, and industry — used as product context for hallucination detection |
+| **API Keys** | Ingest key management showing prefix, status, and last used |
+| **Members** | Chatbot-level access |
+| **Webhooks** | Discord, Slack, and custom webhook destinations |
+| **Import/Export Data** | JSON/CSV export with analysis results, and CSV/JSON import |
+
+## What you can do
+
+- Edit the chatbot display name and copy the chatbot ID
+- Toggle user and assistant message analysis
+- Re-analyze all conversations
+- View and manage the billing plan and purchase credit top-ups
+- Edit company and product information used for hallucination detection context
+- View and rotate API keys
+- Manage chatbot-level member access
+- Configure Discord, Slack, and custom webhook destinations
+- Export conversation data as JSON or CSV, with analysis results
+- Import conversation data from a file
+- Delete the chatbot from the General tab's danger zone
+
+<Note>
+  Editing chatbot settings requires an owner or admin role.
+</Note>
+
+## Where it connects
+
+- The webhook destinations you configure here are the targets that [Workflows](/platform/features/workflows) fire to.
+- Member access here is the chatbot-level layer of [team and access](/platform/features/team-and-access) control.
+- Company Info feeds product context into the analysis pipeline; analysis behavior is configured in [Analysis config](/platform/features/analysis-config).
+- For a step-by-step walkthrough of the Import/Export Data tab, see [Export conversation data](/platform/guides/export-conversation-data).

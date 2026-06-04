@@ -1,0 +1,86 @@
+---
+title: "Create your account"
+description: "Register with a work email and verify it."
+icon: "user-round-plus"
+---
+{/* SOURCES: flows/email-sign-up.md; pages/create-account.md */}
+
+Register a new OpenBat account with your work email and a password, then confirm your address from a verification email. This is the first step for a new user setting up chatbot analytics.
+
+<Note title="Before you begin">
+  - You do not already have an OpenBat account.
+  - You have access to your work email.
+</Note>
+
+<Frame caption="The Create account page at /auth/sign-up">
+  <img src="/images/guides/email-sign-up/create-account.png" alt="Create account page" />
+</Frame>
+
+<Steps>
+  <Step title="Open the sign-up page">
+    Navigate to `/auth/sign-up`. You can reach this page from the landing page CTA or the login page's "Create an account" link. The page shows the "Get started." heading with the Work Email, Password, and Confirm Password fields, a "Create account" button, and Terms and Privacy Policy links.
+
+    <Frame caption="The sign-up form with Work Email, Password, and Confirm Password fields">
+      <img src="/images/guides/email-sign-up/step-01.png" alt="email-sign-up step 1" />
+    </Frame>
+  </Step>
+  <Step title="Enter your work email">
+    Type your work email address in the Work Email field.
+  </Step>
+  <Step title="Enter a password">
+    Type a password in the Password field. The password must be at least 8 characters.
+  </Step>
+  <Step title="Confirm your password">
+    Re-enter the same password in the Confirm Password field.
+  </Step>
+  <Step title="Create the account">
+    Click "Create account". On submission, a verification email is sent and you are redirected to `/auth/sign-up-success`.
+  </Step>
+  <Step title="Verify your email">
+    Check your email for the verification link and click it to confirm your account.
+  </Step>
+</Steps>
+
+<Check>
+  Your account is created and verified. You can now log in and are redirected to `/platform`, where an organization is auto-created.
+</Check>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Password too short (under 8 characters)">
+    Submitting a password shorter than the 8-character minimum returns a generic error: "Something went wrong. Please try again." The message does not specify the password-length requirement, so make sure your password is at least 8 characters before resubmitting.
+
+    <Frame caption="Generic error shown when the password is too short">
+      <img src="/images/guides/email-sign-up/failure-01.png" alt="email-sign-up failure 1" />
+    </Frame>
+  </Accordion>
+  <Accordion title="Passwords do not match">
+    If the Password and Confirm Password fields differ, client-side validation shows "Passwords do not match." Re-enter the same value in both fields.
+
+    <Frame caption="Client-side validation when the passwords do not match">
+      <img src="/images/guides/email-sign-up/failure-02.png" alt="email-sign-up failure 2" />
+    </Frame>
+  </Accordion>
+  <Accordion title="Email already has an account">
+    Signing up with an email that already has an account returns the same generic error: "Something went wrong. Please try again." If you already have an account, log in instead of signing up.
+
+    <Frame caption="Generic error shown when the email already has an account">
+      <img src="/images/guides/email-sign-up/failure-03.png" alt="email-sign-up failure 3" />
+    </Frame>
+  </Accordion>
+  <Accordion title="Verification email not received">
+    The verification email may go to spam. Check your spam folder if the email does not arrive in your inbox.
+  </Accordion>
+</AccordionGroup>
+
+## Next steps
+
+<Columns cols={2}>
+  <Card title="Email login" icon="log-in" href="/platform/guides/email-login">
+    Sign in with the email and password you just registered.
+  </Card>
+  <Card title="Sign up from landing page" icon="rocket" href="/platform/guides/sign-up-from-landing-page">
+    See how a new visitor reaches the sign-up page from the landing page CTA.
+  </Card>
+</Columns>

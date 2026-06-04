@@ -1,0 +1,52 @@
+---
+title: "Review a conversation"
+description: "Inspect a transcript and its analysis tags."
+icon: "messages-square"
+---
+{/* SOURCES: flows/review-a-specific-conversation.md; pages/conversation-detail.md */}
+
+Find a conversation, open its full message thread, and read the analysis results so you understand what happened. This is how a CS manager investigates a flagged interaction to see why a customer expressed frustration.
+
+<Note title="Before you begin">
+- Conversations exist in the chatbot.
+</Note>
+
+<Steps>
+  <Step title="Open the Conversations list">
+    Navigate to `/platform/[chatbotId]/conversations`. The table lists conversations with User, Messages, Outcome, Issues, Sentiment, Flags, and Last Message columns. Use the search/filter bar to narrow results, and adjust the date filter (defaults to Last 30 days) as needed.
+
+    <Frame caption="The Conversations table with User, Messages, Outcome, Issues, Sentiment, Flags, and Last Message columns.">
+      <img src="/images/guides/review-a-specific-conversation/step-01.png" alt="review-a-specific-conversation step 1" />
+    </Frame>
+  </Step>
+  <Step title="Open a conversation and read its analysis">
+    Click a conversation row to open the detail page. The full message thread loads, with the user message and the assistant response — including expandable Reasoning and tool call sections, and the formatted answer. The right panel shows the Analysis Overview (flag and outcome), a Persona section, and General, User, and Assistant tabs.
+
+    <Frame caption="The conversation detail page: full message thread on the left, Analysis Overview with flags, outcome, and persona on the right.">
+      <img src="/images/guides/review-a-specific-conversation/step-02.png" alt="review-a-specific-conversation step 2" />
+    </Frame>
+  </Step>
+</Steps>
+
+<Check>
+You can read the full context of the conversation, including its analysis tags, flags, and outcomes.
+</Check>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="No conversations match the filter criteria">
+    The search term, filters, or date range may exclude every conversation. Clear the search/filter bar and widen the date filter (it defaults to Last 30 days) to see more rows.
+  </Accordion>
+</AccordionGroup>
+
+## Next steps
+
+<Columns cols={2}>
+  <Card title="Configure analysis definitions" icon="sliders" href="/platform/guides/configure-analysis-definitions">
+    Customize the flags, outcomes, and issues the analysis pipeline detects in your conversations.
+  </Card>
+  <Card title="Deep search" icon="magnifying-glass" href="/platform/features/deep-search">
+    Find conversations by meaning rather than exact keywords.
+  </Card>
+</Columns>

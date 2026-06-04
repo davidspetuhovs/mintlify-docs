@@ -1,0 +1,89 @@
+---
+title: "Managing chatbots"
+description: "Create, organize, and switch between chatbots."
+icon: "layout-grid"
+---
+{/* SOURCES: knowledgebase/feature-inventory.md; pages/chatbot-list-dashboard.md */}
+
+The chatbot list is the organization-scoped dashboard at `/platform`, and it's the first page you land on after signing in. From here you see every chatbot in the current organization and pick one to analyze, or create a new one.
+
+<Frame caption="The chatbot list dashboard at /platform, scoped to the current organization">
+  <img src="/images/platform/chatbot-list.png" alt="Chatbot list dashboard" />
+</Frame>
+
+## What you can do here
+
+- View all chatbots in the organization, with their name, plan badge (Pro/Demo), API key prefix, creator email, last activity, and conversation and message counts.
+- Filter chatbots by status using the **Active**, **Pending**, **Archive**, and **Demo** tabs.
+- Toggle between card view and list view.
+- Click a chatbot card to open its dashboard.
+- Click **+ New chatbot** to create a new chatbot.
+- Open a **Demo** chatbot to explore the dashboard with sample data.
+- Navigate to **Members** or **Settings** from the organization sidebar.
+- Switch organizations with the org switcher in the sidebar.
+
+## Card and list view
+
+Use the view toggle to switch how chatbots are displayed. List view shows the same chatbots in a denser row layout, and the card menu on each chatbot exposes per-chatbot actions.
+
+<Frame caption="List view shows chatbots in a denser row layout">
+  <img src="/images/states/platform-list-view.png" alt="Chatbot list view" />
+</Frame>
+
+<Frame caption="The per-chatbot card menu">
+  <img src="/images/states/platform-card-menu.png" alt="Chatbot card menu" />
+</Frame>
+
+## Status tabs
+
+Chatbots are grouped by status. Each tab filters the list to a single status.
+
+| Tab | Shows |
+| --- | --- |
+| **Active** | Chatbots currently in use |
+| **Pending** | Chatbots awaiting activity |
+| **Archive** | Archived chatbots |
+| **Demo** | Read-only demo chatbots with sample data |
+
+<Frame caption="The Demo tab lists read-only demo chatbots">
+  <img src="/images/states/platform-tab-demo.png" alt="Demo tab" />
+</Frame>
+
+<Frame caption="The Pending tab filters to chatbots awaiting activity">
+  <img src="/images/states/platform-tab-pending.png" alt="Pending tab" />
+</Frame>
+
+<Frame caption="The Archive tab lists archived chatbots">
+  <img src="/images/states/platform-tab-archive.png" alt="Archive tab" />
+</Frame>
+
+The **Demo** tab contains read-only chatbots (such as E-Commerce or SaaS) populated with sample conversations, analyses, and reports. Open one to browse a fully populated dashboard without integrating the SDK first.
+
+## Organization context
+
+The chatbot list is scoped to a single organization. Your organization is created automatically on first visit if you don't have one. The sidebar provides org-level navigation to **Chatbots**, **Members**, and **Settings**, and the org switcher lets you move between organizations.
+
+<Frame caption="The org switcher in the sidebar moves you between organizations">
+  <img src="/images/states/platform-org-switcher.png" alt="Organization switcher" />
+</Frame>
+
+<Frame caption="The user menu in the sidebar">
+  <img src="/images/states/platform-user-menu.png" alt="User menu" />
+</Frame>
+
+## Next steps
+
+<Columns cols={2}>
+  <Card title="Create a new chatbot" icon="plus" href="/platform/guides/create-new-chatbot">
+    Add a chatbot to the organization and start tracking analytics.
+  </Card>
+  <Card title="Explore a demo chatbot" icon="play" href="/platform/guides/explore-demo-chatbot">
+    Open a read-only demo chatbot to evaluate the dashboard with sample data.
+  </Card>
+  <Card title="Invite a team member" icon="user-plus" href="/platform/guides/invite-team-member">
+    Add colleagues to the organization from the Members page.
+  </Card>
+  <Card title="Chatbot onboarding" icon="rocket" href="/platform/features/onboarding">
+    Follow the SDK setup wizard after creating a chatbot.
+  </Card>
+</Columns>

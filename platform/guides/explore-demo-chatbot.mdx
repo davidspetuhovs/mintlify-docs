@@ -1,0 +1,55 @@
+---
+title: "Explore a demo chatbot"
+description: "Browse a populated, read-only sample dashboard."
+icon: "play"
+---
+{/* SOURCES: flows/explore-demo-chatbot.md */}
+
+Open a read-only demo chatbot to explore the full OpenBat dashboard without needing real data. This is useful if you are evaluating OpenBat or want to see what a fully populated dashboard looks like.
+
+<Note title="Before you begin">
+  - You are authenticated and signed in to OpenBat.
+</Note>
+
+<Steps>
+  <Step title="Navigate to /platform">
+    Go to `/platform`. The chatbot list opens on the tab for your current organization's chatbots.
+  </Step>
+  <Step title="Click the 'Demo' tab">
+    Click the **Demo** tab to see demo chatbots. Two demo chatbots are visible: **Demo Chatbot — E-Commerce** (Threadworks Co.) and **Demo Chatbot — SaaS** (Helmsmith). Both are marked **Provided by OpenBat** with the note "Explore reports, browse the UI — no writes".
+
+    <Frame caption="The Demo tab listing the E-Commerce and SaaS demo chatbots.">
+      <img src="/images/guides/explore-demo-chatbot/step-01.png" alt="explore-demo-chatbot step 2" />
+    </Frame>
+  </Step>
+  <Step title="Open a demo chatbot">
+    Click a demo chatbot card, such as the E-Commerce demo. The full dashboard loads with a DEMO banner, the AI chat, AT-RISK ORGS, ALERTS (13 buying signals), PERFORMANCE (Resolution 54%, Sentiment positive, 3 quality issues, AI Literacy 74/100), and full sidebar navigation.
+
+    <Frame caption="The E-Commerce demo dashboard with the DEMO banner, AI chat, and metric cards.">
+      <img src="/images/guides/explore-demo-chatbot/step-02.png" alt="explore-demo-chatbot step 3" />
+    </Frame>
+  </Step>
+</Steps>
+
+<Check>
+You see a fully populated dashboard with sample conversations, analyses, and reports — all read-only.
+</Check>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Demo data looks static or out of date">
+    Demo chatbot data may not be real-time. The dashboard is populated with sample data for exploration, so values shown in the demo do not update like a live chatbot's would.
+  </Accordion>
+</AccordionGroup>
+
+## Next steps
+
+<Columns cols={2}>
+  <Card title="Create a new chatbot" icon="plus" href="/platform/guides/create-new-chatbot">
+    Add your own chatbot and start tracking real conversations.
+  </Card>
+  <Card title="Overview dashboard" icon="gauge" href="/platform/features/overview-dashboard">
+    Learn what each metric on the chatbot dashboard means.
+  </Card>
+</Columns>

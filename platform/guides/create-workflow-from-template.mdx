@@ -1,0 +1,65 @@
+---
+title: "Create a workflow from a template"
+description: "Set up an automated alert workflow."
+icon: "git-branch"
+---
+{/* SOURCES: flows/create-workflow-from-template.md; pages/workflows.md */}
+
+Set up an automated alert workflow from a pre-built template, such as notifying Slack when an organization becomes at-risk. This is for CS managers and team members who want alerts to fire automatically when analysis conditions are met during conversation analysis.
+
+<Note title="Before you begin">
+  - The chatbot has analysis running.
+  - A webhook destination is configured in settings.
+</Note>
+
+<Steps>
+  <Step title="Open the Workflows page">
+    Navigate to the chatbot's Workflows page at `/platform/[chatbotId]/workflows` from the chatbot sidebar. The page has three tabs: Workflows, Runs, and Templates. With no workflows set up yet, the Workflows tab shows a "No workflows yet" state.
+
+    <Frame caption="The Workflows page showing the empty 'No workflows yet' state.">
+      <img src="/images/guides/create-workflow-from-template/step-01.png" alt="create-workflow-from-template step 1" />
+    </Frame>
+  </Step>
+
+  <Step title="Open the Templates tab">
+    Click the Templates tab. Filter pills let you narrow templates by visibility (All, Public, Your Org) and by category (Alerting, Escalation, Reporting, Moderation, General). One template is listed: "Notify Slack when an organization becomes at risk", tagged Public and Alerting.
+
+    <Frame caption="The Templates tab with filter pills and the 'Notify Slack when an organization becomes at risk' template.">
+      <img src="/images/guides/create-workflow-from-template/step-02.png" alt="create-workflow-from-template step 2" />
+    </Frame>
+  </Step>
+
+  <Step title="Preview the template and use it">
+    Click the template to open its preview panel. The panel shows the template title, description, tags (Alerting, Public), and the Workflow Steps (Organization at risk → Slack notification). Click "Use This Template" to create the workflow.
+
+    <Frame caption="The template preview panel showing the workflow steps and the 'Use This Template' button.">
+      <img src="/images/guides/create-workflow-from-template/step-03.png" alt="create-workflow-from-template step 3" />
+    </Frame>
+  </Step>
+</Steps>
+
+<Check>
+The workflow is created and will trigger automatically when its conditions are met during conversation analysis.
+</Check>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="No webhook destinations configured">
+    The template's Slack notification step needs a webhook destination to send to. Configure a webhook destination in the chatbot's settings before the workflow can deliver alerts.
+  </Accordion>
+  <Accordion title="Analysis conditions don't match any data">
+    The workflow fires when its conditions are met during conversation analysis. If no conversations match the workflow's conditions, it will not trigger. Confirm the chatbot has analysis running and is capturing the relevant data.
+  </Accordion>
+</AccordionGroup>
+
+## Next steps
+
+<Columns cols={2}>
+  <Card title="Configure webhooks" icon="webhook" href="/platform/features/chatbot-settings">
+    Set up Discord, Slack, or custom webhook destinations for your workflows.
+  </Card>
+  <Card title="View workflow runs" icon="list-checks" href="/platform/features/workflows">
+    Track execution history and filter runs by status.
+  </Card>
+</Columns>

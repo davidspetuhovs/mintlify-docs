@@ -1,0 +1,68 @@
+---
+title: "Pin to one chatbot"
+description: "Hard-lock the server to a single chatbot."
+icon: "pin"
+---
+{/* SOURCES: _sources/mcp-readme.md */}
+
+A PAT can reach every chatbot across your orgs. When you only want an agent to touch one of them, pin the server to a single chatbot so calls can't drift to another. This is the safe default whenever a key can reach many chatbots.
+
+Set `OPENBAT_CHATBOT_ID` — or run `openbat use <id>` once, which writes `~/.openbatrc`, a file the server also reads — to lock the server to that chatbot.
+
+## What pinning enforces
+
+When pinned, the server:
+
+- **injects** the pinned `chatbotId` into every per-chatbot tool, and **rejects** a call that passes a different one;
+- returns **only** the pinned chatbot from `openbat_list_chatbots`;
+- **hides** cross-chatbot / org tools (`openbat_create_chatbot`, `openbat_list_orgs`, org members);
+- verifies the pin against the key's reachable set at startup (exits if it isn't reachable) and logs `pinned to "<name>" (<id>)`.
+
+<Warning>
+The pin is checked against the key's reachable set at startup. If the pinned chatbot isn't reachable by the key, the server exits.
+</Warning>
+
+## Configure the pin
+
+Add `OPENBAT_CHATBOT_ID` alongside your API key in the MCP client config:
+
+```jsonc
+{
+  "mcpServers": {
+    "openbat": {
+      "command": "npx",
+      "args": ["-y", "@openbat/mcp"],
+      "env": { "OPENBAT_API_KEY": "ob_pat_...", "OPENBAT_CHATBOT_ID": "<uuid>" }
+    }
+  }
+}
+```
+
+<ParamField path="OPENBAT_CHATBOT_ID" type="string">
+The UUID of the chatbot to lock the server to. The server injects this id into every per-chatbot tool and rejects calls that pass a different id.
+</ParamField>
+
+## Switch the pinned chatbot
+
+To switch, change `OPENBAT_CHATBOT_ID` (or run `openbat use <other>`) and restart the server.
+
+```bash
+openbat use <other>
+```
+
+## Chatbot-scoped keys pin automatically
+
+A chatbot-scoped `ob_read_*` / `ob_admin_*` key is single-chatbot by construction, so the pin is automatic — nothing to set.
+
+<Note>
+PATs also carry a per-row sub-scope (`read` or `admin`). A read-scope PAT can run every read tool across every chatbot in your orgs but cannot mutate anything — the server surfaces the write tools but the v1 routes return 403. See [Credentials](/mcp/credentials) for how the key kind shapes the exposed tools.
+</Note>
+
+<Columns cols={2}>
+  <Card title="Credentials" icon="key" href="/mcp/credentials">
+    How the key prefix sets the credential kind and the visible tool surface.
+  </Card>
+  <Card title="Tools" icon="wrench" href="/mcp/tools">
+    The per-chatbot and org-level tools the server exposes.
+  </Card>
+</Columns>

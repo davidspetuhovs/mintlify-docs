@@ -1,0 +1,41 @@
+---
+title: "Deep search"
+description: "Find conversations by meaning, not keywords."
+icon: "search"
+---
+{/* SOURCES: knowledgebase/feature-inventory.md; pages/deep-search.md */}
+
+Deep search is a semantic search interface that finds conversations by meaning rather than exact keywords. Enter a natural-language query and it returns the conversations that match its intent, complementing the keyword search in the conversations table.
+
+<Frame caption="The deep search page with a semantic query input, Deep Search button, and date range filter.">
+  <img src="/images/platform/deep-search.png" alt="Deep search page with semantic query input and date range filter" />
+</Frame>
+
+## What you can do
+
+- Enter a semantic search query in natural language instead of exact keywords.
+- Click **Deep Search** to run the query.
+- Filter results by date range using the date range picker.
+- Click a search result to open its conversation detail.
+
+## Where it lives
+
+Deep search is at `/platform/[chatbotId]/deep-search`, reached from the chatbot sidebar under **Clients**. Use it alongside the keyword search and filters in the conversations table when you want to find conversations by intent rather than wording.
+
+<Note>
+Deep search relies on conversation embeddings. Results appear once your chatbot has captured and analyzed conversations.
+</Note>
+
+## Related
+
+<Columns cols={3}>
+  <Card title="Conversations" icon="messages" href="/platform/features/conversations">
+    Browse, filter, and open individual conversations from the data table.
+  </Card>
+  <Card title="Query types" icon="layer-group" href="/platform/features/query-types">
+    See user messages clustered into canonical question categories.
+  </Card>
+  <Card title="Users and organizations" icon="users" href="/platform/features/users-and-organizations">
+    Explore the end-users behind your conversations.
+  </Card>
+</Columns>

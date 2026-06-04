@@ -1,0 +1,65 @@
+---
+title: "Configure analysis"
+description: "Add custom flags, outcomes, and definitions."
+icon: "sliders-horizontal"
+---
+{/* SOURCES: flows/configure-analysis-definitions.md; pages/analysis-config.md */}
+
+Add or modify the analysis definitions that the conversation analysis pipeline looks for, so it detects flags, outcomes, and issues specific to your domain. This is for product and engineering leads with an admin or owner role — for example, adding a custom `pricing_complaint` flag for your product.
+
+<Note title="Before you begin">
+  - You have an admin or owner role.
+</Note>
+
+<Steps>
+  <Step title="Open the Analysis Config page">
+    Navigate to `/platform/[chatbotId]/analysis-config` from the bottom of the chatbot sidebar. The page has tabs for Integration, Metadata, Translation, User Analysis, Assistant Analysis, Calibration, and Personas, and shows the integration layer progression (Baseline, Prompt, Tools, Knowledge, Synced).
+
+    <Frame caption="The Analysis Config page showing its tabs and the integration layer progression.">
+      <img src="/images/guides/configure-analysis-definitions/step-01.png" alt="configure-analysis-definitions step 1" />
+    </Frame>
+  </Step>
+
+  <Step title="Open the User Analysis or Assistant Analysis tab">
+    Click the **User Analysis** tab to work with the Sentiment, AI Literacy, and Flags sections, or the **Assistant Analysis** tab to work with outcome types and issue types. The User Analysis tab's Sentiment section lists levels (Very Negative, Negative, Positive, Very Positive) with color, priority, and enabled toggles, and the Flags section has a **+ Add custom** button for defining new flag types.
+
+    <Frame caption="The User Analysis tab with the Sentiment, AI Literacy, and Flags sections.">
+      <img src="/images/guides/configure-analysis-definitions/step-02.png" alt="configure-analysis-definitions step 2" />
+    </Frame>
+  </Step>
+
+  <Step title="Add a custom definition">
+    Find the relevant section, such as Flags, and click **+ Add custom** to define a new analysis type. Configure its name, description, color, and priority.
+  </Step>
+
+  <Step title="Enable the definition">
+    Toggle the definition on so the analysis pipeline starts detecting it.
+  </Step>
+
+  <Step title="Optionally add calibration examples">
+    Open the **Calibration** tab to add training examples for the definition.
+  </Step>
+</Steps>
+
+<Check>
+  The new analysis definition is active and will be detected in future conversations.
+</Check>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="The new definition isn't showing on existing conversations">
+    Changes to analysis definitions require re-analysis to apply to conversations that were already captured. New definitions are detected in conversations going forward.
+  </Accordion>
+</AccordionGroup>
+
+## Next steps
+
+<Columns cols={2}>
+  <Card title="Review a specific conversation" icon="messages" href="/platform/guides/review-a-specific-conversation">
+    Open a conversation to see flags, outcomes, and analysis results applied.
+  </Card>
+  <Card title="Analysis config reference" icon="sliders-horizontal" href="/platform/features/analysis-config">
+    See every tab on the Analysis Config page, including Calibration and Personas.
+  </Card>
+</Columns>
